@@ -1,0 +1,213 @@
+number,field,foreign_address,communication,term_years,note
+139,water,false,false,14,"three inventions: ships (transport), course instrument, water raising (also for mines); earliest fitting = water"
+4635,metals,false,false,,horseshoes
+13064,glass_ceramics,false,true,,
+1521,other,false,false,14,wooden buttons
+12699,transport,false,false,,carriage springs; transport precedes metals
+195,mills,false,false,14,hulling mill for pepper and barley; mills precedes food_drink
+8563,building,true,false,,"of Paris, residing in London"
+9492,chemicals,true,false,,"of Wetter, Prussia, residing in York"
+7958,steam_power,false,false,,boilers and locomotives; steam_power precedes transport
+3708,agriculture,false,false,14,
+26,metals,false,false,21,lead-melting furnace
+4288,fuel_light,false,false,,medical air application plus oil lamps; fuel_light precedes medicine
+630,textiles,false,false,14,
+10582,textiles,false,true,,"new thread for piece goods, ribbons and paper; coded by object (thread); printing_paper possible under tie rule"
+1805,water,false,false,14,water pipes and cisterns; water precedes building
+6539,other,false,true,,condensing gases and refrigeration
+13935,arms,false,true,,
+555,water,false,false,14,"expansive force for water-raising engines, plus brewing/distilling boilers; earliest fitting = water"
+8143,arms,false,false,,
+11660,chemicals,false,false,,oil expressing; chemicals precedes mills
+10579,mining,true,true,,"blasting rocks for mining; Paris, France"
+9389,agriculture,false,false,,
+3120,agriculture,false,false,14,heated forcing frame for fruit
+8094,chemicals,false,false,,sulphur from pyrites
+5849,printing_paper,false,false,,wallpaper
+5567,fuel_light,false,false,,
+718,medicine,false,false,14,
+11719,agriculture,false,false,,sack holder for corn
+13781,water,false,false,,"water-flow meter, ship log, motive power; earliest fitting = water"
+5603,steam_power,false,false,,
+7614,instruments,false,false,,electric telegraph
+6085,food_drink,false,false,,
+11045,chemicals,false,false,,gelatine and fining liquids; chemicals precedes food_drink
+12981,food_drink,false,false,,
+7227,other,false,true,,combs
+1105,water,false,false,14,water closet; water precedes building
+841,building,false,false,14,cement / artificial stone
+13019,building,false,false,,slate dressing; 2 months
+6726,fuel_light,false,false,,"warming and airing buildings; OCR inserts ""By writ"" mid-title"
+14255,agriculture,false,true,,manure
+653,mining,false,false,14,
+3870,fuel_light,false,false,14,candles
+12508,metals,false,false,,
+12494,printing_paper,false,false,,
+2635,building,false,false,14,joining metal blocks for arches; coded as construction
+6158,transport,false,false,,
+463,water,false,false,14,"multi-purpose water raising (mines, lands, mills, ships)"
+3607,food_drink,false,false,14,
+5880,metals,false,false,,locks
+2632,steam_power,false,false,14,steam engines applicable to mines and spinning
+14341,steam_power,true,false,,"Marseilles, France"
+5137,other,false,false,,pearl shell ornament for japan ware
+5771,fuel_light,false,false,,
+6956,metals,false,false,,
+14022,textiles,true,false,,"co-grantee of Cologne, Prussia"
+12797,fuel_light,false,false,,
+9123,chemicals,false,false,,salt
+2365,printing_paper,false,false,14,playing cards
+81,food_drink,false,false,14,distilling and vinegar
+5753,other,false,false,,horn and hoof articles; 2 months
+9398,steam_power,false,false,,"engines and boilers, railway brakes, ship propulsion"
+11860,building,false,false,,
+10859,metals,false,false,,
+449,mining,false,false,14,atmospheric engine for draining mines
+9242,printing_paper,false,false,,
+11989,medicine,false,false,,pill boxes
+7849,glass_ceramics,false,false,,
+1140,instruments,false,false,14,"Waterford, Ireland is within British Isles"
+1240,metals,false,false,14,
+7976,building,false,false,,door hanging
+497,transport,false,false,14,ship sheathing
+12207,instruments,false,false,,
+6104,textiles,false,false,,"""stretching machine"" object not stated; textile assumed (Manchester)"
+8929,textiles,false,false,,
+12432,arms,false,false,,
+9751,glass_ceramics,false,false,,
+6678,other,false,false,,pens
+4185,agriculture,false,false,,2 months
+13168,steam_power,false,false,,land-crushing and straw machinery plus steam power for farm machinery; steam_power precedes agriculture
+2076,mills,false,false,14,windmill for grinding corn
+11557,mining,false,false,,
+2938,transport,false,false,14,sounding instrument (navigation); transport precedes instruments
+114,steam_power,false,false,14,engine to drive mills and carriages (motive power)
+474,food_drink,false,false,14,chocolate
+2433,printing_paper,false,false,14,
+3425,mills,false,false,14,cutting and pulverizing sugar; mills precedes food_drink
+10925,chemicals,false,true,,impregnating liquids with gases
+9274,transport,false,false,,
+3384,water,false,true,14,"motion to machinery, hydraulic and pneumatic; communication from foreigner"
+2186,agriculture,false,false,14,
+9755,fuel_light,false,false,,
+3739,agriculture,false,false,14,
+3189,other,false,false,14,umbrellas
+7248,mining,false,false,,raising water from mines
+331,instruments,false,false,14,burglar alarm
+5834,medicine,false,false,,2 months
+241,textiles,false,false,14,
+3939,textiles,false,false,14,
+10934,agriculture,false,false,,
+7552,printing_paper,false,false,,
+10283,metals,false,false,,"working sheet iron for ship building (OCR ""Avoiding"")"
+11239,mills,false,false,,
+10768,fuel_light,false,false,,matches
+3389,agriculture,false,false,14,
+12704,mills,false,false,,"chaff cutting, grinding, sawing, dynamometer; earliest fitting = mills"
+7291,metals,false,true,,
+5852,water,false,false,,water closets; 2 months
+7759,arms,false,false,,
+5377,chemicals,false,false,,acetic acid on metals
+13663,chemicals,false,false,,soap
+14011,textiles,false,true,,Glasgow is within British Isles
+6563,water,false,true,,
+11612,fuel_light,false,false,,signalling apparatus plus lamps and burners; fuel_light precedes instruments
+1178,textiles,false,false,14,
+433,mills,false,false,14,sugar mills and rum; mills precedes food_drink
+13912,chemicals,false,false,,gases
+10651,metals,false,false,,
+1586,metals,false,false,14,metal buttons
+3806,instruments,false,false,14,Dublin is within British Isles
+13978,textiles,false,false,,
+8446,fuel_light,false,false,,
+7947,fuel_light,false,false,,
+7068,water,false,false,,
+4009,fuel_light,false,false,,smoky chimneys; 4 months
+9478,transport,false,false,,aerial carriage
+9963,metals,false,false,,"locks, safes; OCR page header ""1843."" inside title"
+6421,steam_power,false,false,,boilers for land carriages; OCR garbled ending
+10910,steam_power,false,false,,wind power for driving mills and machines (motive power)
+4803,building,false,false,,
+13025,mills,false,false,,
+12939,mills,false,false,,
+3180,transport,false,false,14,
+5047,chemicals,false,false,,salt; 4 months
+9890,building,false,true,,ornamental mouldings
+624,water,false,false,14,
+1659,agriculture,false,false,14,
+2148,instruments,false,false,14,
+9411,water,false,false,,
+7850,printing_paper,false,true,,
+234,glass_ceramics,false,false,14,
+1313,water,false,false,14,"hydraulic machine for mines, pits or wells (multi-purpose)"
+10590,metals,false,true,,
+7528,transport,false,false,,
+2238,agriculture,false,false,14,
+13424,chemicals,false,false,,
+8731,mills,false,false,,sugar cane mill; mills precedes food_drink
+6432,food_drink,false,false,,preserving food
+10305,textiles,false,false,,
+2815,instruments,false,false,14,measures
+2155,instruments,false,false,14,spectacles
+4787,chemicals,false,false,,oil pressing; 2 months
+2899,food_drink,false,false,14,
+1716,metals,false,false,14,razor (cutlery)
+217,mills,false,false,14,
+3242,water,false,false,14,under-draining plough; water (drainage) precedes agriculture
+11657,arms,false,true,,
+4873,instruments,false,false,,
+10563,textiles,false,false,,
+13861,printing_paper,false,false,,"papier mache, plus metal-glass buttons"
+2154,glass_ceramics,false,false,14,"OCR page number ""797."" in text"
+1538,metals,false,false,14,spurs
+609,mining,false,false,14,"corn grinding, hoisting from mines, draining fens; earliest fitting = mining"
+9500,agriculture,false,false,,
+1648,water,false,false,14,
+7157,other,false,false,,evaporating and cooling fluids
+5090,steam_power,false,false,,steam carriage; steam_power precedes transport
+8047,transport,false,false,,"OCR signature mark ""3 Y 2"" at end"
+4553,agriculture,false,false,,2 months
+9353,agriculture,false,false,,manures
+10829,food_drink,true,true,,"New York, America"
+360,transport,false,false,14,road levelling
+11702,textiles,false,false,,boots and shoes (leather)
+13461,metals,false,false,,
+6650,medicine,false,false,,
+13854,textiles,false,false,,
+1980,transport,true,false,14,"navigation instruments; ""late chief surveyor ... Cape Breton, North America"" read as origin abroad"
+13627,building,true,true,,citizen of the United States
+3712,medicine,false,false,,pill boxes; no term in years stated
+7058,instruments,false,true,,
+8831,steam_power,false,false,,locomotive engines and carriages
+11014,mills,false,true,,millstone dressing
+6786,steam_power,false,false,,
+12197,glass_ceramics,false,false,,
+2215,glass_ceramics,false,false,14,"""used in foreign parts"" is not an address"
+2018,mining,false,false,14,"hoisting machine; uses include mines (water, ore), ships, carts"
+6122,textiles,false,true,,4 months
+709,steam_power,false,false,14,
+6606,water,false,false,,"pistons, pump buckets, steam engines; water precedes steam_power; Scotland"
+5466,chemicals,false,true,,"oil from seeds; foreign communicator in Luxembourg, but grantee of Deptford"
+4016,building,false,false,14,
+795,mining,false,false,14,
+4955,metals,false,false,,pins; 2 months
+4299,other,false,false,,gilding quills and pens; 2 months
+8592,other,false,true,,sawing wood
+1044,mining,false,false,14,
+7587,food_drink,false,false,,4 months
+1662,printing_paper,false,false,14,
+13207,steam_power,false,false,,
+6051,medicine,false,true,,shower baths
+10828,metals,false,false,,
+11501,building,false,true,,"Limerick, Ireland is within British Isles"
+11754,instruments,false,false,,
+1114,glass_ceramics,false,false,14,
+2122,textiles,false,false,14,
+268,glass_ceramics,false,false,14,
+9129,arms,false,false,,
+1145,textiles,false,false,14,
+11261,instruments,false,true,,
+1208,medicine,false,false,14,
+836,instruments,false,false,14,
+5017,transport,false,false,,
+6405,metals,false,false,,

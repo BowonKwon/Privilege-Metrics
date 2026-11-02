@@ -71,8 +71,8 @@ def build(D: dict) -> dict:
     hl = D["m_c1_hulme"]
     nlf = D["m_c1_foreign_nl"]
     T["c1_foreign"] = {
-        "ko": f"잉글랜드 허여 가운데 외국과 이어진(「communication」이거나 해외 주소) 비율은 18세기 {_pct(e.either.sum() / e.n.sum(), 1)}, 1840–1852년 {_pct(l.either.sum() / l.n.sum(), 1)}다. Hulme는 1561–1603년 55건 중 21건을 외국인 허여로 셌다. 네덜란드 1581–1621년 특권 문서의 {_pct(nlf.foreign.sum() / nlf.n.sum())}에 외국 출신 수혜자가 있다.",
-        "en": f"The share of English grants with a foreign link ('communication' or an address abroad) is {_pct(e.either.sum() / e.n.sum(), 1)} in the 18th century and {_pct(l.either.sum() / l.n.sum(), 1)} in 1840–1852. Hulme counts 21 of 55 grants of 1561–1603 as grants to aliens. In the Dutch Republic {_pct(nlf.foreign.sum() / nlf.n.sum())} of privilege documents of 1581–1621 name a grantee of foreign origin.",
+        "ko": f"잉글랜드 허여 가운데 외국과 이어진(「communication」이거나 해외 주소) 비율은 18세기 {_pct(e.either.sum() / e.n.sum(), 1)}, 1840–1852년 {_pct(l.either.sum() / l.n.sum(), 1)}다. Hulme은 1561–1603년 55건(거래 규제 허여 4건 포함) 가운데 21건을 외국인 허여로 셌다. 네덜란드 1581–1621년 특권 문서 가운데 출신이 외국으로 확인되는 수혜자가 있는 문서는 {_pct(nlf.foreign.sum() / nlf.n.sum())}, 외국 출신으로 추정되는 수혜자까지 넣으면 {_pct(nlf.foreign_incl_probable.sum() / nlf.n.sum())}다.",
+        "en": f"The share of English grants with a foreign link ('communication' or an address abroad) is {_pct(e.either.sum() / e.n.sum(), 1)} in the 18th century and {_pct(l.either.sum() / l.n.sum(), 1)} in 1840–1852. Hulme counts 21 of 55 grants of 1561–1603 (four of them grants for regulating trade) as grants to aliens. In the Dutch Republic {_pct(nlf.foreign.sum() / nlf.n.sum())} of privilege documents of 1581–1621 name a grantee of known foreign origin, {_pct(nlf.foreign_incl_probable.sum() / nlf.n.sum())} if grantees of probable foreign extraction are included.",
         "kv": (_pct(l.either.sum() / l.n.sum(), 1), "1840–1852 잉글랜드", "England 1840–1852")}
     c2 = D["m_c2_cogrant"]
     e17 = c2[c2.decade < 1650]
@@ -87,11 +87,12 @@ def build(D: dict) -> dict:
         "en": f"Median stated terms: {d1.loc['GB Hulme 1561-1603','median']:.0f} years under Elizabeth (Hulme), {d1.loc['GB Woodcroft 1617-1623','median']:.0f} in 1617–1623, {d1.loc['GB Woodcroft 1625-1700','median']:.0f} in 1625–1700; {d1.loc['NL Buning 1581-1621','median']:.0f} in the Dutch Republic and {d1.loc['VE Fulin 1469-1526 (printing)','median']:.0f} for Venetian printing privileges.",
         "kv": ("21 → 14", "잉글랜드 중앙값, 1624 전후", "England median, before → after 1624")}
     d2 = D["m_d2_term_shift"]
-    last21 = int(d2[d2.eq21 > 0].year.max())
+    after = d2[d2.year >= 1625]
+    y21 = [int(y) for y in after[after.eq21 > 0].year]
     T["d2_term_shift"] = {
-        "ko": f"21년 기간이 적힌 마지막 해는 {last21}년이다. 1625–1660년 기간이 적힌 {int(d2[d2.year >= 1625].stated.sum())}건 가운데 {int(d2[d2.year >= 1625].le14.sum())}건이 14년 이하다.",
-        "en": f"The last year with a 21-year term written is {last21}. Of the {int(d2[d2.year >= 1625].stated.sum())} stated terms in 1625–1660, {int(d2[d2.year >= 1625].le14.sum())} are 14 years or less.",
-        "kv": (str(last21), "마지막 21년 기간", "last 21-year term")}
+        "ko": f"1625–1700년 기간이 적힌 {int(after.stated.sum())}건 가운데 {int(after.le14.sum())}건이 14년 이하다. 21년도 {int(after.eq21.sum())}건 남는다({'·'.join(map(str, y21))}년).",
+        "en": f"Of the {int(after.stated.sum())} stated terms in 1625–1700, {int(after.le14.sum())} are 14 years or less; {int(after.eq21.sum())} are still 21 years ({', '.join(map(str, y21))}).",
+        "kv": (f"{int(after.le14.sum())} / {int(after.stated.sum())}", "1625–1700 14년 이하", "14 years or less, 1625–1700")}
     d3 = D["m_d3_clauses"]
     e = d3[d3.decade < 1650]
     l = d3[(d3.decade >= 1660) & (d3.decade < 1700)]
