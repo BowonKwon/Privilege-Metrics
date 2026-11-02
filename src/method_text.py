@@ -1,0 +1,114 @@
+# -*- coding: utf-8 -*-
+"""Method page and reading edition, Korean and English. Numbers come from the derived tables and reliability.json."""
+import json
+from pathlib import Path
+
+import pandas as pd
+
+ROOT = Path(__file__).resolve().parent.parent
+DER = ROOT / "data" / "derived"
+
+
+def _rel():
+    p = DER / "reliability.json"
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+
+
+def build():
+    R = _rel().get("_summary", {})
+    W = pd.read_csv(DER / "woodcroft_entries.csv")
+    log = json.loads((DER / "woodcroft_parse_log.json").read_text(encoding="utf-8"))
+    miss = len(log["missing_numbers"])
+    ds = W["date_source"].value_counts()
+    margin = int(ds.get("margin", 0))
+    neigh = len(W) - margin - int(ds.get("none", 0)) - int(ds.get("margin_rejected", 0))
+    g = lambda k, d="—": R.get(k, d)
+    wy = W[W["year"].notna()]
+    c6099 = int(wy["year"].between(1660, 1799).sum())          # all numbered entries, as in the published comparisons
+    c0050 = int(wy["year"].between(1700, 1850).sum())
+    F = pd.read_csv(ROOT / "data" / "coding" / "fulin_coding.csv", dtype=str)
+    fy = pd.to_numeric(F["date"].str[:4], errors="coerce")
+    f9226 = int(((F["kind"] == "privilege") & fy.between(1492, 1526)).sum())
+    METHOD = {
+        "ko": [
+            ("무엇을 세었나", [
+                "잉글랜드 발명 특권·특허는 두 목록에서 셌다. 1561–1603년은 Hulme(1896·1900)가 특허 기록부 캘린더에서 뽑은 산업 독점 허여 55건이고, 1617–1852년은 Woodcroft(1854)의 연대순 목록 1–14,359번이다. 1604–1616년을 다룬 목록은 없다. Hulme 자신이 1827년 하원이 요구한 목록이 끝내 제출되지 않았다고 적었다.",
+                "런던 출판업조합 등록부는 Stationers' Register Online의 TEI 원자료(1557–1640, 10,453항목)를 그대로 읽었다. 베네치아 출판 특권은 Fulin(1882)이 모은 문서 256건을 문서마다 읽어 코딩했다. 네덜란드는 Buning·Looijesteijn이 공개한 자료를 다시 셌다.",
+                "베네치아 발명 특허는 이 사이트가 세지 않았다. 건별로 볼 수 있는 원천은 Berveglieri(2020)의 레게스토뿐인데 종이책이다. 문헌 수치는 「2차 인용」으로 표시해 따로 둔다."]),
+            ("Woodcroft 목록을 읽은 방법", [
+                f"Internet Archive의 OCR 단어 좌표에서 여백 단(수혜자 성·날인일)과 본문 단(번호·요약)을 갈랐다. 번호는 1부터 14,359까지 늘어나야 하므로, 번호처럼 보이는 줄 가운데 가장 긴 증가 사슬을 고르고 그 틈에 낀 후보는 차례로 다시 번호를 매겼다. OCR이 번호를 잃은 115쪽은 같은 쪽 이미지를 tesseract 5로 다시 읽었다. 그래도 본문을 찾지 못한 번호는 {miss}개다. 이 번호들은 연도별 수에는 넣고(앞뒤 항목의 연도), 본문이 필요한 지표에서는 뺐다.",
+                f"날짜는 여백의 날인일이다. {margin:,}항목은 여백 날짜를 그대로 썼다. 여백 날짜를 읽지 못했거나 앞뒤 20항목의 중앙 연도와 2년 넘게 어긋난 항목은 앞뒤 항목의 연도가 같을 때 그 연도를 썼다({neigh:,}항목).",
+                "존속기간·지대·단서 조항·외국 연관·공동 수혜는 요약문의 단어로 판정했다. 1820년 무렵부터 요약이 기간을 적지 않으므로 그 뒤의 기간은 비워 두었다. 법정 14년을 가정해 채우지 않았다."]),
+            ("분야 분류", [
+                "분야는 17개다. 발명 명칭에 정해진 순서대로 단어 규칙을 적용해 처음 맞는 분야를 택한다. 1700년 이전 항목은 명칭이 따옴표로 갈라져 있지 않아 요약 전체에 적용했고, 옛 철자는 현대 철자로 바꾼 뒤 맞췄다.",
+                "규칙은 결과를 보기 전에 정했으나 공개 전에 세 번 고쳤다. r2에서는 17세기의 「instrument」(장치 일반)를 기기 분야에서 뺐다. r3에서는 옛 철자 표를 넣고 1700년 이전 항목의 분류 대상을 요약 전체로 넓혔다. 이 두 번은 첫 결과가 이상해서 고친 것이다.",
+                f"r3 규칙을 독립 코더의 본문 재코딩 212항목(R2)과 맞춰 보니 분야 일치가 {g('r2_dictr3_field')}였고 광업은 11건 중 2건만 맞았다. 「tan pits」·「pit coal」·「smelting copper ore」가 광업으로 가고 가스 조명이 화학으로 간 탓이었다. r4에서 이를 고친 뒤, 고친 근거가 된 표본이 아니라 다른 시드로 새로 뽑은 212항목(R2b)으로 다시 쟀다. 아래 신뢰도 카드의 분야 수치는 R2b다. 고친 내용은 src/fields.py 머리에 그대로 남겼다."]),
+            ("신뢰도 카드", [
+                f"쪽 이미지 대조(R1): 시기별 30항목씩 120항목을 쪽 이미지에서 독립 코더가 직접 읽어 번호·날짜·수혜자 수·「communication」·기간을 우리 추출값과 비교했다. 연도 일치 {g('r1_year')}, 날짜(일) 일치 {g('r1_date')}, 기간 일치 {g('r1_term')}, 수혜자 수 일치 {g('r1_ngrantees')}, communication 일치 {g('r1_comm')}.",
+                f"본문 재코딩(R2b): 분야마다 11항목(「기타」 25항목), 212항목을 다른 코더가 본문만 보고 분야·해외 주소·communication·기간을 코딩했다. 분야 일치 {g('r2_field')}(κ {g('r2_kappa')}; 분야마다 같은 수를 뽑은 층화 표본이므로, 분야별 정밀도를 실제 분야 비중으로 가중하면 {g('r2_weighted')}), 해외 주소 일치 {g('r2_foreign')}, communication 일치 {g('r2_comm')}, 기간 일치 {g('r2_term')}.",
+                f"Fulin 재코딩(R3): 무작위 40건을 두 번째 코더가 같은 코드북으로 다시 코딩했다. 특권 여부 일치 {g('r3_kind')}, 기간 일치 {g('r3_term')}, 수혜자 유형 일치 {g('r3_btype')}.",
+                f"Hulme 55건: 손으로 옮긴 표를 다른 코더가 쪽 이미지에서 따로 읽어 날짜 {g('hulme_date')}, 기간 {g('hulme_term')}가 일치했다. 10년 단위 건수는 Hulme 52쪽 표와 모두 같다(23·12·14·6·0)."]),
+            ("선행 수치와의 대조", [
+                f"Woodcroft 번호 항목은 1660–1799년 {c6099:,}건으로 MacLeod(1988)의 2,240건과 {abs(c6099 - 2240)}건, 1700–1850년 {c0050:,}건으로 Nuvolari 등(2021)의 13,070건과 {abs(c0050 - 13070)}건 차이가 난다. 두 연구의 세는 규칙(연장 포함 여부 등)을 확인하지 못해 차이의 원인은 가리지 않았다.",
+                f"출판업조합 등록의 10년 합은 SRO 사이트 검색으로 잰 값과 모든 10년에서 같다. Fulin 계수는 1492–1526년 {f9226}건으로 Kostylo(2010)의 254건보다 {254 - f9226}건 적다. 무엇을 특권으로 세었는지가 달라서일 수 있다."]),
+            ("하지 않은 것", [
+                "인과 추정은 하지 않는다. 1474·1624·1710년 같은 연도는 전후 비교의 기준일 뿐이다. 「법이 특허를 늘렸다」 같은 문장을 쓰지 않는다.",
+                "베네치아 발명 특허의 건별 계수, 프랑스 왕실 특권, 1640년 이후의 출판업조합 등록, 미국 연방 특허(1790–)는 다음 판 후보다."]),
+            ("판", ["1.0 (2026-11-03) 첫 공개."]),
+        ],
+        "en": [
+            ("What was counted", [
+                "English invention privileges and patents come from two lists: Hulme (1896, 1900), who drew 55 industrial monopoly grants of 1561–1603 from the calendars of the Patent Rolls, and Woodcroft (1854), whose chronological list numbers 1 to 14,359 for 1617–1852. No list covers 1604–1616; Hulme himself notes that the return ordered by the Commons in 1827 was never presented.",
+                "The Stationers' Register is read straight from the Stationers' Register Online TEI (1557–1640, 10,453 entries). Venetian printing privileges are Fulin's 256 documents (1882), read and coded one by one. The Dutch figures are a recount of the data published by Buning and Looijesteijn.",
+                "Venetian invention patents were not counted here. The only record-level source is Berveglieri's printed calendar (2020); figures from the literature are marked 'secondary' and kept apart."]),
+            ("Reading Woodcroft's list", [
+                f"The word coordinates of the Internet Archive OCR were used to separate the margin column (surnames, sealing dates) from the text column (numbers and abstracts). Because numbers must run from 1 to 14,359, the longest rising chain of number-like lines was kept and candidates caught in its gaps were renumbered in order. 115 pages on which the OCR lost entry numbers were read again from the page images with tesseract 5. {miss} numbers still have no text: they are counted in the yearly totals (with their neighbours' year) and left out of metrics that need the text.",
+                f"Dates are the sealing dates printed in the margin. For {margin:,} entries the margin date is used as read. Where it could not be read, or its year differed by more than two from the median year of the 20 nearest dated entries, the neighbours' year was used when both neighbours agreed ({neigh:,} entries).",
+                "Terms, rents, provisos, foreign links and shared grants are judged from the words of the abstract. From about 1820 the abstracts stop stating the term, so later terms are left blank; the statutory 14 years was not assumed."]),
+            ("Field classification", [
+                "There are 17 fields. Word rules are applied to the title of the invention in a fixed order and the first match is taken. Entries before 1700 do not set the title off in quotation marks, so the whole abstract is used, after early-modern spellings are normalised.",
+                "The rules were fixed before any results were seen but were revised three times before publication. r2 removed the bare word 'instrument' (any device, in 17th-century usage) from the instruments field; r3 added the spelling table and widened the text used for entries before 1700. These two followed an implausible first result.",
+                f"Checked against an independent coder's recoding of 212 entries from the text (R2), the r3 rules agreed on {g('r2_dictr3_field')} and on only 2 of 11 mining entries: 'tan pits', 'pit coal' and 'smelting copper ore' had gone to mining and gas lighting to chemicals. After the r4 fix, precision was measured again on a fresh sample of 212 entries drawn with another seed (R2b), not on the sample that prompted the fix. The field figures on the reliability cards are from R2b. The revisions are recorded at the head of src/fields.py."]),
+            ("Reliability cards", [
+                f"Image check (R1): an independent coder read 120 entries, 30 per period, from the page images (number, date, number of grantees, 'communication', term) for comparison with the extracted values. Year agreement {g('r1_year')}, full date {g('r1_date')}, term {g('r1_term')}, number of grantees {g('r1_ngrantees')}, communication {g('r1_comm')}.",
+                f"Text recoding (R2b): another coder coded 212 entries (11 per field, 25 'other') from the text alone: field, address abroad, communication, term. Field agreement {g('r2_field')} (κ {g('r2_kappa')}; the sample takes equal numbers per field, so per-field precision weighted by actual field shares gives {g('r2_weighted')}), address abroad {g('r2_foreign')}, communication {g('r2_comm')}, term {g('r2_term')}.",
+                f"Fulin recoding (R3): a second coder recoded 40 random documents under the same codebook. Agreement on privilege or not {g('r3_kind')}, term {g('r3_term')}, beneficiary type {g('r3_btype')}.",
+                f"Hulme's 55 grants: another coder read the page images independently; dates agree {g('hulme_date')} and terms {g('hulme_term')}. The decade counts match Hulme's own table on p. 52 (23, 12, 14, 6, 0)."]),
+            ("Checks against prior figures", [
+                f"Woodcroft's numbered entries come to {c6099:,} for 1660–1799 against MacLeod's (1988) 2,240 (a difference of {abs(c6099 - 2240)}), and {c0050:,} for 1700–1850 against the 13,070 of Nuvolari et al. (2021) (a difference of {abs(c0050 - 13070)}). The counting rules of those studies (whether extensions are included, for instance) were not checked, so the source of the differences is not settled.",
+                f"The decade totals of the Stationers' Register match the SRO website's own search counts in every decade. The Fulin count of {f9226} privileges for 1492–1526 is {254 - f9226} below Kostylo's (2010) 254, possibly because of what each counts as a privilege."]),
+            ("What this site does not do", [
+                "It makes no causal estimates. Years such as 1474, 1624 and 1710 are reference points for before-and-after comparison only; the site does not say that a law increased patenting.",
+                "Record-level counts of Venetian invention patents, French royal privileges, the Stationers' Register after 1640 and United States federal patents (from 1790) are candidates for later versions."]),
+            ("Versions", ["1.0 (2026-11-03) first release."]),
+        ],
+    }
+    READING = {
+        "ko": [
+            ("특권은 어떻게 셀 수 있나", [
+                "근대 특허법과 저작권법이 생기기 전, 새 기술이나 책에 대한 배타적 권리는 법률이 정한 권리가 아니라 군주·원로원·의회가 사람마다 내주는 특권이었다. 특권은 문서로 남았고, 19세기의 문서 정리자들이 그것을 목록으로 엮었다. 이 사이트는 그 목록을 건별로 세었다.",
+                "목록마다 세는 단위가 다르다. Woodcroft는 특허 번호를, Hulme는 허여를, 출판업조합 등록부는 기재를, Fulin은 문서를 단위로 삼았다. 그래서 관할을 나란히 놓는 표에는 단위를 함께 적었다."]),
+            ("1624년 전후", [
+                "잉글랜드 독점법은 새 발명에 대한 특허를 14년 이하로 정했다. Woodcroft 목록에서 1617–1623년 허여는 대개 21년을 적고, 1625년 뒤 허여는 거의 모두 14년 이하를 적는다. 연평균 허여 수는 독점법 전후 7년씩을 비교하면 비슷하게 관측된다. 1630년대 들어 늘어난다."]),
+            ("누가 받았나", [
+                "엘리자베스 시대 허여의 상당수는 외국 장인에게 갔다. Hulme는 55건 가운데 21건을 외국인 허여로 셌다. 19세기에는 해외에서 전해진 발명을 대리인이 받는 「communication」 항목이 늘어난다. 네덜란드 1581–1621년 특권 문서에서도 외국 출신 수혜자가 적지 않다."]),
+            ("출판 쪽", [
+                "런던 출판업조합 등록부에는 1557–1640년 1만여 건의 출판 허가가 기재되었다. 등록은 1637년에야 의무가 되었으므로 등록 수가 곧 출판 수는 아니다. 양도·공동 등록 표시가 1590년대 이후 늘어나는 것이 관측된다. 베네치아에서는 1490년대에 출판 특권이 몰리고, 그 가운데 열에 셋쯤이 저자에게 갔다."]),
+            ("이 수치를 쓸 때", [
+                "모든 수치는 남아 있는 목록에서 센 것이다. 목록 바깥에서 내려진 특권, 기록이 사라진 특권은 들어 있지 않다. 지표마다 붙은 신뢰도 카드와 한계를 함께 읽기를 권한다."]),
+        ],
+        "en": [
+            ("How privileges can be counted", [
+                "Before modern patent and copyright law, an exclusive right in a new technique or a book was not a right set by statute but a privilege granted case by case by a ruler, a senate or a parliament. The grants left documents, and nineteenth-century archivists bound them into lists. This site counts those lists grant by grant.",
+                "Each list counts in its own unit: Woodcroft numbers patents, Hulme counts grants, the Stationers' Register records entries and Fulin collects documents. Tables that set jurisdictions side by side therefore carry the unit with every figure."]),
+            ("Before and after 1624", [
+                "The Statute of Monopolies limited patents for new inventions to 14 years or less. In Woodcroft's list the grants of 1617–1623 mostly state 21 years, and almost all grants after 1625 state 14 years or less. Comparing seven years on either side, the yearly number of grants is about the same; it rises in the 1630s."]),
+            ("Who received them", [
+                "Many Elizabethan grants went to foreign craftsmen: Hulme counts 21 of 55 as grants to aliens. In the nineteenth century 'communication' entries, inventions communicated from abroad and taken out by an agent, become more frequent. Grantees of foreign origin are also common in Dutch privilege documents of 1581–1621."]),
+            ("Printing", [
+                "The register of the London Stationers' Company records some ten thousand permissions to publish in 1557–1640. Entrance became compulsory only in 1637, so entries are not a count of books printed. Entries marked as shared or reassigned grow from the 1590s. In Venice printing privileges bunch in the 1490s, and roughly three in ten of them went to authors."]),
+            ("Using these numbers", [
+                "Every figure is counted from a surviving list. Privileges granted outside these lists, or whose record is lost, are not in them. Please read the reliability card and the caveats that come with each metric."]),
+        ],
+    }
+    return METHOD, READING

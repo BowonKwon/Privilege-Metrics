@@ -1,0 +1,615 @@
+{
+ "a1_annual": {
+  "ko": {
+   "이미지 대조 연도 일치": "119/120 (99%, 95% CI 95–100%)",
+   "이미지 대조 기간 일치": "114/120 (95%, 95% CI 90–98%)",
+   "이미지 대조 수혜자 수 일치": "112/120 (93%, 95% CI 87–97%)",
+   "이미지 대조 communication 일치": "119/120 (99%, 95% CI 95–100%)",
+   "Hulme 전사 날짜 일치": "55/55 (100%, 95% CI 93–100%)",
+   "Hulme 전사 기간 일치": "55/55 (100%, 95% CI 93–100%)"
+  },
+  "en": {
+   "Image check, year": "119/120 (99%, 95% CI 95–100%)",
+   "Image check, term": "114/120 (95%, 95% CI 90–98%)",
+   "Image check, number of grantees": "112/120 (93%, 95% CI 87–97%)",
+   "Image check, communication": "119/120 (99%, 95% CI 95–100%)",
+   "Hulme transcription, date": "55/55 (100%, 95% CI 93–100%)",
+   "Hulme transcription, term": "55/55 (100%, 95% CI 93–100%)"
+  }
+ },
+ "a3_1624": {
+  "ko": {
+   "이미지 대조 연도 일치": "119/120 (99%, 95% CI 95–100%)",
+   "이미지 대조 기간 일치": "114/120 (95%, 95% CI 90–98%)",
+   "이미지 대조 수혜자 수 일치": "112/120 (93%, 95% CI 87–97%)",
+   "이미지 대조 communication 일치": "119/120 (99%, 95% CI 95–100%)"
+  },
+  "en": {
+   "Image check, year": "119/120 (99%, 95% CI 95–100%)",
+   "Image check, term": "114/120 (95%, 95% CI 90–98%)",
+   "Image check, number of grantees": "112/120 (93%, 95% CI 87–97%)",
+   "Image check, communication": "119/120 (99%, 95% CI 95–100%)"
+  }
+ },
+ "a4_extensions": {
+  "ko": {
+   "이미지 대조 연도 일치": "119/120 (99%, 95% CI 95–100%)",
+   "이미지 대조 기간 일치": "114/120 (95%, 95% CI 90–98%)",
+   "이미지 대조 수혜자 수 일치": "112/120 (93%, 95% CI 87–97%)",
+   "이미지 대조 communication 일치": "119/120 (99%, 95% CI 95–100%)"
+  },
+  "en": {
+   "Image check, year": "119/120 (99%, 95% CI 95–100%)",
+   "Image check, term": "114/120 (95%, 95% CI 90–98%)",
+   "Image check, number of grantees": "112/120 (93%, 95% CI 87–97%)",
+   "Image check, communication": "119/120 (99%, 95% CI 95–100%)"
+  }
+ },
+ "c2_cogrant": {
+  "ko": {
+   "이미지 대조 연도 일치": "119/120 (99%, 95% CI 95–100%)",
+   "이미지 대조 기간 일치": "114/120 (95%, 95% CI 90–98%)",
+   "이미지 대조 수혜자 수 일치": "112/120 (93%, 95% CI 87–97%)",
+   "이미지 대조 communication 일치": "119/120 (99%, 95% CI 95–100%)"
+  },
+  "en": {
+   "Image check, year": "119/120 (99%, 95% CI 95–100%)",
+   "Image check, term": "114/120 (95%, 95% CI 90–98%)",
+   "Image check, number of grantees": "112/120 (93%, 95% CI 87–97%)",
+   "Image check, communication": "119/120 (99%, 95% CI 95–100%)"
+  }
+ },
+ "d2_term_shift": {
+  "ko": {
+   "이미지 대조 연도 일치": "119/120 (99%, 95% CI 95–100%)",
+   "이미지 대조 기간 일치": "114/120 (95%, 95% CI 90–98%)",
+   "이미지 대조 수혜자 수 일치": "112/120 (93%, 95% CI 87–97%)",
+   "이미지 대조 communication 일치": "119/120 (99%, 95% CI 95–100%)",
+   "본문 재코딩 기간 일치": "210/212 (99%, 95% CI 97–100%)"
+  },
+  "en": {
+   "Image check, year": "119/120 (99%, 95% CI 95–100%)",
+   "Image check, term": "114/120 (95%, 95% CI 90–98%)",
+   "Image check, number of grantees": "112/120 (93%, 95% CI 87–97%)",
+   "Image check, communication": "119/120 (99%, 95% CI 95–100%)",
+   "Text recoding, term": "210/212 (99%, 95% CI 97–100%)"
+  }
+ },
+ "d3_clauses": {
+  "ko": {
+   "이미지 대조 연도 일치": "119/120 (99%, 95% CI 95–100%)",
+   "이미지 대조 기간 일치": "114/120 (95%, 95% CI 90–98%)",
+   "이미지 대조 수혜자 수 일치": "112/120 (93%, 95% CI 87–97%)",
+   "이미지 대조 communication 일치": "119/120 (99%, 95% CI 95–100%)"
+  },
+  "en": {
+   "Image check, year": "119/120 (99%, 95% CI 95–100%)",
+   "Image check, term": "114/120 (95%, 95% CI 90–98%)",
+   "Image check, number of grantees": "112/120 (93%, 95% CI 87–97%)",
+   "Image check, communication": "119/120 (99%, 95% CI 95–100%)"
+  }
+ },
+ "d1_terms": {
+  "ko": {
+   "이미지 대조 연도 일치": "119/120 (99%, 95% CI 95–100%)",
+   "이미지 대조 기간 일치": "114/120 (95%, 95% CI 90–98%)",
+   "이미지 대조 수혜자 수 일치": "112/120 (93%, 95% CI 87–97%)",
+   "이미지 대조 communication 일치": "119/120 (99%, 95% CI 95–100%)",
+   "본문 재코딩 기간 일치": "210/212 (99%, 95% CI 97–100%)",
+   "Fulin 재코딩 특권 여부 일치": "40/40 (100%, 95% CI 91–100%)",
+   "Fulin 재코딩 기간 일치": "40/40 (100%, 95% CI 91–100%)",
+   "Fulin 재코딩 수혜자 유형 일치": "37/40 (92%, 95% CI 80–97%)",
+   "Hulme 전사 날짜 일치": "55/55 (100%, 95% CI 93–100%)",
+   "Hulme 전사 기간 일치": "55/55 (100%, 95% CI 93–100%)"
+  },
+  "en": {
+   "Image check, year": "119/120 (99%, 95% CI 95–100%)",
+   "Image check, term": "114/120 (95%, 95% CI 90–98%)",
+   "Image check, number of grantees": "112/120 (93%, 95% CI 87–97%)",
+   "Image check, communication": "119/120 (99%, 95% CI 95–100%)",
+   "Text recoding, term": "210/212 (99%, 95% CI 97–100%)",
+   "Fulin recoding, privilege or not": "40/40 (100%, 95% CI 91–100%)",
+   "Fulin recoding, term": "40/40 (100%, 95% CI 91–100%)",
+   "Fulin recoding, beneficiary type": "37/40 (92%, 95% CI 80–97%)",
+   "Hulme transcription, date": "55/55 (100%, 95% CI 93–100%)",
+   "Hulme transcription, term": "55/55 (100%, 95% CI 93–100%)"
+  }
+ },
+ "c1_foreign": {
+  "ko": {
+   "이미지 대조 연도 일치": "119/120 (99%, 95% CI 95–100%)",
+   "이미지 대조 기간 일치": "114/120 (95%, 95% CI 90–98%)",
+   "이미지 대조 수혜자 수 일치": "112/120 (93%, 95% CI 87–97%)",
+   "이미지 대조 communication 일치": "119/120 (99%, 95% CI 95–100%)",
+   "본문 재코딩 해외 주소 일치": "205/212 (97%, 95% CI 93–98%)",
+   "본문 재코딩 communication 일치": "208/212 (98%, 95% CI 95–99%)",
+   "Hulme 전사 날짜 일치": "55/55 (100%, 95% CI 93–100%)",
+   "Hulme 전사 기간 일치": "55/55 (100%, 95% CI 93–100%)"
+  },
+  "en": {
+   "Image check, year": "119/120 (99%, 95% CI 95–100%)",
+   "Image check, term": "114/120 (95%, 95% CI 90–98%)",
+   "Image check, number of grantees": "112/120 (93%, 95% CI 87–97%)",
+   "Image check, communication": "119/120 (99%, 95% CI 95–100%)",
+   "Text recoding, address abroad": "205/212 (97%, 95% CI 93–98%)",
+   "Text recoding, communication": "208/212 (98%, 95% CI 95–99%)",
+   "Hulme transcription, date": "55/55 (100%, 95% CI 93–100%)",
+   "Hulme transcription, term": "55/55 (100%, 95% CI 93–100%)"
+  }
+ },
+ "b1_fields": {
+  "ko": {
+   "본문 재코딩 분야 일치(층화 표본)": "145/212 (68%, 95% CI 62–74%)",
+   "Cohen κ": "0.67",
+   "분야 비중으로 가중한 정밀도": "67%",
+   "분야별 일치": "agriculture 10/11; arms 5/11; building 6/11; chemicals 10/11; food_drink 6/11; fuel_light 9/11; glass_ceramics 9/11; instruments 9/11; medicine 7/11; metals 10/11; mills 10/11; mining 7/11; other 5/25; printing_paper 8/11; steam_power 8/11; textiles 11/11; transport 6/11; water 9/11"
+  },
+  "en": {
+   "Text recoding, field (stratified sample)": "145/212 (68%, 95% CI 62–74%)",
+   "Cohen's kappa": "0.67",
+   "Precision weighted by field shares": "67%",
+   "Agreement by field": "agriculture 10/11; arms 5/11; building 6/11; chemicals 10/11; food_drink 6/11; fuel_light 9/11; glass_ceramics 9/11; instruments 9/11; medicine 7/11; metals 10/11; mills 10/11; mining 7/11; other 5/25; printing_paper 8/11; steam_power 8/11; textiles 11/11; transport 6/11; water 9/11"
+  }
+ },
+ "b2_hhi": {
+  "ko": {
+   "본문 재코딩 분야 일치(층화 표본)": "145/212 (68%, 95% CI 62–74%)",
+   "Cohen κ": "0.67",
+   "분야 비중으로 가중한 정밀도": "67%",
+   "분야별 일치": "agriculture 10/11; arms 5/11; building 6/11; chemicals 10/11; food_drink 6/11; fuel_light 9/11; glass_ceramics 9/11; instruments 9/11; medicine 7/11; metals 10/11; mills 10/11; mining 7/11; other 5/25; printing_paper 8/11; steam_power 8/11; textiles 11/11; transport 6/11; water 9/11"
+  },
+  "en": {
+   "Text recoding, field (stratified sample)": "145/212 (68%, 95% CI 62–74%)",
+   "Cohen's kappa": "0.67",
+   "Precision weighted by field shares": "67%",
+   "Agreement by field": "agriculture 10/11; arms 5/11; building 6/11; chemicals 10/11; food_drink 6/11; fuel_light 9/11; glass_ceramics 9/11; instruments 9/11; medicine 7/11; metals 10/11; mills 10/11; mining 7/11; other 5/25; printing_paper 8/11; steam_power 8/11; textiles 11/11; transport 6/11; water 9/11"
+  }
+ },
+ "v1_venice_printing": {
+  "ko": {
+   "Fulin 재코딩 특권 여부 일치": "40/40 (100%, 95% CI 91–100%)",
+   "Fulin 재코딩 기간 일치": "40/40 (100%, 95% CI 91–100%)",
+   "Fulin 재코딩 수혜자 유형 일치": "37/40 (92%, 95% CI 80–97%)"
+  },
+  "en": {
+   "Fulin recoding, privilege or not": "40/40 (100%, 95% CI 91–100%)",
+   "Fulin recoding, term": "40/40 (100%, 95% CI 91–100%)",
+   "Fulin recoding, beneficiary type": "37/40 (92%, 95% CI 80–97%)"
+  }
+ },
+ "a2_periods": {
+  "ko": {
+   "Fulin 재코딩 특권 여부 일치": "40/40 (100%, 95% CI 91–100%)",
+   "Fulin 재코딩 기간 일치": "40/40 (100%, 95% CI 91–100%)",
+   "Fulin 재코딩 수혜자 유형 일치": "37/40 (92%, 95% CI 80–97%)"
+  },
+  "en": {
+   "Fulin recoding, privilege or not": "40/40 (100%, 95% CI 91–100%)",
+   "Fulin recoding, term": "40/40 (100%, 95% CI 91–100%)",
+   "Fulin recoding, beneficiary type": "37/40 (92%, 95% CI 80–97%)"
+  }
+ },
+ "p1_sro_annual": {
+  "ko": {
+   "원자료": "SRO TEI 10,453항목. 10년 합이 SRO 사이트 검색값과 모든 10년에서 일치"
+  },
+  "en": {
+   "Source": "SRO TEI, 10,453 entries; decade totals equal the SRO website's search counts in every decade"
+  }
+ },
+ "p2_sro_concentration": {
+  "ko": {
+   "원자료": "SRO TEI 10,453항목. 10년 합이 SRO 사이트 검색값과 모든 10년에서 일치"
+  },
+  "en": {
+   "Source": "SRO TEI, 10,453 entries; decade totals equal the SRO website's search counts in every decade"
+  }
+ },
+ "p3_sro_status": {
+  "ko": {
+   "원자료": "SRO TEI 10,453항목. 10년 합이 SRO 사이트 검색값과 모든 10년에서 일치"
+  },
+  "en": {
+   "Source": "SRO TEI, 10,453 entries; decade totals equal the SRO website's search counts in every decade"
+  }
+ },
+ "p4_sro_fees": {
+  "ko": {
+   "원자료": "SRO TEI 10,453항목. 10년 합이 SRO 사이트 검색값과 모든 10년에서 일치"
+  },
+  "en": {
+   "Source": "SRO TEI, 10,453 entries; decade totals equal the SRO website's search counts in every decade"
+  }
+ },
+ "b3_venice_sectors": {
+  "ko": {
+   "출처": "문헌 수치를 옮긴 값. 재계산하지 않음"
+  },
+  "en": {
+   "Source": "figures quoted from the literature; not recounted"
+  }
+ },
+ "_summary": {
+  "r3_kind": "40/40 (100%, 95% CI 91–100%)",
+  "r3_term": "40/40 (100%, 95% CI 91–100%)",
+  "r3_btype": "37/40 (92%, 95% CI 80–97%)",
+  "r1_year": "119/120 (99%, 95% CI 95–100%)",
+  "r1_date": "112/120 (93%, 95% CI 87–97%)",
+  "r1_term": "114/120 (95%, 95% CI 90–98%)",
+  "r1_ngrantees": "112/120 (93%, 95% CI 87–97%)",
+  "r1_comm": "119/120 (99%, 95% CI 95–100%)",
+  "r2_dictr3_field": "144/212 (68%, 95% CI 61–74%)",
+  "r2_weighted": "67%",
+  "r2_per_field": "agriculture 10/11; arms 5/11; building 6/11; chemicals 10/11; food_drink 6/11; fuel_light 9/11; glass_ceramics 9/11; instruments 9/11; medicine 7/11; metals 10/11; mills 10/11; mining 7/11; other 5/25; printing_paper 8/11; steam_power 8/11; textiles 11/11; transport 6/11; water 9/11",
+  "r2_field": "145/212 (68%, 95% CI 62–74%)",
+  "r2_kappa": "0.67",
+  "r2_foreign": "205/212 (97%, 95% CI 93–98%)",
+  "r2_comm": "208/212 (98%, 95% CI 95–99%)",
+  "r2_term": "210/212 (99%, 95% CI 97–100%)",
+  "hulme_date": "55/55 (100%, 95% CI 93–100%)",
+  "hulme_term": "55/55 (100%, 95% CI 93–100%)"
+ },
+ "_detail": {
+  "r3": {
+   "kind": {
+    "k": 40,
+    "n": 40,
+    "share": 1.0,
+    "ci": [
+     0.9123783975415363,
+     1.0
+    ]
+   },
+   "term": {
+    "k": 40,
+    "n": 40,
+    "share": 1.0,
+    "ci": [
+     0.9123783975415363,
+     1.0
+    ]
+   },
+   "btype": {
+    "k": 37,
+    "n": 40,
+    "share": 0.925,
+    "ci": [
+     0.8013576634835684,
+     0.9741639744267374
+    ]
+   },
+   "year": {
+    "k": 40,
+    "n": 40,
+    "share": 1.0,
+    "ci": [
+     0.9123783975415363,
+     1.0
+    ]
+   },
+   "disagree_term": [],
+   "disagree_kind": []
+  },
+  "r1": {
+   "kind": {
+    "k": 120,
+    "n": 120,
+    "share": 1.0,
+    "ci": [
+     0.9689808331071251,
+     0.9999999999999999
+    ]
+   },
+   "disagree_year": [
+    "284"
+   ],
+   "disagree_term": [
+    "32",
+    "225",
+    "251",
+    "258",
+    "269",
+    "1370"
+   ],
+   "disagree_n": [
+    "6",
+    "284",
+    "1328",
+    "1370",
+    "1594",
+    "5306",
+    "7880",
+    "11021"
+   ],
+   "disagree_comm": [
+    "11021"
+   ],
+   "year": {
+    "k": 119,
+    "n": 120,
+    "share": 0.9916666666666667,
+    "ci": [
+     0.9543037082724115,
+     0.9985274442829282
+    ]
+   },
+   "date": {
+    "k": 112,
+    "n": 120,
+    "share": 0.9333333333333333,
+    "ci": [
+     0.873948695378013,
+     0.9658346933148289
+    ]
+   },
+   "term": {
+    "k": 114,
+    "n": 120,
+    "share": 0.95,
+    "ci": [
+     0.8951971140756136,
+     0.9768856357207989
+    ]
+   },
+   "n_grantees": {
+    "k": 112,
+    "n": 120,
+    "share": 0.9333333333333333,
+    "ci": [
+     0.873948695378013,
+     0.9658346933148289
+    ]
+   },
+   "communication": {
+    "k": 119,
+    "n": 120,
+    "share": 0.9916666666666667,
+    "ci": [
+     0.9543037082724115,
+     0.9985274442829282
+    ]
+   },
+   "n": 120
+  },
+  "r2_dictr3": {
+   "field": {
+    "k": 144,
+    "n": 212,
+    "share": 0.6792452830188679,
+    "ci": [
+     0.6137032508867555,
+     0.738407045225526
+    ]
+   },
+   "kappa": 0.6600160369793877
+  },
+  "r2": {
+   "field": {
+    "k": 145,
+    "n": 212,
+    "share": 0.6839622641509434,
+    "ci": [
+     0.6185769059405936,
+     0.7427994505956955
+    ]
+   },
+   "kappa": 0.6655679035599925,
+   "weighted_precision": 0.6681840452541089,
+   "per_field": {
+    "agriculture": {
+     "k": 10,
+     "n": 11,
+     "share": 0.9090909090909091,
+     "ci": [
+      0.6226415608917041,
+      0.9837678272946745
+     ]
+    },
+    "arms": {
+     "k": 5,
+     "n": 11,
+     "share": 0.45454545454545453,
+     "ci": [
+      0.21271271487637833,
+      0.7199084642140241
+     ]
+    },
+    "building": {
+     "k": 6,
+     "n": 11,
+     "share": 0.5454545454545454,
+     "ci": [
+      0.2800915357859759,
+      0.7872872851236217
+     ]
+    },
+    "chemicals": {
+     "k": 10,
+     "n": 11,
+     "share": 0.9090909090909091,
+     "ci": [
+      0.6226415608917041,
+      0.9837678272946745
+     ]
+    },
+    "food_drink": {
+     "k": 6,
+     "n": 11,
+     "share": 0.5454545454545454,
+     "ci": [
+      0.2800915357859759,
+      0.7872872851236217
+     ]
+    },
+    "fuel_light": {
+     "k": 9,
+     "n": 11,
+     "share": 0.8181818181818182,
+     "ci": [
+      0.5230194356457672,
+      0.9486323107214162
+     ]
+    },
+    "glass_ceramics": {
+     "k": 9,
+     "n": 11,
+     "share": 0.8181818181818182,
+     "ci": [
+      0.5230194356457672,
+      0.9486323107214162
+     ]
+    },
+    "instruments": {
+     "k": 9,
+     "n": 11,
+     "share": 0.8181818181818182,
+     "ci": [
+      0.5230194356457672,
+      0.9486323107214162
+     ]
+    },
+    "medicine": {
+     "k": 7,
+     "n": 11,
+     "share": 0.6363636363636364,
+     "ci": [
+      0.35380117262012434,
+      0.8483352901086686
+     ]
+    },
+    "metals": {
+     "k": 10,
+     "n": 11,
+     "share": 0.9090909090909091,
+     "ci": [
+      0.6226415608917041,
+      0.9837678272946745
+     ]
+    },
+    "mills": {
+     "k": 10,
+     "n": 11,
+     "share": 0.9090909090909091,
+     "ci": [
+      0.6226415608917041,
+      0.9837678272946745
+     ]
+    },
+    "mining": {
+     "k": 7,
+     "n": 11,
+     "share": 0.6363636363636364,
+     "ci": [
+      0.35380117262012434,
+      0.8483352901086686
+     ]
+    },
+    "other": {
+     "k": 5,
+     "n": 25,
+     "share": 0.2,
+     "ci": [
+      0.08860584630746873,
+      0.39130950534876585
+     ]
+    },
+    "printing_paper": {
+     "k": 8,
+     "n": 11,
+     "share": 0.7272727272727273,
+     "ci": [
+      0.4343546966810743,
+      0.9025394078669138
+     ]
+    },
+    "steam_power": {
+     "k": 8,
+     "n": 11,
+     "share": 0.7272727272727273,
+     "ci": [
+      0.4343546966810743,
+      0.9025394078669138
+     ]
+    },
+    "textiles": {
+     "k": 11,
+     "n": 11,
+     "share": 1.0,
+     "ci": [
+      0.7411670300055737,
+      1.0
+     ]
+    },
+    "transport": {
+     "k": 6,
+     "n": 11,
+     "share": 0.5454545454545454,
+     "ci": [
+      0.2800915357859759,
+      0.7872872851236217
+     ]
+    },
+    "water": {
+     "k": 9,
+     "n": 11,
+     "share": 0.8181818181818182,
+     "ci": [
+      0.5230194356457672,
+      0.9486323107214162
+     ]
+    }
+   },
+   "foreign_address": {
+    "k": 205,
+    "n": 212,
+    "share": 0.9669811320754716,
+    "ci": [
+     0.9334246398068489,
+     0.983915342169885
+    ]
+   },
+   "communication": {
+    "k": 208,
+    "n": 212,
+    "share": 0.9811320754716981,
+    "ci": [
+     0.9524993874209199,
+     0.9926387758278362
+    ]
+   },
+   "term": {
+    "k": 210,
+    "n": 212,
+    "share": 0.9905660377358491,
+    "ci": [
+     0.9662612408022331,
+     0.997409043294538
+    ]
+   },
+   "n": 212
+  },
+  "hulme": {
+   "date": {
+    "k": 55,
+    "n": 55,
+    "share": 1.0,
+    "ci": [
+     0.9347150979202339,
+     1.0
+    ]
+   },
+   "term": {
+    "k": 55,
+    "n": 55,
+    "share": 1.0,
+    "ci": [
+     0.9347150979202339,
+     1.0
+    ]
+   },
+   "n": 55,
+   "disagree_date": [],
+   "disagree_term": []
+  }
+ }
+}

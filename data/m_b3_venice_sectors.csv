@@ -1,0 +1,18 @@
+sector_berveglieri,count,our_field
+Mills — cereals,42,mills
+Mills — metals,6,mills
+Mills — textiles,9,mills
+Mills — wood saws,6,mills
+Mills — multiple usage,22,mills
+Fabrics,8,textiles
+Paint,4,chemicals
+Bread and food,1,food_drink
+Pottery and Porcelain Vases,1,glass_ceramics
+Agricultural machines,4,agriculture
+"Drainage, mud removal",20,water
+Hydraulic pumps,11,water
+Armour and weapons,7,arms
+Arsenal,3,arms
+Mining,3,mining
+Perpetual Motion,3,steam_power
+Miscellaneous,19,other

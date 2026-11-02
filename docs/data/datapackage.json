@@ -1,0 +1,192 @@
+{
+ "name": "privilege-metrics",
+ "title": "From Privilege to Patent",
+ "version": "1.0",
+ "created": "2026-11-03",
+ "licenses": [
+  {
+   "name": "CC-BY-4.0"
+  },
+  {
+   "name": "CC-BY-SA-4.0",
+   "note": "data/sro/ only"
+  }
+ ],
+ "resources": [
+  {
+   "path": "woodcroft_entries.csv.gz",
+   "license": "CC BY 4.0",
+   "source": "Bennet Woodcroft, *Titles of Patents of Invention, Chronologically Arranged, from March 2, 1617 (14 James I.) to October 1, 1852 (16 Victoriae)*, London: Eyre & Spottiswoode, 1854, 2 parts (Nos. 1–14,359). Entries were split from the word coordinates of the Internet Archive OCR of the University of Illinois copy (`chronologicalin1617grea_0`, `chronologicalind1617grea`); 115 pages on which that OCR lost entry numbers were read again from the page images with tesseract 5.",
+   "source_license": "public domain (1854)",
+   "source_url": "https://archive.org/details/chronologicalin1617grea_0"
+  },
+  {
+   "path": "hulme_1561_1603.csv",
+   "license": "CC BY 4.0",
+   "source": "E. Wyndham Hulme, 'The History of the Patent System under the Prerogative and at Common Law', *Law Quarterly Review* 12 (1896) 141–154, and '… A Sequel', *LQR* 16 (1900) 44–56: the list of industrial monopoly grants 1561–1603, Nos. I–LV (55 grants), and the summary table on p. 52, transcribed by hand and checked against the page images.",
+   "source_license": "public domain (1896, 1900)",
+   "source_url": "https://archive.org/details/sim_law-quarterly-review_1900-01_16_61"
+  },
+  {
+   "path": "fulin_coding.csv",
+   "license": "CC BY 4.0",
+   "source": "Rinaldo Fulin, 'Documenti per servire alla storia della tipografia veneziana', *Archivio Veneto* 23 (1882), documents 1–256 (1469–1526), Internet Archive `ArchivioVeneto23` OCR. Whether a document is a privilege, its term and the beneficiary type were coded document by document under a codebook fixed before coding.",
+   "source_license": "public domain (1882)",
+   "source_url": "https://archive.org/details/ArchivioVeneto23"
+  },
+  {
+   "path": "sro/sro_entries.csv.gz",
+   "license": "CC BY-SA 4.0",
+   "source": "Giles Bergel & Ian Gadd (eds.), *Stationers' Register Online*, CREATe, University of Glasgow. TEI of the register volumes corrected against the manuscripts, GitHub `gbergel/SRO_data` (`reg_A`–`reg_D-updated.xml`, commit 562db00, 2019-08-27). The project website states a 'CC-BY-SA licence'; the TEI header states 'Creative Commons Attribution' (CC BY 4.0). This site distributes its entry table under the stricter CC BY-SA 4.0.",
+   "source_license": "CC BY-SA 4.0 (entry table)",
+   "source_url": "https://stationersregister.online"
+  },
+  {
+   "path": "m_a1_annual.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://archive.org/details/sim_law-quarterly-review_1900-01_16_61",
+    "https://archive.org/details/chronologicalin1617grea_0"
+   ]
+  },
+  {
+   "path": "m_a2_periods.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://archive.org/details/sim_law-quarterly-review_1900-01_16_61",
+    "https://archive.org/details/chronologicalin1617grea_0",
+    "https://archive.org/details/ArchivioVeneto23",
+    "https://doi.org/10.6084/m9.figshare.16685788.v1",
+    "https://www.nber.org/papers/w24118"
+   ]
+  },
+  {
+   "path": "m_a3_1624.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://archive.org/details/chronologicalin1617grea_0"
+   ]
+  },
+  {
+   "path": "m_a4_extensions.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://archive.org/details/chronologicalin1617grea_0"
+   ]
+  },
+  {
+   "path": "m_b1_fields.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://archive.org/details/chronologicalin1617grea_0",
+    "https://archive.org/details/sim_law-quarterly-review_1900-01_16_61"
+   ]
+  },
+  {
+   "path": "m_b2_hhi.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://archive.org/details/chronologicalin1617grea_0"
+   ]
+  },
+  {
+   "path": "m_b3_venice_sectors.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://www.nber.org/papers/w24118"
+   ]
+  },
+  {
+   "path": "m_c1_foreign_gb.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://archive.org/details/chronologicalin1617grea_0",
+    "https://archive.org/details/sim_law-quarterly-review_1900-01_16_61",
+    "https://doi.org/10.6084/m9.figshare.16685788.v1",
+    "https://www.nber.org/papers/w24118"
+   ]
+  },
+  {
+   "path": "m_c1_foreign_nl.csv",
+   "license": "CC BY 4.0",
+   "derived_from": []
+  },
+  {
+   "path": "m_c1_hulme.csv",
+   "license": "CC BY 4.0",
+   "derived_from": []
+  },
+  {
+   "path": "m_c2_cogrant.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://archive.org/details/chronologicalin1617grea_0",
+    "https://doi.org/10.6084/m9.figshare.16685788.v1"
+   ]
+  },
+  {
+   "path": "m_d1_terms.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://archive.org/details/sim_law-quarterly-review_1900-01_16_61",
+    "https://archive.org/details/chronologicalin1617grea_0",
+    "https://archive.org/details/ArchivioVeneto23",
+    "https://doi.org/10.6084/m9.figshare.16685788.v1"
+   ]
+  },
+  {
+   "path": "m_d2_term_shift.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://archive.org/details/chronologicalin1617grea_0"
+   ]
+  },
+  {
+   "path": "m_d3_clauses.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://archive.org/details/chronologicalin1617grea_0"
+   ]
+  },
+  {
+   "path": "m_p1_sro_annual.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://stationersregister.online"
+   ]
+  },
+  {
+   "path": "m_p2_sro_concentration.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://stationersregister.online"
+   ]
+  },
+  {
+   "path": "m_p3_sro_status.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://stationersregister.online"
+   ]
+  },
+  {
+   "path": "m_p4_sro_fees.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://stationersregister.online"
+   ]
+  },
+  {
+   "path": "m_v1_fulin_annual.csv",
+   "license": "CC BY 4.0",
+   "derived_from": [
+    "https://archive.org/details/ArchivioVeneto23"
+   ]
+  },
+  {
+   "path": "m_v1_fulin_kinds.csv",
+   "license": "CC BY 4.0",
+   "derived_from": []
+  }
+ ]
+}
