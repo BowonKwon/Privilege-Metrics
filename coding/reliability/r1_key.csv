@@ -1,0 +1,121 @@
+number,date,year,margin_names,n_grantees,communication,term_years,kind
+6,,1618.0,Ramsey.; Wildgosse.; 17th January 61,3.0,False,31.0,grant
+7,1618-02-16,1618.0,Baker.,1.0,False,31.0,grant
+20,1622-05-10,1622.0,Hare well.; Raleigh.; Williams.; Clerke.,4.0,False,11.0,grant
+26,1623-09-20,1623.0,CONNELDON.,1.0,False,21.0,grant
+32,1625-08-31,1625.0,Beale.,1.0,False,,grant
+36,1627-01-03,1627.0,Spencer.,1.0,False,11.0,grant
+47,1629-06-22,1629.0,Grent.,1.0,False,14.0,grant
+80,1635-03-10,1635.0,"Vandebrook.; Culpepper,; scandalarus.",3.0,False,14.0,grant
+100,1637-01-04,1637.0,Hucues.,1.0,False,14.0,grant
+103,1637-02-10,1637.0,"TOORKEY,.",1.0,False,14.0,grant
+106,1637-05-18,1637.0,MASOoNn.,1.0,False,14.0,grant
+111,1637-11-26,1637.0,Manby.; Lidell.,2.0,False,14.0,grant
+162,1671-01-08,1671.0,Prince Rupert.; Lord Ashley.; Chikley.,3.0,False,14.0,grant
+180,1675-04-23,1675.0,Gedde.; Galte.; No well.,3.0,False,14.0,grant
+197,1677-03-20,1677.0,Castle.; EWBANK.,2.0,False,14.0,grant
+211,1681-06-09,1681.0,Du Fresue.; Mayo.,2.0,False,14.0,grant
+212,1681-06-25,1681.0,Pawley.; Dallow.,2.0,False,14.0,grant
+225,1683-04-25,1683.0,Maundrell.; Williams.,2.0,False,,grant
+250,1686-06-23,1686.0,Finch.; Newcomb.; Butler.,3.0,False,14.0,grant
+251,1686-11-23,1686.0,Shawe.,1.0,False,,grant
+258,1688-02-07,1688.0,Holm an.,1.0,False,,grant
+269,1691-06-12,1691.0,Green.,1.0,False,,grant
+272,1691-09-15,1691.0,Neale.,1.0,False,14.0,grant
+279,1691-10-07,1691.0,EVANCE.; Tyssen.; Holland.; Halley.,4.0,False,14.0,grant
+284,,1691.0,GrIFFORD.; November 1691.,2.0,False,14.0,grant
+285,1691-12-07,1691.0,Stapleton.,1.0,False,14.0,grant
+299,1692-06-28,1692.0,Tatham.,1.0,False,14.0,grant
+317,1693-03-07,1693.0,Smith.; PUCKLE.,2.0,False,14.0,grant
+341,1695-08-02,1695.0,Ardesorf.,1.0,False,14.0,grant
+354,1698-07-15,1698.0,Grew.,1.0,False,14.0,grant
+622,1747-05-12,1747.0,Sage.,1.0,False,14.0,grant
+802,,1763.0,Manlove.,1.0,False,14.0,grant
+803,1763-12-15,1763.0,Goulder.,1.0,False,14.0,grant
+844,1766-03-25,1766.0,Fall.,1.0,False,14.0,grant
+991,1771-06-25,1771.0,March.; Horton.,2.0,False,14.0,grant
+1025,1772-11-05,1772.0,Budge.,1.0,False,14.0,grant
+1126,1776-06-06,1776.0,Marsland.,1.0,False,14.0,grant
+1175,1777-12-31,1777.0,DOLIGNON.,1.0,False,14.0,grant
+1328,1782-05-02,1782.0,Arnold.; pursuant; months; the,4.0,False,14.0,grant
+1358,1783-02-27,1783.0,LlNGHAM.,1.0,False,14.0,grant
+1370,,1783.0,Onions.; th May 1783.,2.0,False,,grant
+1416,1784-01-29,1784.0,Noble.,1.0,False,14.0,grant
+1429,1784-04-21,1784.0,HlGTON.,1.0,False,14.0,grant
+1481,1785-05-20,1785.0,Phillips.,1.0,False,14.0,grant
+1515,1785-12-14,1785.0,Dixon.,1.0,False,14.0,grant
+1579,1786-12-19,1786.0,Cairncross.,1.0,False,14.0,grant
+1594,,1787.0,Ansell.; 20th March 178:,2.0,False,14.0,grant
+1657,1788-06-30,1788.0,Sandilands.,1.0,False,14.0,grant
+1828,1791-10-06,1791.0,Summers.,1.0,False,14.0,grant
+2062,1795-08-28,1795.0,Speaks.,1.0,False,14.0,grant
+2136,1796-09-19,1796.0,Cooper.,1.0,False,14.0,grant
+2176,1797-03-25,1797.0,Barton.,1.0,False,14.0,grant
+2184,1797-07-04,1797.0,ECKHARDT.,1.0,False,14.0,grant
+2205,1797-12-22,1797.0,Weldon.,1.0,False,14.0,grant
+2207,1797-12-30,1797.0,BOULTON.,1.0,False,14.0,grant
+2232,1798-05-03,1798.0,Bramah.,1.0,False,14.0,grant
+2250,1798-07-14,1798.0,Row.,1.0,False,14.0,grant
+2261,1798-08-27,1798.0,RArozo.,1.0,False,14.0,grant
+2265,1798-11-08,1798.0,Chapman.,1.0,False,14.0,grant
+2288,1799-01-23,1799.0,Fitzgerald.,1.0,False,14.0,grant
+2410,1800-06-10,1800.0,Wyatt.,1.0,False,14.0,grant
+2518,1801-06-20,1801.0,Senefelder.,1.0,False,14.0,grant
+2632,1802-06-28,1802.0,Morray.,1.0,False,14.0,grant
+2645,1802-08-31,1802.0,Hately.,1.0,False,14.0,grant
+2674,1803-01-20,1803.0,Wilson.,1.0,False,14.0,grant
+2760,1804-05-14,1804.0,Brown.,1.0,False,14.0,grant
+2851,1805-05-18,1805.0,Stansbury.,1.0,False,14.0,grant
+2868,1805-07-19,1805.0,ScHMIDT.; DICKINSON.,2.0,False,14.0,grant
+2884,1805-10-22,1805.0,Desormeaux.; Hutchings.,2.0,False,14.0,grant
+2903,1806-01-23,1806.0,Alcock.,1.0,False,14.0,grant
+3513,1811-12-19,1811.0,SORBT.,1.0,False,14.0,grant
+3681,1813-04-13,1813.0,Rangeley.,1.0,False,14.0,grant
+3840,1814-09-08,1814.0,Penny.; Kendall.,2.0,False,14.0,grant
+4101,1817-02-08,1817.0,Clark.,1.0,False,,grant
+4102,1817-02-20,1817.0,Hardy.,1.0,False,,grant
+4112,1817-03-28,1817.0,Wheeler.,1.0,False,,grant
+4264,1818-05-19,1818.0,Mort ey.,1.0,False,,grant
+4315,1818-11-24,1818.0,COLLYER.,1.0,True,,grant
+4503,1820-10-23,1820.0,BlRKENSHAW.,1.0,False,,grant
+4532,1821-01-27,1821.0,DOXAT.,1.0,True,,grant
+4582,1821-08-14,1821.0,De Chabannes.,1.0,False,,grant
+4858,1823-11-01,1823.0,BUNDY.,1.0,False,,grant
+5117,1825-03-05,1825.0,James.,1.0,False,,grant
+5270,1825-10-21,1825.0,GURNEY.,1.0,False,,grant
+5282,1825-11-08,1825.0,Brown.,1.0,False,,grant
+5306,,1825.0,LUSCOMBE.; th Vee. oO.,2.0,True,,grant
+5384,1826-07-04,1826.0,WORNUM.,1.0,False,,grant
+5393,1826-07-24,1826.0,Robinson.,1.0,False,,grant
+5413,1826-10-04,1826.0,RlSTE.,1.0,False,,grant
+5550,1827-09-06,1827.0,Clymer.,1.0,False,,grant
+6638,1834-07-04,1834.0,Hick.; Evans.; HlGGlNS.,3.0,False,,grant
+6797,1835-03-25,1835.0,Barker.,1.0,False,,grant
+6840,1835-05-27,1835.0,Bergin.,1.0,False,,grant
+6869,1835-07-28,1835.0,Anderson.,1.0,False,,grant
+6870,1835-07-28,1835.0,Charlton.,1.0,False,,grant
+7196,1836-09-28,1836.0,Cay.,1.0,False,,grant
+7435,1837-09-21,1837.0,Cow ine.,1.0,False,,grant
+7880,,1838.0,DELARUE.; 22nd Noy.,2.0,False,,grant
+8601,1840-08-11,1840.0,Wetterstedt.,1.0,False,,grant
+8699,1840-11-12,1840.0,Birch.,1.0,False,,grant
+10247,1844-07-03,1844.0,Newey.; Newman.,2.0,False,,grant
+10331,,1844.0,TlJRNBULL.,1.0,False,,grant
+10677,1845-05-22,1845.0,Lewis.,1.0,False,,grant
+10678,1845-05-22,1845.0,WlLKINS.,1.0,False,,grant
+11021,,1845.0,Siemens.; 24th Dec. 1,2.0,True,,grant
+11566,1847-02-08,1847.0,Kennedy.,1.0,False,,grant
+11834,1847-08-05,1847.0,SlMlSTER.,1.0,False,,grant
+12009,1847-12-31,1847.0,Jenkins.,1.0,False,,grant
+12363,1848-12-09,1848.0,Tutton.,1.0,False,,grant
+12396,1848-12-28,1848.0,JOBSON.,1.0,False,,grant
+12473,1849-02-12,1849.0,Newton.,1.0,True,,grant
+12654,1849-06-07,1849.0,Smith.,1.0,False,,grant
+13013,1850-03-23,1850.0,Ramsbotiiam.; BROWN.,2.0,False,,grant
+13049,1850-04-18,1850.0,H AUG REAVES.,1.0,False,,grant
+13077,1850-05-22,1850.0,Hurry.,1.0,False,,grant
+13355,1850-11-19,1850.0,Dunn.,1.0,False,,grant
+13387,1850-12-07,1850.0,Rayner.,1.0,False,,grant
+13512,1851-02-12,1851.0,Turrer.; Dr Normanpy. |,2.0,False,,grant
+13518,1851-02-18,1851.0,BEADON.,1.0,False,,grant
+14011,1852-03-08,1852.0,Johnson.,1.0,True,,grant

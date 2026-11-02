@@ -1,0 +1,15 @@
+period,jurisdiction,kind,count,unit,basis,source,coverage,alt_count,alt_source
+1469-1500,VE,printing,104,privilege document,own count,"Fulin 1882 (docs 1-256, to Nov. 1526)",1469-1526,,
+1501-1550,VE,printing,138,privilege document,own count,"Fulin 1882 (docs 1-256, to Nov. 1526)",1469-1526,,
+1551-1600,GB,invention,55,grant,own count,Hulme 1896/1900; Woodcroft 1854,"1561-1603, 1617-1852",,
+1551-1600,NL,invention,77,privilege document,own count of Buning & Looijesteijn data,figshare 10.6084/m9.figshare.16685788,1581-1621,,
+1601-1650,GB,invention,125,grant,own count,Hulme 1896/1900; Woodcroft 1854,"1561-1603, 1617-1852",,
+1601-1650,NL,invention,164,privilege document,own count of Buning & Looijesteijn data,figshare 10.6084/m9.figshare.16685788,1581-1621,,
+1651-1700,GB,invention,231,grant,own count,Hulme 1896/1900; Woodcroft 1854,"1561-1603, 1617-1852",,
+1701-1750,GB,invention,288,grant,own count,Hulme 1896/1900; Woodcroft 1854,"1561-1603, 1617-1852",,
+1751-1800,GB,invention,1802,grant,own count,Hulme 1896/1900; Woodcroft 1854,"1561-1603, 1617-1852",,
+1801-1852,GB,invention,11847,grant,own count,Hulme 1896/1900; Woodcroft 1854,"1561-1603, 1617-1852",,
+1474-1500,VE,invention,43,Senate grant,secondary,"Comino, Galasso & Graziano 2017, p. 7 (from Berveglieri 1995/1999)",1474-1500,33.0,"Kostylo 2010, n. 5 (Berveglieri 1995, pp. 21-22)"
+1501-1550,VE,invention,126,Senate grant,secondary,"Comino, Galasso & Graziano 2017, p. 7 (from Berveglieri 1995/1999)",1501-1550,116.0,"Kostylo 2010, n. 5 (Berveglieri 1995, pp. 21-22)"
+1551-1600,VE,invention,471,Senate grant,secondary,"Comino, Galasso & Graziano 2017, p. 7 (from Berveglieri 1995/1999)",1551-1600,461.0,"Kostylo 2010, n. 5 (Berveglieri 1995, pp. 21-22)"
+before 1474,VE,invention,5,ad hoc privilege,secondary,"Comino, Galasso & Graziano 2017, p. 7 (Mandich 1936)",-1473,,

@@ -1,0 +1,7 @@
+pandas>=2.2
+numpy>=1.26
+scipy>=1.11
+lxml>=5.0
+openpyxl>=3.1
+PyMuPDF>=1.24  # import fitz; only for rendering Hulme page images
+# tesseract 5 (system binary) for src/reocr_pages.py

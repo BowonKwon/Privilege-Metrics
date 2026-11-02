@@ -1,0 +1,121 @@
+number,date,n_grantees,first_surname,communication,term_years,kind,found,note
+6,1618-01-17,2,Ramsey,false,31,grant,true,"margin date misprinted ""17th January 6118""; read as 1618"
+7,1618-02-16,1,Baker,false,31,grant,true,
+20,1622-05-10,4,Harewell,false,11,grant,true,"term written ""xj yeares"""
+26,1623-09-20,1,Conneldon,false,21,grant,true,
+32,1625-08-31,1,Beale,false,14,grant,true,"term written ""14teen yeares"""
+36,1627-01-03,1,Spencer,false,11,grant,true,"main term ""xjen yeares""; text also grants river benefits for a further term of 80 yeares"
+47,1629-06-22,1,Grent,false,14,grant,true,"term written ""xiiij yeares"""
+80,1635-03-10,3,Vandebrook,false,14,grant,true,"margin spelling Vandebrook (text: Vandebrooke); term ""fourteen yeares"""
+100,1637-01-04,1,Hughes,false,14,grant,true,
+103,1637-02-10,1,Tookey,false,14,grant,true,
+106,1637-05-18,1,Mason,false,14,grant,true,
+111,1637-11-26,2,Manby,false,14,grant,true,"term ""xiiij yeares""; continues on p1_0042"
+162,1671-01-08,3,Prince Rupert,false,14,grant,true,"margin reads ""Prince Rupert"" (title+name); the 14 yeares is the term of Rupert's earlier grant recited; this entry authorizes Rupert, Lord Ashley and Chickley to take security/administer oaths - ancillary to earlier grant, not an extension"
+180,1675-04-23,3,Gedde,false,14,grant,true,continues on p1_0055
+197,1677-03-20,2,Castle,false,14,grant,true,entry complete on p1_0057
+211,1681-06-09,2,Du Fresue,false,14,grant,true,grant made to Edward Mayo at nomination of Du Fresue; entry complete on p1_0060
+212,1681-06-25,2,Pawley,false,14,grant,true,"term ""14 yeers"""
+225,1683-04-25,2,Maundrell,false,14,grant,true,"text reads ""to hold for 14 from the date hereof"" - the word years is omitted in print; entry complete on p1_0063"
+250,1686-06-23,3,Finch,false,14,grant,true,margin 23rd June 1686 but Teste in text reads 25 Junij
+251,1686-11-23,1,Shawe,false,14,grant,true,"term ""fourteene yeares"""
+258,1688-02-07,1,Holman,false,14,grant,true,"term ""fourteene years"""
+269,1691-06-12,1,Green,false,14,grant,true,"term ""fourteene yeares"""
+272,1691-09-15,1,Neale,false,14,grant,true,
+279,1691-10-07,4,Evance,false,14,grant,true,
+284,,1,Gifford,false,14,grant,true,"margin prints only ""November 1691"" with no day (Teste ""— Novemb""); date left blank"
+285,1691-12-07,1,Stapleton,false,14,grant,true,
+299,1692-06-28,1,Tatham,false,14,grant,true,"term ""14 yeeres"""
+317,1693-03-07,2,Smith,false,14,grant,true,
+341,1695-08-02,1,Ardesorf,false,14,grant,true,"term ""fourteen years""; ""4 or 5 yeares"" in text is a description of the invention, not the term"
+354,1698-07-15,1,Grew,false,14,grant,true,
+622,1747-05-12,1,Sage,false,14,grant,true,
+802,1763-12-07,1,Manlove,false,14,grant,true,
+803,1763-12-15,1,Goulder,false,14,grant,true,
+844,1766-03-25,1,Fall,false,14,grant,true,
+991,1771-06-25,2,March,false,14,grant,true,
+1025,1772-11-05,1,Budge,false,14,grant,true,"term ""fourteen years"""
+1126,1776-06-06,1,Marsland,false,14,grant,true,
+1175,1777-12-31,1,Dolignon,false,14,grant,true,
+1328,1782-05-02,1,Arnold,false,14,grant,true,entry complete on p1_0262
+1358,1783-02-27,1,Lingham,false,14,grant,true,
+1370,1783-05-07,1,Onions,false,14,grant,true,
+1416,1784-01-29,1,Noble,false,14,grant,true,
+1429,1784-04-21,1,Higton,false,14,grant,true,continues on p1_0281
+1481,1785-05-20,1,Phillips,false,14,grant,true,
+1515,1785-12-14,1,Dixon,false,14,grant,true,"term ""fourteen years"""
+1579,1786-12-19,1,Cairncross,false,14,grant,true,
+1594,1787-03-20,1,Ansell,false,14,grant,true,
+1657,1788-06-30,1,Sandilands,false,14,grant,true,
+1828,1791-10-06,1,Summers,false,14,grant,true,
+2062,1795-08-28,1,Spears,false,14,grant,true,
+2136,1796-09-19,1,Cooper,false,14,grant,true,continues on p1_0413
+2176,1797-03-25,1,Barton,false,14,grant,true,continues on p1_0420
+2184,1797-07-04,1,Eckhardt,false,14,grant,true,"term ""fourteen years"""
+2205,1797-12-22,1,Weldon,false,14,grant,true,"term ""fourteen years""; entry complete on p1_0424"
+2207,1797-12-30,1,Boulton,false,14,grant,true,"term ""fourteen years""; entry ends ""Sealed by order."""
+2232,1798-05-03,1,Bramah,false,14,grant,true,"text mentions former Letters Patent of 1784 for the lock, but this entry is a new grant for an improvement, not an extension"
+2250,1798-07-14,1,Row,false,14,grant,true,"term ""fourteen years"""
+2261,1798-08-27,1,Rapozo,false,14,grant,true,"term ""fourteen years"""
+2265,1798-11-08,1,Chapman,false,14,grant,true,"""further improved method"" for which former Letters Patent were obtained; a new grant for the improvement, not an extension"
+2288,1799-01-23,1,Fitzgerald,false,14,grant,true,"term ""fourteen years"""
+2410,1800-06-10,1,Wyatt,false,14,grant,true,
+2518,1801-06-20,1,Senefelder,false,14,grant,true,entry continues on p1_0477
+2632,1802-06-28,1,Murray,false,14,grant,true,
+2645,1802-08-31,1,Hately,false,14,grant,true,
+2674,1803-01-20,1,Wilson,false,14,grant,true,
+2760,1804-05-14,1,Brown,false,14,grant,true,
+2851,1805-05-18,1,Stansbury,false,14,grant,true,
+2868,1805-07-19,2,Schmidt,false,14,grant,true,
+2884,1805-10-22,2,Desormeaux,false,14,grant,true,entry complete on p1_0536
+2903,1806-01-23,1,Alcock,false,14,grant,true,
+3513,1811-12-19,1,Sorby,false,14,grant,true,
+3681,1813-04-13,1,Rangeley,false,14,grant,true,
+3840,1814-09-08,2,Penny,false,14,grant,true,
+4101,1817-02-08,1,Clark,false,,grant,true,
+4102,1817-02-20,1,Hardy,false,,grant,true,
+4112,1817-03-28,1,Wheeler,false,,grant,true,
+4264,1818-05-19,1,Motley,false,,grant,true,
+4315,1818-11-24,1,Collyer,true,,grant,true,
+4503,1820-10-23,1,Birkenshaw,false,,grant,true,
+4532,1821-01-27,1,Doxat,true,,grant,true,
+4582,1821-08-14,1,De Chabannes,false,,grant,true,
+4858,1823-11-01,1,Bundy,false,,grant,true,
+5117,1825-03-05,1,James,false,,grant,true,
+5270,1825-10-21,1,Gurney,false,,grant,true,
+5282,1825-11-08,1,Brown,false,,grant,true,
+5306,1825-12-06,1,Luscombe,true,,grant,true,"text has plural ""communications made to him by a certain foreigner"""
+5384,1826-07-04,1,Wornum,false,,grant,true,
+5393,1826-07-24,1,Robinson,false,,grant,true,
+5413,1826-10-04,1,Riste,false,,grant,true,
+5550,1827-09-06,1,Clymer,false,,grant,true,
+6638,1834-07-04,3,Hick,false,,grant,true,
+6797,1835-03-25,1,Barker,false,,grant,true,
+6840,1835-05-27,1,Bergin,false,,grant,true,
+6869,1835-07-28,1,Anderson,false,,grant,true,
+6870,1835-07-28,1,Charlton,false,,grant,true,"margin prints one surname (Charlton) but text grants to two persons, Robert and Alfred Charlton"
+7196,1836-09-28,1,Clay,false,,grant,true,
+7435,1837-09-21,1,Cowling,false,,grant,true,
+7880,1838-11-22,1,Delarue,false,,grant,true,
+8601,1840-08-11,1,Wetterstedt,false,,grant,true,
+8699,1840-11-12,1,Birch,false,,grant,true,
+10247,1844-07-03,2,Newey,false,,grant,true,
+10331,1844-09-26,1,Turnbull,false,,grant,true,
+10677,1845-05-22,1,Lewis,false,,grant,true,
+10678,1845-05-22,1,Wilkins,false,,grant,true,
+11021,1845-12-24,1,Siemens,false,,grant,true,
+11566,1847-02-08,1,Kennedy,false,,grant,true,
+11834,1847-08-05,1,Simister,false,,grant,true,
+12009,1847-12-31,1,Jenkins,false,,grant,true,
+12363,1848-12-09,1,Tutton,false,,grant,true,
+12396,1848-12-28,1,Jobson,false,,grant,true,
+12473,1849-02-12,1,Newton,true,,grant,true,
+12654,1849-06-07,1,Smith,false,,grant,true,
+13013,1850-03-23,2,Ramsbotham,false,,grant,true,entry complete on p2_0679
+13049,1850-04-18,1,Hargreaves,false,,grant,true,
+13077,1850-05-22,1,Hurry,false,,grant,true,
+13355,1850-11-19,1,Dunn,false,,grant,true,
+13387,1850-12-07,1,Rayner,false,,grant,true,
+13512,1851-02-12,2,Tupper,false,,grant,true,
+13518,1851-02-18,1,Beadon,false,,grant,true,
+14011,1852-03-08,1,Johnson,true,,grant,true,
