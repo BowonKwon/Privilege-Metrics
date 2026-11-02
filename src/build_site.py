@@ -93,9 +93,9 @@ def figure(mid, D, lang):
         e = a[(a.year <= 1700)]
         l = a[(a.year >= 1700)]
         s1 = svg_lines([("grants", [(r.year, float(r.grants) if not pd.isna(r.grants) else math.nan) for r in e.itertuples()], 0)], ",.0f",
-                       bands=[(1604, 1616, "no list" if not ko else "목록 없음"), (1624, 1625, "1624")], xstep=20)
+                       bands=[(1604, 1616, "gap" if not ko else "목록 공백"), (1624, 1625, "1624")], xstep=20)
         s2 = svg_lines([("grants", [(r.year, float(r.grants)) for r in l.itertuples()], 0)], ",.0f", xstep=20)
-        return (fig(s1, "1561–1700. 음영은 목록이 없는 1604–1616년과 1624년." if ko else "1561–1700. Shaded: 1604–1616, for which no list exists, and 1624.")
+        return (fig(s1, "1561–1700. 음영은 두 목록 사이의 공백인 1604–1616년과 1624년." if ko else "1561–1700. Shaded: 1604–1616, the gap between the two lists, and 1624.")
                 + fig(s2, "1700–1852." if ko else "1700–1852."))
     if mid == "a2_periods":
         a = D["m_a2_periods"]
@@ -275,9 +275,43 @@ def home(D, TK, lang):
              (f"{nl:,}", "네덜란드 발명 특권 문서 1581–1621" if lang == "ko" else "Dutch invention-privilege documents 1581–1621", "metrics/a2_periods.html")]
     lines = [TK[k][lang] for k in ("a3_1624", "d2_term_shift", "c1_foreign", "p3_sro_status", "v1_venice_printing")]
     hero = (f'<div class="hero"><div class="glyph">1624</div><h1>{t["site"]}</h1><p class="lead">{esc(t["tagline"])}</p></div>')
-    intro = ("<p class='lead'>근대 특허·저작권 이전, 발명과 출판의 배타적 권리는 군주나 의회가 사람마다 내주는 특권이었다. 이 사이트는 남아 있는 허여 목록을 건별로 세어 언제·어느 분야에·누구에게·얼마 동안 주어졌는지를 수치로 보인다. 해석은 하지 않는다. 전후로 무엇이 관측되는지만 적는다.</p>"
-             if lang == "ko" else
-             "<p class='lead'>Before modern patents and copyright, exclusive rights in inventions and books were privileges granted case by case by a ruler or an assembly. This site counts the surviving lists grant by grant and shows when, in which trades, to whom and for how long they were given. It does not interpret; it reports what is observed before and after.</p>")
+    nlp = int(a2[(a2.jurisdiction == "NL") & (a2.kind == "invention")]["count"].sum()) if "kind" in a2 else nl
+    if lang == "ko":
+        paras = [
+            "근대 특허법과 저작권법이 생기기 전에는 새 기계를 혼자 만들거나 새 책을 혼자 찍을 권리를 법률이 정해 주지 않았다. "
+            "베네치아 원로원, 잉글랜드 국왕, 네덜란드 연방의회가 청원한 사람에게 하나씩 내주었다. 이것이 특권이다. 허여는 문서로 남았고, "
+            "19세기의 문서 정리자들이 그 문서를 목록으로 엮었다.",
+            f"이 사이트는 그 목록을 한 건씩 센다. 잉글랜드는 Hulme이 정리한 1561–1603년 허여 55건, Woodcroft가 번호를 매긴 1617–1852년 14,359번, "
+            f"런던 출판업조합 등록부의 1557–1640년 기재 {int(p1.entries.sum()):,}건이다. 베네치아는 Fulin이 모은 1469–1526년 출판 관련 문서 256건, "
+            f"네덜란드는 Buning·Looijesteijn이 정리한 1581–1621년 특권 문서 {nlp:,}건이다. 베네치아 발명 특허는 직접 세지 못해 문헌의 수치를 2차 인용으로 싣는다.",
+            "묻는 것은 넷이다. 해마다 몇 건이 나갔나, 어느 분야였나, 누가 받았나(외국인, 여럿이 함께 받은 경우), 몇 년 동안 어떤 조건으로 주어졌나. "
+            "1624년 잉글랜드 독점법 앞뒤로 허여에 적힌 존속기간이 21년에서 14년으로 옮겨 가는 것이, 이렇게 세어 보아야 드러나는 변화의 한 예다.",
+            "수치마다 단위와 원자료를 붙였다. 목록마다 세는 단위가 특허 번호, 허여, 등록 기재, 문서로 달라서 관할끼리 그대로 견줄 수 없다. "
+            "지표 면마다 다른 사람이 쪽 이미지나 원문을 다시 읽어 맞춰 본 일치율(신뢰도 카드)과 한계를 함께 두었다. "
+            "법이 무엇을 바꾸었는지는 말하지 않는다. 어느 해 앞뒤로 무엇이 관측되는지만 적는다.",
+            f"처음이라면 아래 「핵심」 문장과 A 계열 지표부터 보면 된다. 나라별로는 <a href='places.html'>{t['nav_places']}</a>, "
+            f"연표는 <a href='eras.html'>{t['nav_eras']}</a>, 수치 없이 흐름만 읽으려면 <a href='reading.html'>{t['nav_reading']}</a>을 연다. "
+            f"세는 규칙은 <a href='method.html'>{t['nav_method']}</a>, 원자료와 코드는 <a href='data.html'>{t['nav_data']}</a>에 있다.",
+        ]
+    else:
+        paras = [
+            "Before modern patent and copyright law, no statute gave anyone the sole right to build a new machine or print a new book. "
+            "The Venetian Senate, the English Crown and the Dutch States General granted that right one petitioner at a time; the grant was a privilege. "
+            "The grants left documents, and nineteenth-century archivists bound them into lists.",
+            f"This site counts those lists one grant at a time. For England: Hulme's 55 grants of 1561–1603, Woodcroft's numbers 1 to 14,359 for 1617–1852, "
+            f"and {int(p1.entries.sum()):,} entries in the London Stationers' Register for 1557–1640. For Venice: the 256 printing documents of 1469–1526 collected by Fulin. "
+            f"For the Dutch Republic: {nlp:,} privilege documents of 1581–1621 from the data of Buning and Looijesteijn. Venetian invention patents could not be counted here; "
+            "figures from the literature are shown as secondary.",
+            "Four questions run through the metrics: how many grants were made each year, in which trades, to whom (foreigners, grants shared by several people), "
+            "and for how long and on what terms. One change these counts show is the term written in English grants moving from 21 years to 14 around the Statute of Monopolies of 1624.",
+            "Every figure carries its unit and its source. The lists count in different units (patent numbers, grants, register entries, documents), so jurisdictions cannot be compared as they stand. "
+            "Each metric page also has a reliability card, the agreement found when another reader went back to the page images or the original text, and its caveats. "
+            "The site does not say what a law changed; it reports what is observed before and after a given year.",
+            f"To start, read the key points below and the A metrics. By country, open <a href='places.html'>{t['nav_places']}</a>; for dates, "
+            f"<a href='eras.html'>{t['nav_eras']}</a>; for a narrative without tables, the <a href='reading.html'>{t['nav_reading']}</a>. "
+            f"The counting rules are under <a href='method.html'>{t['nav_method']}</a>, and the sources and code under <a href='data.html'>{t['nav_data']}</a>.",
+        ]
+    intro = "<div class='prose intro'>" + "".join(f"<p>{x}</p>" for x in paras) + "</div>"
     body = [hero, intro, '<div class="stats">' + "".join(f'<a class="stat" href="{h}"><div class="n">{n}</div><small>{esc(s)}</small></a>' for n, s, h in stats) + "</div>",
             f'<div class="take"><div class="l">{t["key"]}</div>' + "".join(f"<p>{esc(x)}</p>" for x in lines) + "</div>"]
     for s, lab in SERIES.items():
@@ -291,11 +325,11 @@ def places(D, TK, lang):
     t = T[lang]
     blocks = {
         "GB": (["a1_annual", "a3_1624", "b1_fields", "c1_foreign", "d1_terms", "d2_term_shift", "d3_clauses", "p1_sro_annual", "p3_sro_status"],
-               "1561–1603년 Hulme 목록 55건, 1617–1852년 Woodcroft 목록 14,359번, 1557–1640년 출판업조합 등록 10,453건. 1604–1616년은 목록이 없다." if ko else
-               "Hulme's list of 55 grants for 1561–1603, Woodcroft's 14,359 numbers for 1617–1852 and 10,453 Stationers' Register entries for 1557–1640. No list exists for 1604–1616."),
+               "1561–1603년 Hulme 목록 55건, 1617–1852년 Woodcroft 목록 14,359번, 1557–1640년 출판업조합 등록 10,453건. 1604–1616년은 두 목록 사이의 공백이다." if ko else
+               "Hulme's list of 55 grants for 1561–1603, Woodcroft's 14,359 numbers for 1617–1852 and 10,453 Stationers' Register entries for 1557–1640. 1604–1616 falls between the two lists."),
         "VE": (["a2_periods", "b3_venice_sectors", "v1_venice_printing", "d1_terms"],
-               "발명 특허는 문헌 수치(2차 인용)만 싣는다. 건별 원천은 Berveglieri 2020의 레게스토(2,130건)뿐이고 아직 옮기지 않았다. 출판 특권은 Fulin 1882의 문서 256건을 코딩했다." if ko else
-               "Invention patents are shown only as figures from the literature (secondary). The only record-level source is Berveglieri's 2020 calendar (2,130 grants), not yet transcribed. Printing privileges: Fulin's 256 documents of 1882, coded here."),
+               "발명 특허는 문헌 수치(2차 인용)만 싣는다. 이 사이트가 확인한 건별 원천은 Berveglieri 2020의 레게스토(2,130건)이고 아직 옮기지 않았다. 그보다 앞서 Mandich(1936·1948)가 1474–1550년 109건을 옮기고 분류했다(Comino 등 2017). 출판 특권은 Fulin 1882의 문서 256건을 코딩했다." if ko else
+               "Invention patents are shown only as figures from the literature (secondary). The record-level source checked here is Berveglieri's 2020 calendar (2,130 grants), not yet transcribed; earlier, Mandich (1936, 1948) transcribed and classified 109 grants of 1474–1550 (Comino et al. 2017). Printing privileges: Fulin's 256 documents of 1882, coded here."),
         "NL": (["a2_periods", "c1_foreign", "d1_terms"],
                "Buning·Looijesteijn 자료(1581–1621, CC BY 4.0)를 다시 셌다. 문서 성격이 특권 허여인 것만 센다." if ko else
                "The Buning and Looijesteijn data (1581–1621, CC BY 4.0), recounted here; only documents that issue a privilege are counted."),
@@ -310,7 +344,7 @@ def eras(D, TK, lang):
     ko = lang == "ko"
     ev = [(1469, "베네치아, 요한네스 데 스피라에게 5년 인쇄 특권(Fulin 1번)" if ko else "Venice: five-year printing privilege to Johannes de Spira (Fulin no. 1)"),
           (1474, "베네치아 원로원 발명 특허법(Parte, 3월 19일)" if ko else "Venetian Senate patent act (parte of 19 March)"),
-          (1486, "베네치아, 사벨리코에게 첫 저자 특권(Fulin 3번)" if ko else "Venice: first author's privilege, to Sabellico (Fulin no. 3)"),
+          (1486, "베네치아, 사벨리코에게 저자 특권(Fulin 문서 가운데 저자에게 간 가장 이른 것, 3번)" if ko else "Venice: privilege to the author Sabellico (the earliest to an author among Fulin's documents, no. 3)"),
           (1517, "베네치아 원로원, 기존 출판 특권을 거두고 새 책에만 특권을 주기로 의결" if ko else "Venetian Senate revokes existing printing privileges and limits new ones to new books"),
           (1557, "런던 출판업조합 칙허, 등록부 기재 시작(SRO 1번 1557-07-19)" if ko else "Stationers' Company chartered; register entries begin (SRO no. 1, 1557-07-19)"),
           (1561, "잉글랜드, Hulme 목록 1번(흰 비누)" if ko else "England: Hulme's No. I (white soap)"),
@@ -319,7 +353,7 @@ def eras(D, TK, lang):
           (1624, "잉글랜드 독점법(21 Jac. I c. 3). 새 발명 특허를 14년 이하로" if ko else "Statute of Monopolies (21 Jac. I c. 3): patents for new inventions limited to 14 years or less"),
           (1637, "출판업조합 등록이 의무가 됨(SRO)" if ko else "Entrance in the Stationers' Register becomes compulsory (SRO)"),
           (1710, "앤 여왕법. 이 사이트의 출판 자료는 1640년에서 끝나 그 전후는 담지 못한다" if ko else "Statute of Anne; this site's printing data end in 1640 and cannot show the years around it"),
-          (1852, "잉글랜드 특허법 개정(10월 1일). Woodcroft 목록 끝" if ko else "Patent Law Amendment Act in force (1 October); Woodcroft's list ends")]
+          (1852, "Woodcroft 목록 끝(10월 1일). 목록은 1852년 특허법(15 & 16 Vict. c. 83) 제32조에 따라 편찬되었다(표제면)" if ko else "Woodcroft's list ends (1 October); it was compiled under the Patent Law Amendment Act, 15 & 16 Vict. c. 83, s. 32 (title page)")]
     a1, p1, v1 = D["m_a1_annual"], D["m_p1_sro_annual"], D["m_v1_fulin_annual"]
     s = svg_lines([("GB" if not ko else "잉글랜드 발명", [(r.year, float(r.grants)) for r in a1[a1.year <= 1700].itertuples() if not pd.isna(r.grants)], 0),
                    ("VE" if not ko else "베네치아 출판", [(r.year, float(r.privileges)) for r in v1.itertuples()], 1)], ",.0f",
@@ -333,7 +367,7 @@ def eras(D, TK, lang):
 
 def prior_page(lang):
     t = T[lang]
-    body = [f"<h1>{t['nav_prior']}</h1><p class='lead'>{'원문에서 확인한 선행 수치. 이 사이트의 계수와 나란히 본다.' if lang == 'ko' else 'Prior figures checked in the original publications, to read next to this site’s counts.'}</p><ul class='prose'>"]
+    body = [f"<h1>{t['nav_prior']}</h1><p class='lead'>{'선행 수치. 원문에서 확인한 것을 싣되, 원문을 보지 못하고 다른 문헌을 거쳐 옮긴 것은 「2차 인용」으로 표시했다. 이 사이트의 계수와 나란히 본다.' if lang == 'ko' else 'Prior figures, checked in the original publications except those marked as secondary citations, which are taken from another work. Read them next to this site’s counts.'}</p><ul class='prose'>"]
     for k, p in PRIOR.items():
         body.append(f"<li>{md(p[lang])} <span class='src'>— {md(p['cite'])}</span></li>")
     body.append("</ul>")
@@ -341,7 +375,7 @@ def prior_page(lang):
 
 
 DATA_FILES = [("woodcroft_entries.csv.gz", "CC BY 4.0", "woodcroft"), ("hulme_1561_1603.csv", "CC BY 4.0", "hulme"), ("fulin_coding.csv", "CC BY 4.0", "fulin"),
-              ("sro/sro_entries.csv.gz", "CC BY-SA 4.0", "sro")]
+              ("sro/sro_entries.csv.gz", "CC BY-SA 4.0", "sro"), ("sro/sro_site_decade_counts.csv", "CC BY-SA 4.0", "sro")]
 
 
 def data_page(D, lang):
@@ -394,6 +428,7 @@ def write_data(D):
     S = pd.read_csv(DER / "sro_entries.csv")
     with gzip.open(dd / "sro" / "sro_entries.csv.gz", "wt", encoding="utf-8", newline="") as f:
         S.to_csv(f, index=False)
+    shutil.copy(DER / "sro_site_decade_counts.csv", dd / "sro" / "sro_site_decade_counts.csv")
     if (DER / "reliability.json").exists():
         shutil.copy(DER / "reliability.json", dd / "reliability.json")
     res = []

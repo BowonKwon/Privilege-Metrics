@@ -14,7 +14,7 @@ One row per Fulin number, 1..256. Columns:
 | term_years | number or blank | term stated in the act or summary ("per anni dieci", "annos decem", "per anni X"). Blank when not stated. For "per la vita" write `life` |
 | beneficiary | short name as in the text | first named beneficiary; add "et al." if several |
 | n_beneficiaries | integer | persons named as beneficiaries |
-| beneficiary_type | author / printer / both / other | author = author, editor, translator, commentator or heirs of one; printer = printer, publisher, bookseller, typefounder; both = the text says the person is both; other = artist, engraver, nobleman, cleric etc. when not one of the above |
+| beneficiary_type | author / printer / both / other | author = author, editor, translator, commentator or heirs of one; printer = printer, publisher, bookseller, typefounder; both = the text says the person is both; other = artist, engraver, nobleman, cleric etc. when not one of the above. The type follows the role the act gives the person (who has others' works printed is a publisher, hence printer) even when no occupation is stated; the note column says when the type rests on the role alone (v1.0.1 clarification) |
 | object | book / type_technique / print_image / music / other | what the right covers |
 | penalty | yes / no | a penalty for infringers (fine, confiscation) is stated |
 | place_origin | as stated (e.g. "da Brescia", "ferrarese", "tedesco") or blank | origin of the first beneficiary when the text gives it |
@@ -23,3 +23,14 @@ One row per Fulin number, 1..256. Columns:
 | confidence | high / medium / low | |
 
 Do not use any knowledge outside the text. When the text does not say, leave the cell blank.
+
+
+## Clarifications in v1.0.1 (2026-11-03)
+
+These do not change any code; they state how the rules above were applied.
+
+- `kind = privilege` also covers petitions entered in the Notatorio whose outcome Fulin's summary does not state, when the
+  summary records the penalty to be imposed or Fulin's note cites an edition printed 'con privilegio'. The note column
+  marks every such case ('grant not stated explicitly'). The method page gives their number.
+- `term_years` for a confirmation is the term written in the act (e.g. 'per annos X' for the remainder of an earlier
+  ten-year privilege); the note column says when the act confirms a residue rather than a new term.

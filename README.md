@@ -42,7 +42,7 @@ python src/build_site.py
 
 ## 인용 · Citation
 
-From Privilege to Patent, version 1.0 (2026), https://bowonkwon.github.io/Privilege-Metrics/
+From Privilege to Patent, version 1.0.1 (2026), https://bowonkwon.github.io/Privilege-Metrics/
 
 ## 라이선스 · License
 

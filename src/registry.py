@@ -10,9 +10,9 @@ Values for the cards are written by src/reliability.py into data/derived/reliabi
 """
 
 SITE = {
-    "ko": {"title": "특권에서 특허로", "subtitle": "베네치아·잉글랜드·네덜란드의 발명·출판 특권을 건별로 센 수치와, 그 수치를 얼마나 믿어도 되는지"},
-    "en": {"title": "From Privilege to Patent", "subtitle": "Invention and printing privileges in Venice, England and the Dutch Republic, counted grant by grant, with a reliability card on every number"},
-    "version": "1.0",
+    "ko": {"title": "특권에서 특허로", "subtitle": "근대 특허 이전, 베네치아·잉글랜드·네덜란드의 발명·출판 특권을 한 건씩 세다"},
+    "en": {"title": "From Privilege to Patent", "subtitle": "Invention and printing privileges in Venice, England and the Dutch Republic before modern patents, counted one grant at a time"},
+    "version": "1.0.1",
 }
 
 SERIES = {
@@ -69,12 +69,12 @@ PRIOR = {
                        "cite": "Comino, Galasso & Graziano (2017), pp. 21–22."},
     "hulme_table": {"ko": "1561–1603년 55건: 외국인 21·내국인 30·거래 규제 4.", "en": "55 grants 1561–1603: 21 to aliens, 30 to natives, 4 for regulating trade.",
                     "cite": "Hulme (1900), LQR 16, p. 52."},
-    "macleod": {"ko": "1660–1799년 특허 2,240건.", "en": "2,240 patents in 1660–1799.",
+    "macleod": {"ko": "1660–1799년 특허 2,240건(2차 인용).", "en": "2,240 patents in 1660–1799 (secondary citation).",
                 "cite": "MacLeod, C. (1988), Inventing the Industrial Revolution, CUP, Table 9.1, p. 160 (as quoted by Nuvolari, Tartari & Tranchero 2021)."},
     "ntt": {"ko": "1700–1850년 잉글랜드 특허 13,070건.", "en": "13,070 English patents granted in 1700–1850.",
             "cite": "Nuvolari, A., Tartari, V. & Tranchero, M. (2021), 'Patterns of innovation during the Industrial Revolution', Explorations in Economic History 82; LEM WP 2020/23, p. 2."},
-    "doorman": {"ko": "네덜란드 1515–1797년 특허 관련 신청 952건(카를 5세·펠리페 2세 23, 연방의회 574, 주 의회 355).",
-                "en": "952 Dutch patent applications 1515–1797 (23 under Charles V and Philip II, 574 States General, 355 provincial States).",
+    "doorman": {"ko": "네덜란드 1515–1797년 특허 관련 신청 952건(카를 5세·펠리페 2세 23, 연방의회 574, 주 의회 355; 2차 인용).",
+                "en": "952 Dutch patent applications 1515–1797 (23 under Charles V and Philip II, 574 States General, 355 provincial States; secondary citation).",
                 "cite": "Doorman, G. (1940), Octrooien voor uitvindingen in de Nederlanden, as summarised in the review in Maandblad Oud-Utrecht, Sept. 1941."},
     "kostylo_printing": {"ko": "1492–1526년 베네치아 출판 특권 254건, 그중 저자에게 79건(약 30%).", "en": "254 Venetian printing privileges 1492–1526, 79 of them (about 30%) to authors.",
                          "cite": "Kostylo (2010), nn. 17–19, from Fulin (1882)."},
@@ -90,26 +90,26 @@ def metric(**kw):
 metric(id="a1_annual", series="A", table="m_a1_annual", unit="grants", fmt=",.0f", sources=["hulme", "woodcroft"], prior=["macleod", "ntt"],
        rel="ocr",
        ko=dict(name="잉글랜드 연도별 발명 특권·특허 수", definition="그해 내려진 새 발명 특권·특허의 수. 1561–1603년은 Hulme 목록, 1617–1852년은 Woodcroft 목록의 번호 항목에서 기간 연장(extension)을 뺀 수.",
-               formula="허여 수(연) = Hulme 건수 + Woodcroft 항목 수 − 연장 항목 수", reading="1604–1616년은 목록이 없어 비워 두었다. 0이 아니라 「모름」이다.",
+               formula="허여 수(연) = Hulme 건수 + Woodcroft 항목 수 − 연장 항목 수", reading="1604–1616년은 이 사이트가 쓰는 두 목록(Hulme은 1603년까지, Woodcroft는 1617년부터) 사이라 비워 두었다. 0이 아니라 「모름」이다.",
                caveat="Woodcroft 번호는 허여일 순서이고 날짜는 여백의 날인일이다. OCR이 번호를 잃은 항목은 앞뒤 항목의 연도로 셌다. 1853년 2건은 1852년법 이전 출원의 날인분이다."),
        en=dict(name="Invention grants per year, England", definition="New invention privileges and patents granted in the year: Hulme's list for 1561–1603; for 1617–1852 the numbered entries of Woodcroft's list less those granting an extension.",
-               formula="grants(year) = Hulme grants + Woodcroft entries − extension entries", reading="1604–1616 is blank because no list exists for those years. Blank means unknown, not zero.",
+               formula="grants(year) = Hulme grants + Woodcroft entries − extension entries", reading="1604–1616 is blank because it falls between the two lists used here (Hulme ends in 1603, Woodcroft begins in 1617). Blank means unknown, not zero.",
                caveat="Woodcroft numbers follow the date of the grant; the date used is the sealing date printed in the margin. Entries whose number the OCR lost are counted in the year of their neighbours. The two grants of 1853 are sealings of applications made under the law before 1852."))
 metric(id="a2_periods", series="A", table="m_a2_periods", unit="grants", fmt=",.0f", sources=["hulme", "woodcroft", "fulin", "buning", "comino"], prior=["comino_counts", "kostylo_counts", "berveglieri_total", "doorman"],
        rel="secondary",
        ko=dict(name="관할별 기간 비교", definition="같은 반세기 구간에 잉글랜드(자체 계수)·네덜란드(Buning 자료 재계수)·베네치아(문헌 수치)의 특권 수를 나란히 놓은 표.",
                formula="구간별 합계, 세는 단위를 열로 표시", reading="세는 단위가 다르다. 베네치아 발명은 원로원 허여(2차 인용), 네덜란드는 특권 허여 문서, 잉글랜드는 허여, 베네치아 출판은 Fulin 문서다.",
-               caveat="베네치아 발명 수치는 이 사이트가 세지 않았다. 두 계열(43·126·471 과 33·116·461)이 10건씩 어긋난다. 잉글랜드 1551–1600 은 1561년부터, 1601–1650 은 1604–1616 공백을 포함한다."),
+               caveat="베네치아 발명 수치는 이 사이트가 세지 않았다. 두 계열(43·126·471 과 33·116·461)이 10건씩 어긋난다. 잉글랜드 1551–1600 은 1561년부터이고, Hulme의 55건에는 거래 규제 허여 4건이 들어 있다. 1601–1650 은 1604–1616 공백을 포함한다."),
        en=dict(name="Jurisdictions compared by period", definition="Privileges per half-century for England (our count), the Dutch Republic (our recount of the Buning data) and Venice (figures quoted from the literature), side by side.",
                formula="sum per period, with the counting unit in its own column", reading="The units differ: Venetian inventions are Senate grants (secondary), Dutch figures are documents issuing a privilege, English figures are grants, Venetian printing figures are Fulin documents.",
-               caveat="The Venetian invention figures were not counted here, and the two published series (43, 126, 471 and 33, 116, 461) differ by 10 in each period. England 1551–1600 starts in 1561; 1601–1650 includes the 1604–1616 gap."))
+               caveat="The Venetian invention figures were not counted here, and the two published series (43, 126, 471 and 33, 116, 461) differ by 10 in each period. England 1551–1600 starts in 1561, and Hulme's 55 include four grants for regulating trade; 1601–1650 includes the 1604–1616 gap."))
 metric(id="a3_1624", series="A", table="m_a3_1624", unit="grants per year", fmt=".1f", sources=["woodcroft"], prior=[],
        rel="ocr",
        ko=dict(name="1624년 독점법 전후", definition="독점법(Statute of Monopolies, 21 Jac. I c. 3)이 나온 1624년 앞뒤 7년씩의 연평균 허여 수와, 본문에 적힌 존속기간.",
-               formula="연평균 = 구간 허여 수 ÷ 7, 95% 구간은 포아송 정확 구간", reading="1617–1623년과 1625–1631년의 연평균이 비슷하게 관측된다. 같은 두 구간에서 본문의 존속기간은 21년에서 14년으로 바뀐다.",
+               formula="연평균 = 구간 허여 수 ÷ 7, 95% 구간은 포아송 정확 구간", reading="1617–1623년과 1625–1631년의 연평균이 비슷하게 관측된다. 본문에 적힌 존속기간의 중앙값은 1617–1623년 21년, 1625–1640년 14년이다. 1624년 앞에도 14년 이하가 있고 뒤에도 21년이 남는다.",
                caveat="전후 비교일 뿐이다. 법이 수를 바꾸었다는 뜻이 아니다. 1617년 이전 목록은 1603년에서 끊긴다."),
        en=dict(name="Before and after the Statute of Monopolies (1624)", definition="Mean grants per year in the seven years before and after 1624, the year of the Statute of Monopolies (21 Jac. I c. 3), and the terms written in the entries.",
-               formula="mean per year = grants in window ÷ 7; 95% interval = exact Poisson interval", reading="The yearly means of 1617–1623 and 1625–1631 are about the same. Across the same windows the term written in the entries moves from 21 to 14 years.",
+               formula="mean per year = grants in window ÷ 7; 95% interval = exact Poisson interval", reading="The yearly means of 1617–1623 and 1625–1631 are about the same. The median term written in the entries is 21 years in 1617–1623 and 14 in 1625–1640; some terms of 14 or less come before 1624 and some 21-year terms after it.",
                caveat="A before-and-after comparison only; it does not say the Statute changed the number. The list before 1617 stops in 1603."))
 metric(id="a4_extensions", series="A", table="m_a4_extensions", unit="share", fmt=".1%", sources=["woodcroft"], prior=[],
        rel="ocr",
@@ -147,10 +147,10 @@ metric(id="c1_foreign", series="C", table="m_c1_foreign_gb", unit="share", fmt="
        rel="sampled",
        ko=dict(name="외국 연관 비율", definition="잉글랜드 1617–1852: 본문에 「communication」(해외에서 전해진 발명)이 있거나 수혜자 주소가 브리튼 제도 밖인 허여의 비율. 1561–1603은 Hulme의 외국인 집계와 그의 주석으로 우리가 다시 코딩한 값. 네덜란드는 Buning 자료의 출신국 코드.",
                formula="외국 연관 허여 ÷ 허여(10년 단위), 95% 윌슨 구간", reading="잉글랜드에서는 1810년대부터 「communication」 항목이 늘어 1840–50년대 허여의 약 다섯에 하나가 외국과 이어진다.",
-               caveat="관할마다 외국인의 정의가 다르다. 잉글랜드 수치는 주소와 문구로 잡은 하한이다. 국적은 적혀 있지 않다. Hulme 주석으로 잡은 외국인은 Hulme 자신의 21건보다 적다."),
+               caveat="관할마다 외국인의 정의가 다르다. 잉글랜드 수치는 주소와 문구로 잡은 하한이다. 국적은 적혀 있지 않다. Hulme 주석으로 잡은 외국인은 Hulme 자신의 21건보다 적다. 네덜란드는 Buning 코드 1–6(출신국이 적힌 외국)을 외국으로, 7(외국 출신 추정)을 따로 셌다. 8·9는 네덜란드인이다."),
        en=dict(name="Foreign links", definition="England 1617–1852: share of grants whose text says 'communication' (an invention communicated from abroad) or whose grantee lives outside the British Isles. 1561–1603: Hulme's alien count and our recoding from his notes. Dutch Republic: origin code in the Buning data.",
                formula="grants with a foreign link ÷ grants, by decade; 95% Wilson interval", reading="In England 'communication' entries grow from the 1810s; by the 1840s–50s about one grant in five has a foreign link.",
-               caveat="Each jurisdiction defines 'foreign' differently. The English figure is a lower bound read from addresses and wording; nationality is not recorded. Our recoding from Hulme's notes finds fewer aliens than Hulme's own 21."))
+               caveat="Each jurisdiction defines 'foreign' differently. The English figure is a lower bound read from addresses and wording; nationality is not recorded. Our recoding from Hulme's notes finds fewer aliens than Hulme's own 21. For the Dutch Republic, Buning's codes 1–6 (a named foreign origin) count as foreign and code 7 (probably of foreign extraction) is shown separately; codes 8 and 9 mark Dutch grantees."))
 metric(id="c2_cogrant", series="C", table="m_c2_cogrant", unit="share", fmt=".1%", sources=["woodcroft", "buning"], prior=[],
        rel="ocr",
        ko=dict(name="공동 수혜 비율", definition="수혜자가 둘 이상인 허여의 비율. 잉글랜드는 Woodcroft 여백에 찍힌 성(姓)의 수로 센다.",
@@ -169,12 +169,12 @@ metric(id="d1_terms", series="D", table="m_d1_terms", unit="years", fmt=".0f", s
                caveat="Woodcroft's entries from about 1820 do not state the term, so those years are empty. The statutory 14 years was not assumed."))
 metric(id="d2_term_shift", series="D", table="m_d2_term_shift", unit="grants", fmt=",.0f", sources=["woodcroft"], prior=[],
        rel="ocr",
-       ko=dict(name="21년에서 14년으로", definition="1617–1660년 해마다 본문에 적힌 기간이 21년인 허여와 14년 이하인 허여의 수.",
-               formula="연도별 건수", reading="1624년을 경계로 21년이 사라지고 14년 이하가 남는다.",
-               caveat="독점법 제6조는 새 발명 특허를 14년 이하로 정했다. 이 표는 기록에 적힌 기간을 셀 뿐이다."),
-       en=dict(name="From 21 years to 14", definition="Grants per year 1617–1660 whose written term is 21 years, and whose written term is 14 years or less.",
-               formula="counts per year", reading="21-year terms disappear around 1624 and terms of 14 years or less remain.",
-               caveat="Section 6 of the Statute of Monopolies limited patents for new inventions to 14 years or less. The table only counts the terms written in the record."))
+       ko=dict(name="21년에서 14년으로", definition="1617–1700년 해마다 본문에 적힌 첫 기간이 21년인 허여와 14년 이하인 허여의 수.",
+               formula="연도별 건수", reading="1624년 뒤로 14년 이하가 대부분이 되지만 21년도 드물게 남는다.",
+               caveat="독점법 제6조는 새 발명 특허를 14년 이하로 정했다. 이 표는 기록에 적힌 기간을 셀 뿐이다. 한 항목에 광산권·아일랜드·뒤따르는 수익권처럼 다른 기간이 함께 적힌 경우(other_term)는 첫 기간으로 셌다."),
+       en=dict(name="From 21 years to 14", definition="Grants per year 1617–1700 whose first written term is 21 years, and whose first written term is 14 years or less.",
+               formula="counts per year", reading="After 1624 terms of 14 years or less become the rule, but a few 21-year terms remain.",
+               caveat="Section 6 of the Statute of Monopolies limited patents for new inventions to 14 years or less. The table only counts the terms written in the record. Where an entry states further terms (mines, Ireland, a later revenue; column other_term), the first is counted."))
 metric(id="d3_clauses", series="D", table="m_d3_clauses", unit="share", fmt=".1%", sources=["woodcroft"], prior=[],
        rel="ocr",
        ko=dict(name="지대·단서 조항", definition="1617–1759년 Woodcroft 항목 요약에 왕실에 바치는 지대(rent)나 단서·무효 조항(proviso, void)이 언급된 비율.",

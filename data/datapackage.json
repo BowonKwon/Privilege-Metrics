@@ -1,7 +1,7 @@
 {
  "name": "privilege-metrics",
  "title": "From Privilege to Patent",
- "version": "1.0",
+ "version": "1.0.1",
  "created": "2026-11-03",
  "licenses": [
   {
@@ -36,6 +36,13 @@
   },
   {
    "path": "sro/sro_entries.csv.gz",
+   "license": "CC BY-SA 4.0",
+   "source": "Giles Bergel & Ian Gadd (eds.), *Stationers' Register Online*, CREATe, University of Glasgow. TEI of the register volumes corrected against the manuscripts, GitHub `gbergel/SRO_data` (`reg_A`–`reg_D-updated.xml`, commit 562db00, 2019-08-27). The project website states a 'CC-BY-SA licence'; the TEI header states 'Creative Commons Attribution' (CC BY 4.0). This site distributes its entry table under the stricter CC BY-SA 4.0.",
+   "source_license": "CC BY-SA 4.0 (entry table)",
+   "source_url": "https://stationersregister.online"
+  },
+  {
+   "path": "sro/sro_site_decade_counts.csv",
    "license": "CC BY-SA 4.0",
    "source": "Giles Bergel & Ian Gadd (eds.), *Stationers' Register Online*, CREATe, University of Glasgow. TEI of the register volumes corrected against the manuscripts, GitHub `gbergel/SRO_data` (`reg_A`–`reg_D-updated.xml`, commit 562db00, 2019-08-27). The project website states a 'CC-BY-SA licence'; the TEI header states 'Creative Commons Attribution' (CC BY 4.0). This site distributes its entry table under the stricter CC BY-SA 4.0.",
    "source_license": "CC BY-SA 4.0 (entry table)",

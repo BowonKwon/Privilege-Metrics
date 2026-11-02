@@ -21,6 +21,17 @@ REL = ROOT / "data" / "coding" / "reliability"
 OUT = ROOT / "data" / "derived" / "reliability.json"
 
 
+
+def refresh(key: pd.DataFrame, cols: list) -> pd.DataFrame:
+    """The sampled entry numbers stay fixed; the values compared are the current extraction (the key files keep the values
+    at sampling time, and re-measuring after a correction must compare the corrected values)."""
+    W = pd.read_csv(ROOT / "data" / "derived" / "woodcroft_entries.csv", dtype=str).set_index("number")
+    key = key.copy()
+    for c in cols:
+        if c in key.columns:
+            key[c] = key["number"].map(W[c])
+    return key
+
 def wilson(k, n):
     if n == 0:
         return math.nan, math.nan
@@ -95,7 +106,7 @@ def main():
     if all(x.exists() for x in parts):
         c = pd.concat([pd.read_csv(x, dtype=str) for x in parts])
         c.to_csv(REL / "r1_image_coder.csv", index=False)
-        k = pd.read_csv(REL / "r1_key.csv", dtype=str)
+        k = refresh(pd.read_csv(REL / "r1_key.csv", dtype=str), ["date", "year", "margin_names", "n_grantees", "communication", "term_years", "kind"])
         m = k.merge(c, on="number", suffixes=("_ours", "_img"))
         r_year = agree(m["year"].map(num).tolist(), m["date_img"].str[:4].map(num).tolist())
         r_date = agree(m["date_ours"].fillna("").tolist(), m["date_img"].fillna("").tolist())
@@ -122,7 +133,7 @@ def main():
     p = REL / "r2b_text_coder.csv"
     if p.exists():
         c = pd.read_csv(p, dtype=str)
-        k = pd.read_csv(REL / "r2b_key.csv", dtype=str)
+        k = refresh(pd.read_csv(REL / "r2b_key.csv", dtype=str), ["field", "foreign_address", "communication", "term_years"])
         m = k.merge(c, on="number", suffixes=("_ours", "_text"))
         r_f = agree(m["field_ours"].tolist(), m["field_text"].tolist())
         kap = kappa(m["field_ours"].tolist(), m["field_text"].tolist())

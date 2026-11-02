@@ -1,0 +1,213 @@
+number,field,foreign_address,communication,term_years,note
+8928,instruments,false,false,,measuring fluids (meter)
+7854,water,false,false,,heating fluids/engines; also raising and forcing fluids -> earlier field; alt steam_power
+12717,medicine,false,false,,artificial teeth
+1799,building,false,false,14,sash frames doors
+10639,fuel_light,false,false,,stoves
+5488,food_drink,false,false,,sugar refining
+592,medicine,false,false,14,
+3784,arms,false,false,14,
+13222,agriculture,false,false,,
+11226,other,false,true,,corks and bungs
+8620,metals,false,false,,spring hinges; alt building
+3771,food_drink,false,false,14,sugar pans and furnaces; alt metals
+757,medicine,false,false,14,
+13839,glass_ceramics,false,false,,bricks
+1486,agriculture,false,false,14,threshing mill; alt mills
+4464,printing_paper,false,false,,
+7002,steam_power,false,false,,power engines
+6567,instruments,false,false,,weighing machines
+2591,instruments,false,false,14,
+12310,metals,false,true,,
+3038,textiles,false,false,14,tanning leather
+6065,printing_paper,false,false,,
+3586,instruments,false,false,14,
+5590,transport,false,false,,ships dry rot
+255,mills,false,false,14,saw mills; colonies are place of use not residence
+8813,steam_power,false,false,,
+9547,transport,false,false,,wheel tyres; alt metals
+7722,other,false,false,,buttons
+4418,medicine,false,false,,
+6495,steam_power,false,false,,
+13248,textiles,false,false,,
+4355,water,false,false,,fire engines pumps
+7777,fuel_light,false,false,,chimneys; alt building
+13282,textiles,true,false,,Connecticut
+8388,instruments,false,false,,
+1447,steam_power,false,false,14,steam engine for brewing; alt food_drink
+13566,mills,true,true,,Paris and London
+5009,building,false,false,,fire escapes
+1467,fuel_light,false,false,14,candlesticks
+8760,agriculture,false,false,,
+2097,water,false,false,14,pump; Bute Scotland
+6864,metals,false,false,,
+2756,fuel_light,false,false,14,
+12414,transport,false,false,,ventilating ships vehicles houses; alt building
+1720,water,false,false,14,rotative engine for raising fluids; alt steam_power
+5455,water,false,false,,wheels impelled by water/wind; Dublin
+9450,glass_ceramics,false,false,,
+8434,printing_paper,false,false,,
+3942,arms,false,false,14,
+7739,building,false,false,,
+4601,chemicals,false,false,,lamp black pigment; alt printing_paper
+3872,building,false,false,14,mastic cement; alt chemicals
+12415,other,false,false,,capsules
+9224,metals,false,true,,locks
+1065,transport,false,false,14,"ornamenting carriages, buildings, books etc; alt printing_paper/other"
+13240,other,false,false,,cigars
+13985,metals,true,false,,locks; New York
+2509,other,false,false,14,pattens/clogs
+2159,textiles,false,false,14,tanning hides
+3896,printing_paper,false,false,14,copying writings; Edinburgh
+8679,chemicals,false,false,,"evaporation (generic process); OCR merges next entry (Mannoury of Paris, communication) - coded own grant only"
+12566,transport,true,false,,"pipes, pavement curbs, tram roads; Paris; alt building"
+5379,arms,false,false,,ordnance; Dublin
+12385,medicine,false,true,,
+111,mills,false,false,14,xiiij yeares
+5439,arms,false,false,,powder flasks
+442,medicine,false,false,,no term stated
+11997,fuel_light,true,false,,heat and coke; of Epieds France now residing London
+11957,food_drink,false,false,,soda water
+4678,metals,false,false,,colouring steel surfaces
+5248,textiles,false,false,,hats; alt other
+3082,agriculture,false,false,14,threshing
+12915,steam_power,false,false,,
+5128,steam_power,false,false,,air engines
+6450,printing_paper,false,false,,
+11128,textiles,true,false,,Boston Mass.
+988,metals,false,false,14,iron from ore; alt mining
+978,building,false,false,14,scagliola inlay; alt other
+10445,water,false,false,,oscillating engines also for raising fluids; alt steam_power
+4978,fuel_light,false,false,,gas apparatus
+4167,other,false,false,,rollers material
+13139,steam_power,false,true,,motive power
+4251,water,false,false,,chain pump
+2208,other,false,false,14,furniture for rooms or carriages; alt transport
+7336,food_drink,false,false,,wines spirits evaporation
+10405,transport,false,false,,axletrees
+1973,agriculture,false,false,14,chaff cutting
+5175,arms,false,false,,
+12389,metals,false,false,,smelting copper ore; alt mining
+5079,textiles,false,false,,
+6499,textiles,false,false,,
+1288,textiles,false,false,14,
+3195,metals,false,false,14,
+13958,fuel_light,true,false,,lamps; Paris
+2106,transport,false,false,14,vessel; Scotland
+10983,building,false,false,,bridges viaducts
+9154,metals,false,false,,Swansea
+1155,chemicals,false,false,14,salt; also manure
+629,food_drink,false,false,14,spirit like brandy
+6168,textiles,false,false,,Greenock
+1571,instruments,false,false,14,
+8517,agriculture,false,false,,
+10206,medicine,false,false,,baths; alt building
+1115,water,false,false,14,pumps fire engines
+2730,steam_power,false,false,14,rotatory motion
+2153,fuel_light,false,false,14,chandelier mounts; alt glass_ceramics
+2855,steam_power,true,false,14,New York now London
+547,mining,false,false,14,water engine also raising water/ore from mines; alt water
+11346,agriculture,false,false,,reaper
+6331,mills,false,false,,windmills for grinding corn; trailing OCR of next entry ignored
+4707,instruments,false,false,,watches
+8715,printing_paper,false,false,,
+6474,chemicals,false,false,,furniture polish
+11200,building,false,false,,doors windows fastenings
+13284,agriculture,false,true,,seed potatoes
+5054,fuel_light,false,false,,gas meter; alt instruments (earlier field chosen)
+2866,food_drink,false,false,14,sugar refining
+1491,instruments,false,false,14,guitar
+6666,steam_power,false,false,,
+3368,mills,false,false,14,grinding malt and grain
+219,water,false,false,14,raising water from wells pits mines; alt mining
+2808,agriculture,false,false,14,threshing
+7648,water,false,false,,raising water from mines; alt mining
+11590,medicine,false,false,,truss
+13614,steam_power,false,true,,
+7320,water,false,false,,lamps; also applicable to raising liquids; alt fuel_light
+9630,textiles,false,false,,leather gloves
+2240,other,true,false,14,tobacco and snuff; late of Boston North America
+6309,printing_paper,false,false,,"preserving paper, canvas, cloth, cordage; alt textiles"
+13011,fuel_light,false,false,,candles
+9533,food_drink,false,false,,sugar machinery; Glasgow
+1347,arms,false,false,14,small shot
+416,chemicals,false,false,14,salt; Edinburgh
+8713,transport,false,false,,railway safety
+6973,other,false,true,,feathers and down
+9767,food_drink,false,false,,kilns for hops and malt; alt agriculture
+3971,agriculture,false,false,14,plough
+5774,textiles,false,false,,fulling materials
+6053,arms,false,false,,
+97,arms,false,false,14,sword blades
+8122,food_drink,false,true,,cooking stoves; alt fuel_light
+8823,other,false,false,,castors
+9557,mills,false,true,,millstones
+5568,food_drink,false,false,,pepper
+10443,transport,true,true,,atmospheric railways; co-grantee of Milan
+2941,fuel_light,false,false,14,coal gas; alt chemicals
+13546,transport,false,false,,
+6072,glass_ceramics,false,false,,glass with metal
+13638,transport,false,false,,buildings incl. floating vessels; alt building
+1363,mining,true,false,14,separating gold/silver from earth; citizen of Geneva; alt metals
+11253,fuel_light,false,false,,gas pendants lamps
+11760,steam_power,false,false,,locomotive engines; alt transport
+8280,transport,false,false,,
+3027,textiles,false,true,14,spinning; communication from foreigner abroad
+2486,textiles,false,false,14,tan pits
+2243,water,false,false,14,steam engine raising water; alt steam_power
+532,mining,false,false,14,extracting silver from mundic; alt metals
+10297,other,false,false,,pencils; alt printing_paper
+434,arms,false,false,14,"many items, chiefly arms"
+7292,textiles,false,false,,dyeing
+11733,steam_power,false,false,,railway engines and carriages; alt transport
+8688,fuel_light,false,false,,furnaces
+10293,chemicals,false,false,,noxious vapours from chemical works
+4047,agriculture,false,false,,hay machines
+13885,water,false,false,,hydraulic syphon
+5866,glass_ceramics,false,false,,bricks
+479,water,false,false,14,fire engine and water raising; also corn mill bush
+1116,medicine,false,false,14,
+6927,printing_paper,false,false,,embossing/printing on fabrics or paper; alt textiles
+889,mills,false,false,14,
+2598,water,false,false,14,purifying water; alt chemicals
+8083,agriculture,false,false,,harrows
+7637,instruments,false,false,,weighing machines
+2227,water,false,false,14,pump
+12567,instruments,false,false,,electric clocks telegraphs
+12999,water,false,false,,water meter; alt instruments
+5481,agriculture,false,false,,ploughs
+8398,chemicals,false,false,,sulphur from pyrites
+8230,building,false,false,,fibrous compositions for covering buildings; alt textiles
+7734,fuel_light,false,false,,gas transmission; Edinburgh
+1070,water,false,false,14,tidal water mill; alt mills
+2802,textiles,false,false,14,silk throwing
+1981,transport,false,false,14,canal construction machinery; alt building
+4927,fuel_light,false,false,,producing light
+13763,glass_ceramics,false,false,,
+2141,agriculture,false,false,14,threshing
+4727,arms,false,false,,
+2790,agriculture,false,false,14,threshing
+9530,other,false,false,,fire extinguishing apparatus (means unspecified)
+13458,glass_ceramics,false,false,,
+11297,agriculture,false,false,,tilling
+4974,steam_power,true,true,,New York now London
+3083,other,false,false,14,toast tray; alt metals
+8575,mining,false,true,,silver from ores; alt metals
+14330,steam_power,false,false,,artificial light and motive power; alt fuel_light
+11488,glass_ceramics,false,false,,pottery
+11643,textiles,false,false,,printing warps; Kilmarnock
+9445,other,false,true,,bottle stoppers
+10530,chemicals,false,true,,soda; Glasgow
+4885,mills,false,false,,
+11213,medicine,false,true,,
+1418,glass_ceramics,false,false,14,
+13075,fuel_light,false,true,,warming and ventilating buildings; alt building
+5360,other,false,false,,clogs pattens
+10060,textiles,false,false,,
+4478,medicine,false,false,,trusses
+8021,metals,false,false,,
+9352,transport,false,false,,axletrees
+24,glass_ceramics,false,false,15,
+6199,building,false,false,,flooring boards; Glasgow
+6054,transport,true,true,,spring carriages; US citizen now London
+1485,steam_power,false,false,14,furnaces applicable to steam engines and smelting; alt fuel_light/metals

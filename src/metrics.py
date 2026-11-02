@@ -75,8 +75,12 @@ def buning_tables(B):
     P["privilege"] = P["Nature of contact"] == 3
     I = B["Inventors"].rename(columns=lambda c: c.strip())
     I["doc"] = pd.to_numeric(I["Unique number document"], errors="coerce")
-    I["foreign"] = pd.to_numeric(I["Foreigner"], errors="coerce").fillna(0) > 0
-    per_doc = I.groupby("doc").agg(n_patentees=("doc", "size"), any_foreign=("foreign", "max"))
+    # Buning's 'Foreigner' codes: 1-6 a named foreign origin, 7 probably of foreign extraction, 8 certainly Dutch,
+    # 9 probably Dutch, 0 not applicable (Codes sheet, row 33)
+    fc = pd.to_numeric(I["Foreigner"], errors="coerce").fillna(0)
+    I["foreign"] = fc.between(1, 6)
+    I["foreign_probable"] = fc.between(1, 7)
+    per_doc = I.groupby("doc").agg(n_patentees=("doc", "size"), any_foreign=("foreign", "max"), any_foreign_probable=("foreign_probable", "max"))
     V = B["Inventions"].rename(columns=lambda c: c.strip())
     V["doc"] = pd.to_numeric(V["Unique number document"], errors="coerce")
     V["gets"] = pd.to_numeric(V["Gets"], errors="coerce")
@@ -196,8 +200,11 @@ def main():
     out["m_c1_hulme"] = hulme_tab.join(ours, on="period")
     nlp = NL[NL["privilege"]]
     c1nl = nlp.assign(period=pd.cut(nlp["year"], [1580, 1590, 1600, 1610, 1621], labels=["1581-1590", "1591-1600", "1601-1610", "1611-1621"])).groupby("period", observed=False).agg(
-        n=("doc", "size"), foreign=("any_foreign", lambda s: int(s.fillna(False).astype(bool).sum())), co=("n_patentees", lambda s: int((s >= 2).sum()))).reset_index()
+        n=("doc", "size"), foreign=("any_foreign", lambda s: int(s.fillna(False).astype(bool).sum())),
+        foreign_incl_probable=("any_foreign_probable", lambda s: int(s.fillna(False).astype(bool).sum())),
+        co=("n_patentees", lambda s: int((s >= 2).sum()))).reset_index()
     c1nl["foreign_share"] = c1nl["foreign"] / c1nl["n"]
+    c1nl["foreign_incl_probable_share"] = c1nl["foreign_incl_probable"] / c1nl["n"]
     c1nl["co_share"] = c1nl["co"] / c1nl["n"]
     out["m_c1_foreign_nl"] = c1nl
 
@@ -223,8 +230,9 @@ def main():
         d1.append({"source": "VE Fulin 1469-1526 (printing)", "n_stated": int(len(s)), "median": float(s.median()), "p25": float(s.quantile(.25)), "p75": float(s.quantile(.75)),
                    "min": float(s.min()), "max": float(s.max()), "values": json.dumps({int(k): int(v) for k, v in s.value_counts().sort_index().items()})})
     out["m_d1_terms"] = pd.DataFrame(d1)
-    d2 = wy[wy["year"].between(1617, 1660)].groupby("year").agg(n=("number", "size"), stated=("term_years", lambda s: int(s.notna().sum())),
-                                                                 le14=("term_years", lambda s: int((s <= 14).sum())), eq21=("term_years", lambda s: int((s == 21).sum()))).reset_index()
+    d2 = wy[wy["year"].between(1617, 1700)].groupby("year").agg(n=("number", "size"), stated=("term_years", lambda s: int(s.notna().sum())),
+                                                                 le14=("term_years", lambda s: int((s <= 14).sum())), eq21=("term_years", lambda s: int((s == 21).sum())),
+                                                                 other_term=("term_other", lambda s: int(s.notna().sum()))).reset_index()
     out["m_d2_term_shift"] = d2
     d3 = wy[wy["parsed"] & wy["year"].between(1617, 1759)].assign(decade=lambda x: x["year"] // 10 * 10).groupby("decade").agg(
         n=("number", "size"), rent=("rent_clause", "sum"), proviso=("proviso_clause", "sum")).reset_index()
