@@ -219,7 +219,7 @@ metric(id="v1_venice_printing", series="P", table="m_v1_fulin_annual", unit="pri
        rel="sampled",
        ko=dict(name="베네치아 출판 특권", definition="Fulin이 모은 1469–1526년 문서 가운데 출판 특권(배타적 인쇄·판매·활자 사용 허가)을 내준 문서의 연도별 수와 수혜자 유형.",
                formula="연도별 특권 문서 수, 저자·인쇄업자 구분", reading="5년 구간으로 1495–1499년이 가장 많고 1510–1514년이 가장 적다. 1515년 뒤로 다시 늘어난다.",
-               caveat="Fulin은 남은 문서만 모았다. 그 스스로 모든 특권의 기록이 남은 것은 아니라고 적었다."),
+               caveat="Fulin은 지금까지 전하는 문서만 모았다. 그 스스로 모든 특권의 기록이 전하지는 않는다고 적었다."),
        en=dict(name="Venetian printing privileges", definition="Documents in Fulin's collection (1469–1526) that grant a printing privilege (an exclusive right to print, sell or use a type), per year and by type of beneficiary.",
                formula="privilege documents per year, split author / printer", reading="By five-year period the most are in 1495–1499 and the fewest in 1510–1514; numbers rise again after 1515.",
                caveat="Fulin collected the documents that survive; he notes that not every privilege granted left a record."))
