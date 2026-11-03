@@ -5,34 +5,31 @@ from pathlib import Path
 
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parent.parent
-DER = ROOT / "data" / "derived"
+from paths import COD, DER, find, need
 
 
 def _rel():
-    p = DER / "reliability.json"
-    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+    return json.loads(need(DER / "reliability.json").read_text(encoding="utf-8"))
 
 
 def build():
     R = _rel().get("_summary", {})
-    W = pd.read_csv(DER / "woodcroft_entries.csv")
-    log = json.loads((DER / "woodcroft_parse_log.json").read_text(encoding="utf-8"))
-    miss = len(log["missing_numbers"])
+    W = pd.read_csv(find(DER, "woodcroft_entries.csv"))
+    miss = int((~W["parsed"].astype(bool)).sum())     # numbers with no text (the parse log lists the same numbers)
     ds = W["date_source"].value_counts()
     margin = int(ds.get("margin", 0))
     ocr = int(ds.get("margin_ocr", 0) + ds.get("margin_year", 0))
     page = int(ds.get("page_image", 0))
     neigh = int(ds.get("neighbours", 0) + ds.get("margin_rejected+neighbours", 0))
     multi = int(W[W["year"].between(1617, 1700)]["term_other"].notna().sum())
-    Fc = pd.read_csv(ROOT / "data" / "coding" / "fulin_coding.csv", dtype=str)
+    Fc = pd.read_csv(need(COD / "fulin_coding.csv"), dtype=str)
     unstated = int(((Fc["kind"] == "privilege") & Fc["note"].fillna("").str.contains(
         "not stated explicitly|outcome not stated|grant not stated|grant implied|not stated in act", case=False, regex=True)).sum())
     g = lambda k, d="—": R.get(k, d)
     wy = W[W["year"].notna()]
     c6099 = int(wy["year"].between(1660, 1799).sum())          # all numbered entries, as in the published comparisons
     c0050 = int(wy["year"].between(1700, 1850).sum())
-    F = pd.read_csv(ROOT / "data" / "coding" / "fulin_coding.csv", dtype=str)
+    F = pd.read_csv(need(COD / "fulin_coding.csv"), dtype=str)
     fy = pd.to_numeric(F["date"].str[:4], errors="coerce")
     f9226 = int(((F["kind"] == "privilege") & fy.between(1492, 1526)).sum())
     METHOD = {
@@ -42,7 +39,7 @@ def build():
                 f"런던 출판업조합 등록부는 Stationers' Register Online의 TEI 원자료(1557–1640, 10,453항목)를 그대로 읽었다. 베네치아 출판 특권은 Fulin(1882)이 모은 문서 256건을 문서마다 읽어 코딩했다. 특권으로 코딩한 것 가운데 {unstated}건은 Fulin의 요약에 청원만 있고 허여가 적혀 있지 않다. 제재 조항이나 Fulin 주석의 「con privilegio」 판본을 근거로 특권으로 셌으며, 코딩 표의 note 열에 그렇게 적었다. 네덜란드는 Buning·Looijesteijn이 공개한 자료를 다시 셌다.",
                 "베네치아 발명 특허는 이 사이트가 세지 않았다. 이 사이트가 확인한 건별 원천은 Berveglieri(2020)의 레게스토(종이책)이고, 그보다 앞서 Mandich(1936·1948)가 1474–1550년 109건을 옮기고 분류했다(Comino 등 2017). 문헌 수치는 「2차 인용」으로 표시해 따로 둔다."]),
             ("Woodcroft 목록을 읽은 방법", [
-                f"Internet Archive의 OCR 단어 좌표에서 여백 단(수혜자 성·날인일)과 본문 단(번호·요약)을 갈랐다. 번호는 1부터 14,359까지 늘어나야 하므로, 번호처럼 보이는 줄 가운데 가장 긴 증가 사슬을 고르고 그 틈에 낀 후보는 차례로 다시 번호를 매겼다. OCR이 번호를 잃은 115쪽은 같은 쪽 이미지를 tesseract 5로 다시 읽었다. 그래도 본문을 찾지 못한 번호는 {miss}개다. 이 번호들은 연도별 수에는 넣고(앞뒤 항목의 연도), 본문이 필요한 지표에서는 뺐다.",
+                f"Internet Archive의 OCR 단어 좌표에서 여백 단(수혜자 성·날인일)과 본문 단(번호·요약)을 갈랐다. 번호는 1부터 14,359까지 늘어나야 하므로, 번호처럼 보이는 줄 가운데 가장 긴 증가 사슬을 고르고 그 틈에 낀 후보는 차례로 다시 번호를 매겼다. OCR이 번호를 잃은 115쪽은 같은 쪽 이미지를 tesseract 5로 다시 읽었다. 그래도 본문을 찾지 못한 번호는 {miss}개다. 이 번호들은 연도별 수에는 넣고(앞뒤 항목의 연도), 본문이 필요한 지표에서는 뺐다. 연장 항목 비율만은 이 번호들을 연장이 아닌 항목으로 분모에 남기므로 하한이다.",
                 f"날짜는 여백의 날인일이다. {margin:,}항목은 여백 날짜를 그대로 썼다. OCR이 망가뜨린 여백 날짜({ocr}항목)는 연도가 앞뒤의 깨끗한 날짜 사이에 들 때만 썼고, 일(日)은 숫자가 깨끗할 때만 남겼다. OCR이 여백 날짜를 아예 잃은 {page}항목은 쪽 이미지에서 읽어 data/coding/woodcroft_date_overrides.csv에 적었다. 나머지는 앞뒤 항목의 연도가 같을 때 그 연도를 썼다({neigh:,}항목).",
                 "앞뒤 항목의 연도가 서로 같은데 혼자 다른 해는 OCR 오독으로 보고 버렸다. 7046·7049번은 Woodcroft 지면에도 1836년 3월 항목들 사이에 「29th March 1835」로 인쇄되어 있어 인쇄 오식으로 보고 1836년으로 셌다.",
                 "여백에서 숫자가 든 줄은 날짜이지 수혜자 성이 아니다. 수혜자 수(공동 수혜)는 숫자 없는 여백 줄만 센다. 해외 주소는 수혜자 설명에 브리튼 제도 밖 지명이 있을 때로 보되, 「Hanover Square」 같은 런던 거리 이름과 외국 학회 회원 자격은 주소로 보지 않는다.",
@@ -64,7 +61,8 @@ def build():
                 "인과 추정은 하지 않는다. 1474·1624·1710년 같은 연도는 전후 비교의 기준일 뿐이다. 「법이 특허를 늘렸다」 같은 문장을 쓰지 않는다.",
                 "베네치아 발명 특허의 건별 계수, 프랑스 왕실 특권, 1640년 이후의 출판업조합 등록, 미국 연방 특허(1790–)는 다음 판 후보다."]),
             ("판", ["1.0 (2026-11-03) 첫 공개.",
-                   "1.0.1 (2026-11-03) 독립 검증 반영. 네덜란드 외국 출신 코드(8·9는 네덜란드인)를 바로잡았다. Woodcroft 17세기 기간 읽기(옛 철자·로마 숫자)와 여백 날짜 읽기를 고쳐 연도 공란을 없앴다. 여백 날짜 줄을 수혜자로 세던 오류와 런던 거리 이름을 해외 주소로 보던 오류를 고쳤다. 「마지막 21년 기간」 서술을 1617–1700년 표로 바꾸었다. 신뢰도 카드는 고친 값으로 다시 쟀다."]),
+                   "1.0.1 (2026-11-03) 독립 검증 반영. 네덜란드 외국 출신 코드(8·9는 네덜란드인)를 바로잡았다. Woodcroft 17세기 기간 읽기(옛 철자·로마 숫자)와 여백 날짜 읽기를 고쳐 연도 공란을 없앴다. 여백 날짜 줄을 수혜자로 세던 오류와 런던 거리 이름을 해외 주소로 보던 오류를 고쳤다. 「마지막 21년 기간」 서술을 1617–1700년 표로 바꾸었다. 신뢰도 카드는 고친 값으로 다시 쟀다.",
+                   "1.0.2 (2026-11-04) 본문의 서술 네 곳을 자료에 맞게 고쳤다. 연장 항목 비율의 분모(본문을 잃은 번호는 36개이고 분모에 남는다), 엘리자베스 시대 존속기간의 범위(6–30년), 18세기 이후 공동 허여 비율의 범위(3.6–17.1%), 기간 열 이름이다. 언어 전환 링크가 같은 면으로 가고, 표 머리글과 그래프 이름을 두 언어로 적었다. 비율은 백분율로 보이고 긴 값은 좁은 화면에서 줄을 바꾼다. 공개 저장소만으로 다시 만드는 절차를 고쳤다. 지표 값은 바뀌지 않았다."]),
         ],
         "en": [
             ("What was counted", [
@@ -72,14 +70,14 @@ def build():
                 f"The Stationers' Register is read straight from the Stationers' Register Online TEI (1557–1640, 10,453 entries). Venetian printing privileges are Fulin's 256 documents (1882), read and coded one by one. For {unstated} of those coded as privileges, Fulin's summary records the petition but not the grant; they were counted on the strength of the penalty clause or of editions 'con privilegio' cited in Fulin's notes, and the note column says so. The Dutch figures are a recount of the data published by Buning and Looijesteijn.",
                 "Venetian invention patents were not counted here. The record-level source checked here is Berveglieri's printed calendar (2020); earlier, Mandich (1936, 1948) transcribed and classified 109 grants of 1474–1550 (Comino et al. 2017). Figures from the literature are marked 'secondary' and kept apart."]),
             ("Reading Woodcroft's list", [
-                f"The word coordinates of the Internet Archive OCR were used to separate the margin column (surnames, sealing dates) from the text column (numbers and abstracts). Because numbers must run from 1 to 14,359, the longest rising chain of number-like lines was kept and candidates caught in its gaps were renumbered in order. 115 pages on which the OCR lost entry numbers were read again from the page images with tesseract 5. {miss} numbers still have no text: they are counted in the yearly totals (with their neighbours' year) and left out of metrics that need the text.",
-                f"Dates are the sealing dates printed in the margin. For {margin:,} entries the margin date is used as read. Margin dates damaged by the OCR ({ocr} entries) are used only when their year falls between the clean dates before and after, and the day is kept only when its digits are clean. For {page} entries whose margin date the OCR lost altogether, the date was read on the page image (data/coding/woodcroft_date_overrides.csv). Otherwise the neighbours' year was used when both neighbours agreed ({neigh:,} entries).",
-                "A year that differs from both neighbours while they agree with each other is treated as an OCR misreading. Nos. 7046 and 7049 are printed '29th March 1835' in Woodcroft itself among entries of March 1836; they are taken as misprints and counted in 1836.",
+                f"The word coordinates of the Internet Archive OCR were used to separate the margin column (surnames, sealing dates) from the text column (numbers and abstracts). Because numbers must run from 1 to 14,359, the longest rising chain of number-like lines was kept and candidates caught in its gaps were renumbered in order. 115 pages on which the OCR lost entry numbers were read again from the page images with tesseract 5. {miss} numbers still have no text: they are counted in the yearly totals (with their neighbors' year) and left out of metrics that need the text, except the share of extension entries, which keeps them in the denominator as entries that are not extensions and is therefore a lower bound.",
+                f"Dates are the sealing dates printed in the margin. For {margin:,} entries the margin date is used as read. Margin dates damaged by the OCR ({ocr} entries) are used only when their year falls between the clean dates before and after, and the day is kept only when its digits are clean. For {page} entries whose margin date the OCR lost altogether, the date was read on the page image (data/coding/woodcroft_date_overrides.csv). Otherwise the neighbors' year was used when both neighbors agreed ({neigh:,} entries).",
+                "A year that differs from both neighbors while they agree with each other is treated as an OCR misreading. Nos. 7046 and 7049 are printed '29th March 1835' in Woodcroft itself among entries of March 1836; they are taken as misprints and counted in 1836.",
                 "A margin line containing digits is a date, not a grantee's surname: the number of grantees (shared grants) counts only margin lines without digits. An address abroad is a place outside the British Isles in the grantee's description; London street names such as 'Hanover Square' and memberships of foreign societies do not count.",
                 f"The term is the first term stated in the abstract, read in early-modern spellings (fourteene, one and twentie), Roman numerals (xiiij, xxjtie) and OCR-damaged forms (xilij). Where an entry states further terms (mines, Ireland, a later revenue), they are kept in the column term_other ({multi} entries in 1617–1700). For nos. 1–126 (1617–1640) the first term agrees in every case with an independent reading of the page images. From about 1820 the abstracts stop stating the term, so later terms are left blank; the statutory 14 years was not assumed.",
                 "Rents, provisos and foreign links are judged from the words of the abstract. The rent metric is the share of entries with rent wording, not a legal finding that rent was owed."]),
             ("Field classification", [
-                "There are 17 fields. Word rules are applied to the title of the invention in a fixed order and the first match is taken. Entries before 1700 do not set the title off in quotation marks, so the whole abstract is used, after early-modern spellings are normalised.",
+                "There are 17 fields. Word rules are applied to the title of the invention in a fixed order and the first match is taken. Entries before 1700 do not set the title off in quotation marks, so the whole abstract is used, after early-modern spellings are normalized.",
                 "The rules were fixed before any results were seen but were revised three times before publication. r2 removed the bare word 'instrument' (any device, in 17th-century usage) from the instruments field; r3 added the spelling table and widened the text used for entries before 1700. These two followed an implausible first result.",
                 f"Checked against an independent coder's recoding of 212 entries from the text (R2), the r3 rules agreed on {g('r2_dictr3_field')} and on only 2 of 11 mining entries: 'tan pits', 'pit coal' and 'smelting copper ore' had gone to mining and gas lighting to chemicals. After the r4 fix, precision was measured again on a fresh sample of 212 entries drawn with another seed (R2b), not on the sample that prompted the fix. The field figures on the reliability cards are from R2b. The revisions are recorded at the head of src/fields.py."]),
             ("Reliability cards", [
@@ -94,7 +92,8 @@ def build():
                 "It makes no causal estimates. Years such as 1474, 1624 and 1710 are reference points for before-and-after comparison only; the site does not say that a law increased patenting.",
                 "Record-level counts of Venetian invention patents, French royal privileges, the Stationers' Register after 1640 and United States federal patents (from 1790) are candidates for later versions."]),
             ("Versions", ["1.0 (2026-11-03) first release.",
-                        "1.0.1 (2026-11-03) corrections after independent verification. The Dutch foreign-origin codes are read correctly (8 and 9 mark Dutch grantees). Woodcroft's 17th-century terms (old spellings, Roman numerals) and damaged margin dates are read better, leaving no entry without a year. Margin date lines are no longer counted as grantees, and London street names are no longer read as addresses abroad. The 'last 21-year term' statement is replaced by a table for 1617–1700. The reliability cards were measured again on the corrected values."]),
+                        "1.0.1 (2026-11-03) corrections after independent verification. The Dutch foreign-origin codes are read correctly (8 and 9 mark Dutch grantees). Woodcroft's 17th-century terms (old spellings, Roman numerals) and damaged margin dates are read better, leaving no entry without a year. Margin date lines are no longer counted as grantees, and London street names are no longer read as addresses abroad. The 'last 21-year term' statement is replaced by a table for 1617–1700. The reliability cards were measured again on the corrected values.",
+                        "1.0.2 (2026-11-04) Four statements in the text now match the data: the denominator of the extension share (36 numbers lost their text, and they stay in the denominator), the range of Elizabethan terms (6–30 years), the range of the shared-grant share from the 18th century (3.6–17.1%) and the name of the term column. The language switch leads to the same page, and table headers and chart labels are given in each language. Shares are shown as percentages, and long values wrap on narrow screens. The steps to rebuild from the public repository were corrected. No metric values changed."]),
         ],
     }
     READING = {

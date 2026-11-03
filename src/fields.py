@@ -58,7 +58,7 @@ FIELDS = [
      r"\bglass|pottery|earthen|porcelain|\bchina\b|stoneware|\bbricks?\b|\btiles?\b|\bkilns?\b|crucible"),
     ("metals", "metals and metalworking", "금속·금속가공",
      r"\biron\b|\bsteel|copper|\bbrass|\blead\b|\btin\b|\bzinc|smelt|\bmetals?\b|\bnails?\b|\bwire|forg|cast\w* (?:of )?(?:iron|metal)|plating|\bscrews?\b|\bbolts?\b|cutlery|\bknives|rolling (?:of )?metal|puddl|\bsmith"),
-    ("chemicals", "chemicals, salt, soap, oil and dyes stuffs", "화학·소금·비누·기름",
+    ("chemicals", "chemicals, salt, soap, oil and dyestuffs", "화학·소금·비누·기름",
      r"\bsalt\b|saltpetre|nitre|\bsoap|\balum|copperas|sulphur|brimstone|\bacid|alkali|\bsoda\b|\bpotash|\boils?\b|varnish|\bpaint|\bcolou?rs?\b|starch|\bglue|\bresin|\btar\b|turpentine|chemical|bleaching powder|ammonia"),
     ("mills", "mills and grinding", "방아·제분",
      r"\bmills?\b|grind|grinding|\bquerns?\b"),

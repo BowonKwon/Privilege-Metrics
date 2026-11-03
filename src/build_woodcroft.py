@@ -25,8 +25,9 @@ from pathlib import Path
 import pandas as pd
 from lxml import etree
 
-ROOT = Path(__file__).resolve().parent.parent
-RAW = ROOT / "data" / "raw" / "woodcroft"
+from paths import DER, RAW as RAW_ROOT
+
+RAW = RAW_ROOT / "woodcroft"
 
 MONTHS = {"jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6, "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12}
 DATE_RE = re.compile(r"^\s*(\d{1,2})\s*(?:st|nd|rd|th|d|t)?\s*\.?\s*([A-Za-z]{3,9})\.?\s*,?\s*(1[5-8]\d\d)\b")
@@ -258,11 +259,11 @@ def main():
                      "date_margin": dates[0] if dates else "", "n_margin_dates": len(dates),
                      "margin_names": "; ".join(names), "n_margin_names": len(names), "flag": e["flag"], "text": text})
     df = pd.DataFrame(rows)
-    df.to_csv(ROOT / "data" / "derived" / "woodcroft_raw.csv", index=False, encoding="utf-8")
+    df.to_csv(DER / "woodcroft_raw.csv", index=False, encoding="utf-8")
     log["entries"] = len(df)
     log["last_number"] = int(df["number"].max())
     log["missing_numbers"] = sorted(set(range(1, 14360)) - set(df["number"]))
-    (ROOT / "data" / "derived" / "woodcroft_parse_log.json").write_text(json.dumps(log, indent=1), encoding="utf-8")
+    (DER / "woodcroft_parse_log.json").write_text(json.dumps(log, indent=1), encoding="utf-8")
     print("entries", len(df), "last", log["last_number"], "missing", len(log["missing_numbers"]), "gaps", len(log["gaps"]),
           "candidates", log["candidates"], "chain", log["chain"], "renumbered", log["renumbered"])
     print("no date:", int((df["date_margin"] == "").sum()), " >1 date:", int((df["n_margin_dates"] > 1).sum()))

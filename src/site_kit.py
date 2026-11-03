@@ -94,9 +94,10 @@ footer{border-top:1px solid var(--line);color:var(--fg3);font-size:.82rem;paddin
 .card .kv small{display:inline;font:inherit;font-family:var(--body);font-weight:400;font-size:.8rem;color:var(--fg3);margin-left:.4rem;letter-spacing:0}
 h2.num{counter-increment:sec}h2.num::before{content:attr(data-n);font-family:var(--display);font-weight:600;color:var(--accent2);margin-right:.6rem;font-size:.95rem;vertical-align:.12em;font-variant-numeric:tabular-nums}
 .mhero{display:grid;grid-template-columns:1fr auto;gap:1rem 2rem;align-items:end;margin-bottom:.4rem}
-.mhero .big{font-family:var(--display);font-weight:600;font-size:clamp(2rem,4.5vw,3.2rem);line-height:1;letter-spacing:-.025em;font-variant-numeric:tabular-nums;color:var(--accent);text-align:right;white-space:nowrap}
+.mhero .big{font-family:var(--display);font-weight:600;font-size:clamp(2rem,4.5vw,3.2rem);line-height:1;letter-spacing:-.025em;font-variant-numeric:tabular-nums;color:var(--accent);text-align:right;white-space:nowrap;min-width:0}
+.mhero .big.long{font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.15;white-space:normal;overflow-wrap:break-word;max-width:18ch;margin-left:auto}
 .mhero .big small{display:block;font:inherit;font-family:var(--body);font-weight:400;font-size:.82rem;color:var(--fg2);letter-spacing:0;margin-top:.35rem;white-space:normal;max-width:22ch;margin-left:auto}
-@media(max-width:720px){.mhero{grid-template-columns:1fr}.mhero .big{text-align:left}.mhero .big small{margin-left:0}}
+@media(max-width:720px){.mhero{grid-template-columns:1fr}.mhero .big{text-align:left;white-space:normal;overflow-wrap:anywhere}.mhero .big.long{max-width:none;margin-left:0}.mhero .big small{margin-left:0}}
 .ribbon{margin:.8rem 0 1.2rem}.ribbon svg text{font-size:10px}
 .rel .badge{display:inline-block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;padding:.1rem .5rem;border-radius:999px;background:var(--accent2);color:#fff;margin-right:.5rem;vertical-align:.1em}
 .stat .n{color:var(--accent)}
@@ -124,7 +125,11 @@ def esc(s) -> str:
 def fmt(v, spec) -> str:
     if v is None or (isinstance(v, float) and math.isnan(v)) or (isinstance(v, str) and v == ""):
         return ""
+    if hasattr(v, "item"):          # numpy scalar -> Python scalar (repr(np.float64) is not a decimal literal)
+        v = v.item()
     try:
+        if isinstance(v, float) and spec and spec[-1] == "d" and v.is_integer():
+            v = int(v)                  # integer columns read as float because of blank cells
         if isinstance(v, float) and spec and spec[-1] in "%f":
             # 1.2.1: round half-up on the decimal value (format() rounds the binary float: 0.0295 → '2.9%', 0.575 → '0.57')
             from decimal import Decimal, ROUND_HALF_UP
@@ -155,7 +160,7 @@ def nice_ticks(lo: float, hi: float, n: int = 5) -> list[float]:
     return ticks
 
 
-def svg_lines(series, spec, width=900, height=320, ylabel="", xstep=None, bands=None) -> str:
+def svg_lines(series, spec, width=900, height=320, ylabel="", xstep=None, bands=None, lang="en") -> str:
     xs = [p[0] for _, pts, _ in series for p in pts]
     ys = [p[1] for _, pts, _ in series for p in pts if not math.isnan(p[1])]
     if not xs or not ys:
@@ -165,7 +170,7 @@ def svg_lines(series, spec, width=900, height=320, ylabel="", xstep=None, bands=
     pw, ph = width - L - R, height - Tp - B
     X = lambda v: L + (v - x0) / (x1 - x0 or 1) * pw
     Y = lambda v: Tp + ph - (v - y0) / (y1 - y0) * ph
-    out = [f'<svg viewBox="0 0 {width} {height}" role="img" aria-label="line chart">']
+    out = [f'<svg viewBox="0 0 {width} {height}" role="img" aria-label="{"선 그래프" if lang == "ko" else "Line chart"}">']
     if bands:
         for (a, b, label) in bands:
             out.append(f'<rect x="{X(a):.1f}" y="{Tp}" width="{max(X(b)-X(a),1):.1f}" height="{ph}" fill="var(--accent2)" fill-opacity=".10"><title>{esc(label)}</title></rect>')
@@ -193,7 +198,7 @@ def svg_lines(series, spec, width=900, height=320, ylabel="", xstep=None, bands=
     return "".join(out)
 
 
-def svg_bars(items, spec, width=900, row_h=22, label_w=240, xlabel="", errors=None) -> str:
+def svg_bars(items, spec, width=900, row_h=22, label_w=240, xlabel="", errors=None, lang="en") -> str:
     vals = [v for _, v, _ in items if not (isinstance(v, float) and math.isnan(v))]
     if not vals:
         return ""
@@ -204,7 +209,7 @@ def svg_bars(items, spec, width=900, row_h=22, label_w=240, xlabel="", errors=No
     pw = width - label_w - 30
     h = row_h * len(items) + 40
     x = lambda v: label_w + (v - lo) / (hi - lo) * pw
-    out = [f'<svg viewBox="0 0 {width} {h}" role="img" aria-label="bar chart">']
+    out = [f'<svg viewBox="0 0 {width} {h}" role="img" aria-label="{"막대 그래프" if lang == "ko" else "Bar chart"}">']
     for v in nice_ticks(lo, hi):
         out.append(f'<line class="grid" x1="{x(v):.1f}" y1="6" x2="{x(v):.1f}" y2="{h-30}"/><text x="{x(v):.1f}" y="{h-14}" text-anchor="middle">{fmt(v, spec)}</text>')
     if xlabel:
@@ -227,7 +232,46 @@ def legend(entries) -> str:
 
 
 MAX_ROWS = 60
-T = {"ko": {"search": "필터", "nikh_link": "원문"}, "en": {"search": "Filter", "nikh_link": "source"}}
+T = {"ko": {"search": "필터"}, "en": {"search": "Filter"}}
+
+# Column labels for every metric table, Korean and English. The CSV files keep the keys; only the page headers change.
+COLS = {
+    "year": ("연도", "Year"), "decade": ("10년", "Decade"), "period": ("구간", "Period"), "window": ("구간", "Window"), "years": ("햇수", "Years"),
+    "n": ("전체", "Total"), "count": ("건수", "Count"), "share": ("비율", "Share"), "entries": ("항목", "Entries"),
+    "hulme": ("Hulme", "Hulme"), "woodcroft_grants": ("Woodcroft 허여", "Woodcroft grants"), "woodcroft_extensions": ("Woodcroft 연장", "Woodcroft extensions"),
+    "woodcroft_no_text": ("본문 없는 번호", "Numbers without text"), "grants": ("허여", "Grants"), "list": ("목록", "List"),
+    "jurisdiction": ("관할", "Jurisdiction"), "kind": ("종류", "Kind"), "unit": ("단위", "Unit"), "basis": ("근거", "Basis"), "source": ("자료원", "Source"),
+    "coverage": ("범위", "Coverage"), "alt_count": ("다른 계수", "Other count"), "alt_source": ("다른 계수의 자료원", "Source of other count"),
+    "per_year": ("연평균", "Per year"), "ci_low": ("95% 구간 하한", "95% CI low"), "ci_high": ("95% 구간 상한", "95% CI high"),
+    "term_stated": ("기간 적힘", "Terms stated"), "term_median": ("기간 중앙값", "Median term"), "term_21": ("21년", "21 years"), "term_14_or_less": ("14년 이하", "≤14 years"),
+    "extensions": ("연장 항목", "Extensions"), "field": ("분야", "Field"), "field_name": ("분야", "Field"),
+    "classified": ("분류된 허여", "Classified"), "hhi": ("HHI", "HHI"), "top_field": ("가장 큰 분야", "Largest field"), "top_share": ("가장 큰 분야의 몫", "Largest field's share"),
+    "other_share": ("「기타」 비율", "'Other' share"), "sector_berveglieri": ("분야(Berveglieri)", "Sector (Berveglieri)"), "our_field": ("이 사이트 분야", "Field here"),
+    "communication": ("communication", "Communication"), "foreign_address": ("해외 주소", "Address abroad"), "either": ("둘 중 하나", "Either"),
+    "communication_share": ("communication 비율", "Communication share"), "foreign_address_share": ("해외 주소 비율", "Address-abroad share"),
+    "either_share": ("둘 중 하나 비율", "Either share"), "either_ci_low": ("95% 구간 하한", "95% CI low"), "either_ci_high": ("95% 구간 상한", "95% CI high"),
+    "foreign": ("외국", "Foreign"), "foreign_incl_probable": ("외국(추정 포함)", "Foreign incl. probable"), "co": ("공동 허여", "Shared grants"),
+    "foreign_share": ("외국 비율", "Foreign share"), "foreign_incl_probable_share": ("외국(추정 포함) 비율", "Foreign share incl. probable"), "co_share": ("공동 허여 비율", "Shared-grant share"),
+    "hulme_alien": ("Hulme 외국인", "Hulme aliens"), "hulme_native": ("Hulme 내국인", "Hulme natives"), "hulme_trade": ("Hulme 거래 규제", "Hulme trade"),
+    "hulme_total": ("Hulme 합계", "Hulme total"), "explicit": ("명시", "Explicit"), "indirect": ("간접", "Indirect"),
+    "n_stated": ("기간 적힘", "Terms stated"), "median": ("중앙값", "Median"), "p25": ("1사분위", "Lower quartile"), "p75": ("3사분위", "Upper quartile"),
+    "min": ("최소", "Min"), "max": ("최대", "Max"), "values": ("값별 건수", "Counts by value"),
+    "stated": ("기간 적힘", "Terms stated"), "le14": ("14년 이하", "≤14 years"), "eq21": ("21년", "21 years"), "other_term": ("다른 기간 병기", "Further terms"),
+    "rent": ("지대", "Rent"), "proviso": ("단서", "Proviso"), "rent_share": ("지대 비율", "Rent share"), "proviso_share": ("단서 비율", "Proviso share"),
+    "works": ("저작", "Works"), "gap": ("기록 공백", "Gap"), "enterers": ("등록자", "Enterers"), "top5_share": ("상위 5인 몫", "Top-five share"), "top1": ("최다 등록자", "Top enterer"),
+    "shared": ("공동 등록", "Shared"), "reassigned": ("양도", "Reassigned"), "cancelled": ("말소", "Cancelled"), "stock": ("stock 표시", "Stock"),
+    "shared_share": ("공동 등록 비율", "Shared share"), "reassigned_share": ("양도 비율", "Reassigned share"), "cancelled_share": ("말소 비율", "Cancelled share"),
+    "with_fee": ("수수료 적힘", "With fee"), "fee6": ("6펜스 항목", "6d entries"), "median_fee": ("수수료 중앙값(펜스)", "Median fee (d)"),
+    "fee6_share": ("6펜스 비율", "6d share"), "no_fee_stated": ("수수료 없음", "No fee stated"),
+    "privileges": ("특권", "Privileges"), "author": ("저자", "Author"), "printer": ("인쇄업자", "Printer"), "documents": ("문서", "Documents"),
+}
+
+
+def col_label(c: str, lang: str) -> str:
+    """Header for a table column. Unknown keys fail loudly so that no raw key reaches a page."""
+    if c not in COLS:
+        raise KeyError(f"no column label for {c!r}; add it to site_kit.COLS")
+    return COLS[c][0 if lang == "ko" else 1]
 
 
 def table_html(df: pd.DataFrame, cols, tid: str, lang: str, filt=True) -> str:
@@ -249,9 +293,7 @@ def table_html(df: pd.DataFrame, cols, tid: str, lang: str, filt=True) -> str:
         if big:
             if c in wide:
                 style = f' style="width:{int(50/len(wide))}%"'
-            elif c == "nikh_url":
-                style = ' style="width:10%"'
-        out.append(f'<th class="{"num" if spec else ""}"{style}>{esc(cap(hname, lang))}</th>')
+        out.append(f'<th class="{"num" if spec else ""}"{style}>{esc(hname)}</th>')
     out.append("</tr></thead><tbody>")
     for _, r in df.iterrows():
         out.append("<tr>")
@@ -259,8 +301,6 @@ def table_html(df: pd.DataFrame, cols, tid: str, lang: str, filt=True) -> str:
             v = r.get(c)
             if spec:
                 out.append(f'<td class="num" data-v="{"" if pd.isna(v) else v}">{fmt(v, spec)}</td>')
-            elif c == "nikh_url":
-                out.append(f'<td><a href="{esc(v)}">{t["nikh_link"]}</a></td>')
             else:
                 out.append(f"<td>{esc(v)}</td>")
         out.append("</tr>")

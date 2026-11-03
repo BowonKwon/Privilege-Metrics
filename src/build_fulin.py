@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parent.parent
+from paths import DER, RAW
 MONTHS = {"gennaio": 1, "febbraio": 2, "marzo": 3, "aprile": 4, "maggio": 5, "giugno": 6, "luglio": 7, "agosto": 8,
           "settembre": 9, "ottobre": 10, "novembre": 11, "dicembre": 12}
 START = re.compile(r"^\s*(\d(?:\s?\d){0,2})\s*[.,]\s*([0-9OIlG()\s]{3,7}?)\s*[,.]\s*[0-9ÌI]{1,2}\s*[A-Z]")
@@ -38,7 +38,7 @@ def month_of(s: str):
 
 
 def main():
-    text = (ROOT / "data" / "raw" / "fulin" / "av23.djvu.txt").read_text(encoding="utf-8")
+    text = (RAW / "fulin" / "av23.djvu.txt").read_text(encoding="utf-8")
     lines = text.splitlines()
     # the document series begins at no. 1 (1469, 18 Settembre); stop at the first heading after the last document of
     # the first article (pp. 84-212). 'Nuovi documenti' (pp. 390-405) continue the numbering and are included.
@@ -93,9 +93,9 @@ def main():
             df.loc[k, "year_flag"] = "from_neighbours" if lo == hi else "uncertain"
             df.loc[k, "year"] = lo if lo == hi else (lo or hi)
     df["year"] = df["year"].astype(int)
-    df.to_csv(ROOT / "data" / "derived" / "fulin_docs.csv", index=False, encoding="utf-8")
+    df.to_csv(DER / "fulin_docs.csv", index=False, encoding="utf-8")
     missing = sorted(set(range(1, df["number"].max() + 1)) - set(df["number"]))
-    (ROOT / "data" / "derived" / "fulin_parse_log.json").write_text(json.dumps({"jumps": log, "missing": missing}, indent=1), encoding="utf-8")
+    (DER / "fulin_parse_log.json").write_text(json.dumps({"jumps": log, "missing": missing}, indent=1), encoding="utf-8")
     print("docs", len(df), "last", df["number"].max(), "missing", missing, "years", df.year.min(), df.year.max())
     print(df["series"].value_counts().to_string())
 

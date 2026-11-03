@@ -26,23 +26,36 @@ A public data site that counts invention and printing privileges before modern p
 
 ## 재현 · Reproducing
 
+스크립트는 이 저장소의 구조(`data/`, `coding/`, `docs/`)를 알아보고 그대로 읽고 쓴다(`src/paths.py`). 필요한 입력이 없으면 건너뛰지 않고 오류로 멈춘다.
+The scripts detect this repository's layout (`data/`, `coding/`, `docs/`; see `src/paths.py`) and read and write there. A missing required input stops the run with an error; nothing is skipped silently.
+
+**지표·신뢰도 카드·사이트 다시 만들기 · Rebuilding the metrics, reliability cards and site** (from the record tables shipped here)
+
 ```
 pip install -r requirements.txt
-python src/build_woodcroft.py      # needs the Internet Archive OCR files (djvu.xml) in data/raw/woodcroft/
-python src/reocr_pages.py          # page images + tesseract 5 for pages where the OCR lost entry numbers
-python src/enrich_woodcroft.py
-python src/build_sro.py            # needs reg_A..reg_D-updated.xml from gbergel/SRO_data in data/raw/sro/current/
-python src/build_fulin.py          # needs the Archivio Veneto 23 OCR text in data/raw/fulin/
-python src/metrics.py
-python src/reliability.py
-python src/build_site.py
+# Dutch data (CC BY 4.0, not redistributed here): Buning & Looijesteijn, figshare doi:10.6084/m9.figshare.16685788.v1,
+# file 31787171 — save it as data/raw/buning/patents-dutch-republic-1581-1621.xlsx
+python src/metrics.py        # data/woodcroft_entries.csv.gz, data/sro/sro_entries.csv.gz, coding/*.csv, the Buning xlsx -> data/m_*.csv
+python src/reliability.py    # coding/reliability/*.csv -> data/reliability.json
+python src/build_site.py     # -> docs/
 ```
 
-원자료 파일은 이 저장소에 넣지 않았다. 각 스크립트 머리에 원자료의 위치와 식별자를 적었다. The raw files are not in this repository; the head of each script names the source files and identifiers.
+**원자료부터 레코드 표 만들기 · Rebuilding the record tables from the raw sources** (raw files are not in this repository; the head of each script names the files and identifiers)
+
+```
+python src/build_woodcroft.py      # Internet Archive OCR (djvu.xml) in data/raw/woodcroft/ -> data/woodcroft_raw.csv, data/woodcroft_parse_log.json
+python src/reocr_pages.py          # page images + tesseract 5 (--tesseract PATH or TESSERACT) for pages where the OCR lost entry numbers
+python src/build_woodcroft.py      # again, now reading the re-OCR'd pages
+python src/enrich_woodcroft.py     # -> data/woodcroft_entries.csv
+python src/build_sro.py            # reg_A..reg_D-updated.xml from gbergel/SRO_data in data/raw/sro/current/ -> data/sro_entries.csv
+python src/build_fulin.py          # Archivio Veneto 23 OCR text in data/raw/fulin/
+```
+
+then the three steps above. Uncompressed record tables written by these steps are read in preference to the shipped `.gz` copies.
 
 ## 인용 · Citation
 
-From Privilege to Patent, version 1.0.1 (2026), https://bowonkwon.github.io/Privilege-Metrics/
+From Privilege to Patent, version 1.0.2 (2026), https://bowonkwon.github.io/Privilege-Metrics/
 
 ## 라이선스 · License
 

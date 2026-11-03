@@ -3,11 +3,13 @@
 
   python src/reliability.py
 
-R1 image check  data/coding/reliability/r1_image_coder.csv  vs r1_key.csv
-R2 text coding  data/coding/reliability/r2_text_coder.csv   vs r2_key.csv
+R1 image check  data/coding/reliability/r1_image_coder.csv  vs r1_key.csv  (merged from the two coders' _a/_b files when they exist)
+R2 text coding  data/coding/reliability/r2b_text_coder.csv  vs r2b_key.csv (and the r3-dictionary round r2_*_dictr3.csv)
 R3 Fulin        data/coding/reliability/r3_fulin_second_coder.csv vs data/coding/fulin_coding.csv
 H  Hulme        data/coding/reliability/hulme_image_coder.csv vs data/coding/hulme_1561_1603.csv
 Agreement is reported as k/n (share, 95% Wilson interval); field agreement also as Cohen's kappa.
+In the public repository the same files are in coding/reliability/ and the output goes to data/reliability.json (paths.py).
+Every input is required: a missing file stops the run instead of dropping cards.
 """
 import json
 import math
@@ -16,16 +18,16 @@ from pathlib import Path
 
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parent.parent
-REL = ROOT / "data" / "coding" / "reliability"
-OUT = ROOT / "data" / "derived" / "reliability.json"
+from paths import COD, DER, REL, find, need
+
+OUT = DER / "reliability.json"
 
 
 
 def refresh(key: pd.DataFrame, cols: list) -> pd.DataFrame:
     """The sampled entry numbers stay fixed; the values compared are the current extraction (the key files keep the values
     at sampling time, and re-measuring after a correction must compare the corrected values)."""
-    W = pd.read_csv(ROOT / "data" / "derived" / "woodcroft_entries.csv", dtype=str).set_index("number")
+    W = pd.read_csv(find(DER, "woodcroft_entries.csv"), dtype=str).set_index("number")
     key = key.copy()
     for c in cols:
         if c in key.columns:
@@ -87,10 +89,10 @@ def tf(v):
 def main():
     res, S = {}, {}
     # R3 Fulin
-    p = REL / "r3_fulin_second_coder.csv"
-    if p.exists():
+    p = need(REL / "r3_fulin_second_coder.csv")
+    if True:
         b = pd.read_csv(p, dtype=str)
-        a = pd.read_csv(ROOT / "data" / "coding" / "fulin_coding.csv", dtype=str).set_index("number")
+        a = pd.read_csv(need(COD / "fulin_coding.csv"), dtype=str).set_index("number")
         b["number"] = b["number"].astype(str)
         a = a.loc[b["number"]]
         r_kind = agree((a["kind"] == "privilege").tolist(), (b["kind"] == "privilege").tolist())
@@ -103,10 +105,13 @@ def main():
         S["r3_kind"], S["r3_term"], S["r3_btype"] = fmt(r_kind), fmt(r_term), fmt(r_bt)
     # R1 image check
     parts = [REL / "r1_image_coder_a.csv", REL / "r1_image_coder_b.csv"]
-    if all(x.exists() for x in parts):
+    if all(x.exists() for x in parts):        # build layout: the two coders' files, merged here
         c = pd.concat([pd.read_csv(x, dtype=str) for x in parts])
         c.to_csv(REL / "r1_image_coder.csv", index=False)
-        k = refresh(pd.read_csv(REL / "r1_key.csv", dtype=str), ["date", "year", "margin_names", "n_grantees", "communication", "term_years", "kind"])
+    else:                                     # public layout: the merged file only
+        c = pd.read_csv(need(REL / "r1_image_coder.csv"), dtype=str)
+    if True:
+        k = refresh(pd.read_csv(need(REL / "r1_key.csv"), dtype=str), ["date", "year", "margin_names", "n_grantees", "communication", "term_years", "kind"])
         m = k.merge(c, on="number", suffixes=("_ours", "_img"))
         r_year = agree(m["year"].map(num).tolist(), m["date_img"].str[:4].map(num).tolist())
         r_date = agree(m["date_ours"].fillna("").tolist(), m["date_img"].fillna("").tolist())
@@ -122,18 +127,18 @@ def main():
         S["r1_year"], S["r1_date"], S["r1_term"], S["r1_ngrantees"], S["r1_comm"] = fmt(r_year), fmt(r_date), fmt(r_term), fmt(r_ng), fmt(r_cm)
     # R2 text coding
     # R2 on the r3 dictionary (kept as the record that led to r4)
-    p0 = REL / "r2_text_coder_dictr3.csv"
-    if p0.exists():
+    p0 = need(REL / "r2_text_coder_dictr3.csv")
+    if True:
         c0 = pd.read_csv(p0, dtype=str)
-        k0 = pd.read_csv(REL / "r2_key_dictr3.csv", dtype=str)
+        k0 = pd.read_csv(need(REL / "r2_key_dictr3.csv"), dtype=str)
         m0 = k0.merge(c0, on="number", suffixes=("_ours", "_text"))
         r0 = agree(m0["field_ours"].tolist(), m0["field_text"].tolist())
         res["r2_dictr3"] = {"field": r0, "kappa": kappa(m0["field_ours"].tolist(), m0["field_text"].tolist())}
         S["r2_dictr3_field"] = fmt(r0)
-    p = REL / "r2b_text_coder.csv"
-    if p.exists():
+    p = need(REL / "r2b_text_coder.csv")
+    if True:
         c = pd.read_csv(p, dtype=str)
-        k = refresh(pd.read_csv(REL / "r2b_key.csv", dtype=str), ["field", "foreign_address", "communication", "term_years"])
+        k = refresh(pd.read_csv(need(REL / "r2b_key.csv"), dtype=str), ["field", "foreign_address", "communication", "term_years"])
         m = k.merge(c, on="number", suffixes=("_ours", "_text"))
         r_f = agree(m["field_ours"].tolist(), m["field_text"].tolist())
         kap = kappa(m["field_ours"].tolist(), m["field_text"].tolist())
@@ -144,7 +149,7 @@ def main():
         r_cm = agree(m["communication_ours"].map(tf).tolist(), m["communication_text"].map(tf).tolist())
         r_t = agree(m["term_years_ours"].map(num).tolist(), m["term_years_text"].map(num).tolist())
         # population-weighted precision: per-field precision weighted by each field's share of all classified grants
-        W = pd.read_csv(ROOT / "data" / "derived" / "woodcroft_entries.csv")
+        W = pd.read_csv(find(DER, "woodcroft_entries.csv"))
         pop = W[W["parsed"] & (W["kind"] == "grant")]["field"].value_counts(normalize=True)
         wprec = sum(pop.get(f, 0) * r["share"] for f, r in per_field.items())
         S["r2_weighted"] = f"{wprec * 100:.0f}%"
@@ -152,10 +157,10 @@ def main():
         res["r2"] = {"field": r_f, "kappa": kap, "weighted_precision": wprec, "per_field": per_field, "foreign_address": r_fa, "communication": r_cm, "term": r_t, "n": len(m)}
         S["r2_field"], S["r2_kappa"], S["r2_foreign"], S["r2_comm"], S["r2_term"] = fmt(r_f), f"{kap:.2f}", fmt(r_fa), fmt(r_cm), fmt(r_t)
     # Hulme transcription check
-    p = REL / "hulme_image_coder.csv"
-    if p.exists():
+    p = need(REL / "hulme_image_coder.csv")
+    if True:
         c = pd.read_csv(p, dtype=str)
-        h = pd.read_csv(ROOT / "data" / "coding" / "hulme_1561_1603.csv", dtype=str)
+        h = pd.read_csv(need(COD / "hulme_1561_1603.csv"), dtype=str)
         m = h.merge(c, on="hulme_no", suffixes=("_ours", "_img"))
         def ymd(v):
             import re as _re

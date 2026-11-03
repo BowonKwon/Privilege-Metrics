@@ -21,7 +21,8 @@ from pathlib import Path
 import pandas as pd
 from lxml import etree
 
-ROOT = Path(__file__).resolve().parent.parent
+from paths import DER, RAW
+
 NS = {"t": "http://www.tei-c.org/ns/1.0"}
 
 
@@ -74,10 +75,10 @@ def parse(path: Path):
 def main():
     rows = []
     for L in "ABCD":
-        rows.extend(parse(ROOT / "data" / "raw" / "sro" / "current" / f"reg_{L}.xml"))
+        rows.extend(parse(RAW / "sro" / "current" / f"reg_{L}.xml"))
     df = pd.DataFrame(rows).sort_values("sro_number").reset_index(drop=True)
     df["year"] = df["sort_date"].str[:4].astype(int)
-    out = ROOT / "data" / "derived" / "sro_entries.csv"
+    out = DER / "sro_entries.csv"
     df.to_csv(out, index=False, encoding="utf-8")
     print("entries:", len(df), "ids unique:", df["sro_id"].is_unique, "years:", df["year"].min(), df["year"].max())
     print("exact dates:", int(df["date_exact"].sum()))
