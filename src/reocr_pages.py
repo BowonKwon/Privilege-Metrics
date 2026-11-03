@@ -1,23 +1,38 @@
 # -*- coding: utf-8 -*-
 """Re-OCR the Woodcroft scan pages where the Internet Archive OCR lost entry numbers.
 
-  python src/reocr_pages.py            # pages = every page holding a numbering gap + the page after it
+  python src/reocr_pages.py [--tesseract PATH]   # pages = every page holding a numbering gap + the page after it
+
+Run after a first build_woodcroft.py (it reads the numbering gaps from woodcroft_parse_log.json), then run
+build_woodcroft.py again. tesseract is taken from --tesseract, else the TESSERACT environment variable, else
+Library/bin/tesseract.exe next to the Python interpreter (a conda install on Windows), else tesseract on PATH.
 
 Downloads the page image from Internet Archive (page/n{index-1}.jpg) and runs tesseract 5 (eng, psm 4)
 to a TSV with word boxes in data/raw/woodcroft/reocr/p{part}_{index:04d}.tsv. build_woodcroft.py reads a
 TSV in place of the djvu.xml page when one exists. Pages are listed in reocr/pages.json.
 """
+import argparse
 import json
+import os
+import shutil
 import subprocess
 import sys
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "data" / "raw" / "woodcroft" / "reocr"
+from paths import DER, RAW
+
+OUT = RAW / "woodcroft" / "reocr"
 IA = {1: "chronologicalin1617grea_0", 2: "chronologicalind1617grea"}
-TESS = Path(sys.executable).parent / "Library" / "bin" / "tesseract.exe"
+TESS = None
+
+
+def tesseract(arg: str = "") -> Path:
+    for c in (arg, os.environ.get("TESSERACT", ""), str(Path(sys.executable).parent / "Library" / "bin" / "tesseract.exe"), shutil.which("tesseract") or ""):
+        if c and Path(c).exists():
+            return Path(c)
+    raise FileNotFoundError("tesseract not found: pass --tesseract PATH or set TESSERACT")
 
 
 def one(pg):
@@ -34,7 +49,11 @@ def one(pg):
 
 
 def main():
-    log = json.loads((ROOT / "data" / "derived" / "woodcroft_parse_log.json").read_text(encoding="utf-8"))
+    global TESS
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--tesseract", default="")
+    TESS = tesseract(ap.parse_args().tesseract)
+    log = json.loads((DER / "woodcroft_parse_log.json").read_text(encoding="utf-8"))
     pages = sorted({(g["page"][0], g["page"][1] + k) for g in log["gaps"] for k in (0, 1)})
     if (OUT / "pages.json").exists():
         pages = sorted(set(pages) | {tuple(p) for p in json.loads((OUT / "pages.json").read_text())})

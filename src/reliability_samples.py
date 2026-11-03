@@ -18,16 +18,14 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parent.parent
-DER, COD = ROOT / "data" / "derived", ROOT / "data" / "coding"
-REL = COD / "reliability"
+from paths import COD, DER, REL, find  # noqa: F401
 IA = {1: "chronologicalin1617grea_0", 2: "chronologicalind1617grea"}
 rng = np.random.default_rng(20261103)
 
 
 def main():
     REL.mkdir(parents=True, exist_ok=True)
-    W = pd.read_csv(DER / "woodcroft_entries.csv")
+    W = pd.read_csv(find(DER, "woodcroft_entries.csv"))
     P = W[W["parsed"]].copy()
     # R1
     strata = [(1617, 1699), (1700, 1799), (1800, 1829), (1830, 1853)]

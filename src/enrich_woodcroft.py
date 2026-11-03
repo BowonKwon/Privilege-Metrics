@@ -31,8 +31,8 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from fields import classify  # noqa: E402
+from paths import COD, DER  # noqa: E402
 
-ROOT = Path(__file__).resolve().parent.parent
 WORDNUM = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
            "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14, "fifteen": 15, "sixteen": 16, "seventeen": 17,
            "eighteen": 18, "nineteen": 19, "twenty": 20, "twenty-one": 21, "twentyone": 21, "twenty one": 21,
@@ -217,7 +217,7 @@ def grantee_part(text: str) -> str:
 
 
 def main():
-    raw = pd.read_csv(ROOT / "data" / "derived" / "woodcroft_raw.csv", dtype={"text": str, "margin_names": str}).fillna({"text": "", "margin_names": ""})
+    raw = pd.read_csv(DER / "woodcroft_raw.csv", dtype={"text": str, "margin_names": str}).fillna({"text": "", "margin_names": ""})
     full = pd.DataFrame({"number": range(1, 14360)}).merge(raw, on="number", how="left")
     full["parsed"] = full["text"].notna() & (full["text"] != "")
     full["text"] = full["text"].fillna("")
@@ -260,7 +260,7 @@ def main():
     full["year"] = yr.where(~fill, lo)
     full.loc[fill, "date_source"] = full.loc[fill, "date_source"].map(lambda s: "neighbours" if s == "none" else s + "+neighbours")
     # hand-checked years and dates for entries whose margin date the OCR lost (read on the page image)
-    ov = pd.read_csv(ROOT / "data" / "coding" / "woodcroft_date_overrides.csv", dtype={"date": str})
+    ov = pd.read_csv(COD / "woodcroft_date_overrides.csv", dtype={"date": str})
     for _, o in ov.iterrows():
         i = full.index[full["number"] == o["number"]]
         full.loc[i, "year"] = int(o["year"])
@@ -294,7 +294,7 @@ def main():
     cols = ["number", "part", "scan_page", "parsed", "flag", "date", "year", "date_source", "kind", "n_grantees", "margin_names",
             "margin_dates_ocr", "communication", "foreign_address", "foreign_link", "term_years", "term_other", "rent_clause",
             "proviso_clause", "field", "title", "text"]
-    full[cols].to_csv(ROOT / "data" / "derived" / "woodcroft_entries.csv", index=False, encoding="utf-8")
+    full[cols].to_csv(DER / "woodcroft_entries.csv", index=False, encoding="utf-8")
     print("rows", len(full), "parsed", int(full.parsed.sum()), "year known", int(full.year.notna().sum()))
     print(full["date_source"].value_counts().to_string())
     print(full["kind"].value_counts().to_string())

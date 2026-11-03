@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-"""All metric tables. Reads data/derived/*.csv and data/coding/*.csv, writes data/derived/m_*.csv.
+"""All metric tables. Reads data/derived/*.csv and data/coding/*.csv, writes data/derived/m_*.csv
+(public repository: data/ and coding/, see paths.py). The Dutch tables need the Buning and Looijesteijn spreadsheet in
+data/raw/buning/patents-dutch-republic-1581-1621.xlsx (figshare doi:10.6084/m9.figshare.16685788.v1, file 31787171).
 
   python src/metrics.py
 
@@ -22,10 +24,8 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from fields import FIELD_ORDER, classify  # noqa: E402
+from paths import BUNING_XLSX, COD, DER, find, need  # noqa: E402
 
-ROOT = Path(__file__).resolve().parent.parent
-DER = ROOT / "data" / "derived"
-COD = ROOT / "data" / "coding"
 RNG = np.random.default_rng(20261103)
 
 
@@ -54,16 +54,17 @@ def hhi(shares) -> float:
 
 
 def load():
-    W = pd.read_csv(DER / "woodcroft_entries.csv")
+    W = pd.read_csv(find(DER, "woodcroft_entries.csv"))
     W["grant"] = W["kind"].fillna("") != "extension"
-    H = pd.read_csv(COD / "hulme_1561_1603.csv")
+    H = pd.read_csv(need(COD / "hulme_1561_1603.csv"))
     H["year"] = H["date_given"].str[:4].astype(int)
-    S = pd.read_csv(DER / "sro_entries.csv")
-    F = None
-    if (COD / "fulin_coding.csv").exists():
-        F = pd.read_csv(COD / "fulin_coding.csv")
+    S = pd.read_csv(find(DER, "sro_entries.csv"))
+    F = pd.read_csv(need(COD / "fulin_coding.csv"))
+    if True:
         F["year"] = pd.to_numeric(F["date"].astype(str).str[:4], errors="coerce")   # some dates are year-month only (e.g. 1508-10)
-    B = pd.read_excel(ROOT / "data" / "raw" / "buning" / "patents-dutch-republic-1581-1621.xlsx", sheet_name=None)
+    if not BUNING_XLSX.exists():
+        raise FileNotFoundError(f"{BUNING_XLSX} is missing: download file 31787171 of doi:10.6084/m9.figshare.16685788.v1 and save it under that name")
+    B = pd.read_excel(BUNING_XLSX, sheet_name=None)
     return W, H, S, F, B
 
 

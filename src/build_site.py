@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Build the static site (ko/en) into site/.
+"""Build the static site (ko/en) into docs/ (site/ in the build layout; see paths.py).
 
   python src/build_site.py
 """
@@ -17,12 +17,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import fields as FL  # noqa: E402
 import takeaways  # noqa: E402
 from registry import METRICS, PRIOR, SERIES, SITE, SOURCES  # noqa: E402
-from site_kit import CSS, JS, esc, fig, fmt, legend, svg_bars, svg_lines, table_html, cap  # noqa: E402
+from site_kit import CSS, JS, esc, fig, fmt, legend, svg_bars, svg_lines, table_html, cap, col_label  # noqa: E402
+from paths import COD, DER, OUT, find, need  # noqa: E402
 
-ROOT = Path(__file__).resolve().parent.parent
-DER, COD, OUT = ROOT / "data" / "derived", ROOT / "data" / "coding", ROOT / "site"
 VERSION = SITE["version"]
-BUILD_DATE = "2026-11-03"
+BUILD_DATE = "2026-11-04"
 REPO = "https://github.com/BowonKwon/Privilege-Metrics"
 
 T = {
@@ -30,21 +29,24 @@ T = {
                nav_prior="선행 결과", nav_reading="읽기용 판", nav_data="데이터", nav_method="방법·한계", lang_other="English",
                definition="정의", formula="공식", reading="읽는 법", caveat="한계", source="자료원", unit="단위", key="핵심",
                reliability="신뢰도 카드", table="표", download="CSV 내려받기", metric_list="지표 목록", license="라이선스", built="생성일", version="판",
-               hub="공개 자료 전체", prior="선행 결과", series="계열", year="연도", decade="10년", period="구간", share="비율", n="건수",
+               hub="공개 자료 전체", prior="선행 결과", series="계열", year="연도", decade="10년", period="구간", share="비율", n="건수", file="파일", theme="화면 테마",
                rel={"exact": "집계값 — 구조화된 원자료에서 그대로 셌거나, 쪽 이미지와 대조해 손으로 옮긴 값", "ocr": "OCR 계수 — 스캔 OCR에서 규칙으로 센 값. 아래는 쪽 이미지 표본으로 잰 오류",
-                    "sampled": "규칙 분류 — 단어 규칙으로 나눈 값. 아래는 독립 코딩 표본으로 잰 정밀도", "secondary": "2차 인용 — 문헌 수치를 옮긴 값. 이 사이트가 다시 세지 않았다"}),
+                    "sampled": "규칙 분류 — 단어 규칙으로 나눈 값. 아래는 독립 코딩 표본으로 잰 정밀도", "secondary": "2차 인용 — 문헌 수치를 옮긴 값. 이 사이트가 다시 세지 않았다"},
+               badge={"exact": "집계값", "ocr": "OCR 계수", "sampled": "규칙 분류", "secondary": "2차 인용"}),
     "en": dict(site=SITE["en"]["title"], tagline=SITE["en"]["subtitle"], nav_home="Home", nav_metrics="Metrics", nav_places="Jurisdictions", nav_eras="Timeline",
                nav_prior="Prior results", nav_reading="Reading edition", nav_data="Data", nav_method="Method and limits", lang_other="한국어",
                definition="Definition", formula="Formula", reading="How to read it", caveat="Caveats", source="Sources", unit="Unit", key="Key point",
                reliability="Reliability card", table="Table", download="Download CSV", metric_list="All metrics", license="License", built="Built", version="Version",
-               hub="All public materials", prior="Prior results", series="Series", year="year", decade="decade", period="period", share="share", n="count",
+               hub="All public materials", prior="Prior results", series="Series", year="Year", decade="Decade", period="Period", share="Share", n="Count", file="File", theme="Theme",
                rel={"exact": "Exact count: counted straight from a structured source, or transcribed by hand and checked against the page images", "ocr": "OCR count: counted by rule from scanned OCR text; below, the error measured on a sample checked against page images",
-                    "sampled": "Rule-based classification: assigned by word rules; below, the precision measured on an independently coded sample", "secondary": "Secondary figure: quoted from the literature and not recounted here"}),
+                    "sampled": "Rule-based classification: assigned by word rules; below, the precision measured on an independently coded sample", "secondary": "Secondary figure: quoted from the literature and not recounted here"},
+               badge={"exact": "exact", "ocr": "ocr", "sampled": "sampled", "secondary": "secondary"}),
 }
 JUR = {"GB": {"ko": "잉글랜드", "en": "England"}, "VE": {"ko": "베네치아", "en": "Venice"}, "NL": {"ko": "네덜란드", "en": "Dutch Republic"}}
 
 
-def page(lang, title, body, depth=1, active="", desc=""):
+def page(lang, title, body, depth=1, active="", desc="", rel="index.html"):
+    """rel: this page's path under the language folder; the language switch points to the same path in the other tree."""
     t = T[lang]
     root = "../" * depth
     other = "en" if lang == "ko" else "ko"
@@ -69,7 +71,7 @@ def page(lang, title, body, depth=1, active="", desc=""):
 td.num,th.num{{white-space:nowrap}}</style></head><body>
 <header><a class="brand" href="{root}{lang}/index.html">{t['site']}</a>
 <nav>{navh}</nav>
-<div class="right"><button id="theme" class="theme" type="button" aria-label="theme">◑</button><a class="lang" href="{root}{other}/index.html">{t['lang_other']}</a></div></header>
+<div class="right"><button id="theme" class="theme" type="button" aria-label="{t['theme']}">◑</button><a class="lang" href="{root}{other}/{rel}" hreflang="{other}">{t['lang_other']}</a></div></header>
 <main>{body}</main>
 <footer>{t['site']} · {t['version']} {VERSION} · {t['built']} {BUILD_DATE} · <a href="{REPO}">GitHub</a> · {t['hub']} <a href="https://bowonkwon.github.io/{hub}">bowonkwon.github.io</a><br>{attribution}</footer>
 <script>{JS}</script></body></html>"""
@@ -81,20 +83,27 @@ def take(text, lang):
 
 def load():
     D = {p.stem: pd.read_csv(p) for p in DER.glob("m_*.csv")}
-    rel = json.loads((DER / "reliability.json").read_text(encoding="utf-8")) if (DER / "reliability.json").exists() else {}
+    missing = sorted({m["table"] for m in METRICS.values()} - set(D))
+    if missing:
+        raise FileNotFoundError(f"metric tables missing in {DER}: {missing} (run metrics.py)")
+    rel = json.loads(need(DER / "reliability.json").read_text(encoding="utf-8"))
     return D, rel
 
 
 # ------------------------------------------------------------------ figures per metric
 def figure(mid, D, lang):
     ko = lang == "ko"
+    N = lambda en, k: k if ko else cap(en, "en")      # series / band name per language, sentence case in English
+    from site_kit import svg_lines as svg_lines_, svg_bars as svg_bars_
+    svg_lines = lambda *a, **k: svg_lines_(*a, lang=lang, **k)  # noqa: E731
+    svg_bars = lambda *a, **k: svg_bars_(*a, lang=lang, **k)  # noqa: E731
     if mid == "a1_annual":
         a = D["m_a1_annual"]
         e = a[(a.year <= 1700)]
         l = a[(a.year >= 1700)]
-        s1 = svg_lines([("grants", [(r.year, float(r.grants) if not pd.isna(r.grants) else math.nan) for r in e.itertuples()], 0)], ",.0f",
-                       bands=[(1604, 1616, "gap" if not ko else "목록 공백"), (1624, 1625, "1624")], xstep=20)
-        s2 = svg_lines([("grants", [(r.year, float(r.grants)) for r in l.itertuples()], 0)], ",.0f", xstep=20)
+        s1 = svg_lines([(N("grants", "허여"), [(r.year, float(r.grants) if not pd.isna(r.grants) else math.nan) for r in e.itertuples()], 0)], ",.0f",
+                       bands=[(1604, 1616, N("gap", "목록 공백")), (1624, 1625, "1624")], xstep=20)
+        s2 = svg_lines([(N("grants", "허여"), [(r.year, float(r.grants)) for r in l.itertuples()], 0)], ",.0f", xstep=20)
         return (fig(s1, "1561–1700. 음영은 두 목록 사이의 공백인 1604–1616년과 1624년." if ko else "1561–1700. Shaded: 1604–1616, the gap between the two lists, and 1624.")
                 + fig(s2, "1700–1852." if ko else "1700–1852."))
     if mid == "a2_periods":
@@ -110,21 +119,22 @@ def figure(mid, D, lang):
         return fig(svg_bars(items, ".1f", label_w=140, errors=err), "연평균 허여와 95% 포아송 구간." if ko else "Mean grants per year with 95% Poisson intervals.")
     if mid == "a4_extensions":
         a = D["m_a4_extensions"]
-        return fig(svg_lines([("ext", [(r.decade, float(r.extensions)) for r in a.itertuples()], 0)], ",.0f", xstep=20), "10년별 연장 항목 수." if ko else "Extension entries per decade.")
+        return fig(svg_lines([(N("extension entries", "연장 항목"), [(r.decade, float(r.extensions)) for r in a.itertuples()], 0)], ",.0f", xstep=20), "10년별 연장 항목 수." if ko else "Extension entries per decade.")
     if mid == "b1_fields":
         b = D["m_b1_fields"]
         b = b[b.source == "Woodcroft"]
         per = list(dict.fromkeys(b.period))
         x = {p: i for i, p in enumerate(per)}
         top = b[b.field != "other"].groupby("field")["count"].sum().sort_values(ascending=False).head(4).index.tolist()
-        series = [(FL.LABEL[f][lang], [(x[r.period], float(r.share)) for r in b[b.field == f].itertuples()], i) for i, f in enumerate(top)]
+        series = [(N(FL.LABEL[f]["en"], FL.LABEL[f]["ko"]), [(x[r.period], float(r.share)) for r in b[b.field == f].itertuples()], i) for i, f in enumerate(top)]
         svg = svg_lines(series, ".0%", xstep=1)
-        cap_ = ("가로축은 구간 번호(0 = " + per[0] + ", " + str(len(per) - 1) + " = " + per[-1] + "). 많은 네 분야만 그렸다. 전체는 표."
-                if ko else "x axis: period index (0 = " + per[0] + ", " + str(len(per) - 1) + " = " + per[-1] + "). The four largest fields only; all fields are in the table.")
+        dash = lambda pr: pr.replace("-", "–")     # period keys use a hyphen in the data; the caption uses an en dash
+        cap_ = ("가로축은 구간 번호(0 = " + dash(per[0]) + ", " + str(len(per) - 1) + " = " + dash(per[-1]) + "). 많은 네 분야만 그렸다. 전체는 표."
+                if ko else "X axis: period index (0 = " + dash(per[0]) + ", " + str(len(per) - 1) + " = " + dash(per[-1]) + "). The four largest fields only; all fields are in the table.")
         return fig(svg, cap_)
     if mid == "b2_hhi":
         b = D["m_b2_hhi"]
-        return fig(svg_lines([("HHI", [(r.decade, float(r.hhi)) for r in b.itertuples()], 0), ("other", [(r.decade, float(r.other_share)) for r in b.itertuples()], 1)], ".2f", xstep=20),
+        return fig(svg_lines([("HHI", [(r.decade, float(r.hhi)) for r in b.itertuples()], 0), (N("other", "기타"), [(r.decade, float(r.other_share)) for r in b.itertuples()], 1)], ".2f", xstep=20),
                    "HHI(위)와 「기타」 비율." if ko else "HHI and the 'other' share.")
     if mid == "b3_venice_sectors":
         b = D["m_b3_venice_sectors"]
@@ -132,13 +142,13 @@ def figure(mid, D, lang):
     if mid == "c1_foreign":
         c = D["m_c1_foreign_gb"]
         c = c[c.decade >= 1700]
-        s = svg_lines([("communication", [(r.decade, float(r.communication_share)) for r in c.itertuples()], 0),
-                       ("address abroad" if not ko else "해외 주소", [(r.decade, float(r.foreign_address_share)) for r in c.itertuples()], 1),
-                       ("either" if not ko else "둘 중 하나", [(r.decade, float(r.either_share)) for r in c.itertuples()], 2)], ".0%", xstep=20)
+        s = svg_lines([(N("communication", "communication"), [(r.decade, float(r.communication_share)) for r in c.itertuples()], 0),
+                       (N("address abroad", "해외 주소"), [(r.decade, float(r.foreign_address_share)) for r in c.itertuples()], 1),
+                       (N("either", "둘 중 하나"), [(r.decade, float(r.either_share)) for r in c.itertuples()], 2)], ".0%", xstep=20)
         return fig(s, "잉글랜드 1700–1852, 10년별." if ko else "England 1700–1852, by decade.")
     if mid == "c2_cogrant":
         c = D["m_c2_cogrant"]
-        return fig(svg_lines([("co", [(r.decade, float(r.co_share)) for r in c.itertuples()], 0)], ".0%", xstep=20), "잉글랜드, 10년별." if ko else "England, by decade.")
+        return fig(svg_lines([(N("shared grants", "공동 허여"), [(r.decade, float(r.co_share)) for r in c.itertuples()], 0)], ".0%", xstep=20), "잉글랜드, 10년별." if ko else "England, by decade.")
     if mid == "d1_terms":
         d = D["m_d1_terms"]
         d = d[d.n_stated > 0]
@@ -147,35 +157,35 @@ def figure(mid, D, lang):
         return fig(svg_bars(items, ".0f", label_w=300, errors=err), "중앙값(막대)과 사분위 범위(선)." if ko else "Median (bar) and interquartile range (line).")
     if mid == "d2_term_shift":
         d = D["m_d2_term_shift"]
-        return fig(svg_lines([("21", [(r.year, float(r.eq21)) for r in d.itertuples()], 0), ("≤14", [(r.year, float(r.le14)) for r in d.itertuples()], 1)], ",.0f",
+        return fig(svg_lines([(N("21 years", "21년"), [(r.year, float(r.eq21)) for r in d.itertuples()], 0), (N("≤14 years", "14년 이하"), [(r.year, float(r.le14)) for r in d.itertuples()], 1)], ",.0f",
                              bands=[(1624, 1625, "1624")], xstep=5), "해마다 21년·14년 이하로 적힌 허여 수." if ko else "Grants per year with a written term of 21 years and of 14 years or less.")
     if mid == "d3_clauses":
         d = D["m_d3_clauses"]
-        return fig(svg_lines([("rent", [(r.decade, float(r.rent_share)) for r in d.itertuples()], 0), ("proviso", [(r.decade, float(r.proviso_share)) for r in d.itertuples()], 1)], ".0%", xstep=20),
+        return fig(svg_lines([(N("rent", "지대"), [(r.decade, float(r.rent_share)) for r in d.itertuples()], 0), (N("proviso", "단서"), [(r.decade, float(r.proviso_share)) for r in d.itertuples()], 1)], ".0%", xstep=20),
                    "10년별 언급 비율." if ko else "Share of entries mentioning the clause, by decade.")
     if mid == "p1_sro_annual":
         p = D["m_p1_sro_annual"]
-        return fig(svg_lines([("entries", [(r.year, float(r.entries)) for r in p.itertuples()], 0)], ",.0f", bands=[(1571, 1576, "gap"), (1637, 1638, "1637")], xstep=10),
+        return fig(svg_lines([(N("entries", "등록"), [(r.year, float(r.entries)) for r in p.itertuples()], 0)], ",.0f", bands=[(1571, 1576, N("gap", "기록 없음")), (1637, 1638, "1637")], xstep=10),
                    "음영: 기록이 없는 1571–1576년, 등록이 의무가 된 1637년." if ko else "Shaded: 1571–1576, for which no entries survive, and 1637, when entrance became compulsory.")
     if mid == "p2_sro_concentration":
         p = D["m_p2_sro_concentration"]
         p = p[p.entries >= 20]
-        return fig(svg_lines([("top 5", [(r.year, float(r.top5_share)) for r in p.itertuples()], 0)], ".0%", xstep=10), "등록 20건 이상인 해만." if ko else "Years with at least 20 entries.")
+        return fig(svg_lines([(N("top five", "상위 5인"), [(r.year, float(r.top5_share)) for r in p.itertuples()], 0)], ".0%", xstep=10), "등록 20건 이상인 해만." if ko else "Years with at least 20 entries.")
     if mid == "p3_sro_status":
         p = D["m_p3_sro_status"]
-        return fig(svg_lines([("reassigned", [(r.decade, float(r.reassigned_share)) for r in p.itertuples()], 0), ("shared", [(r.decade, float(r.shared_share)) for r in p.itertuples()], 1)], ".0%", xstep=10),
+        return fig(svg_lines([(N("reassigned", "양도"), [(r.decade, float(r.reassigned_share)) for r in p.itertuples()], 0), (N("shared", "공동 등록"), [(r.decade, float(r.shared_share)) for r in p.itertuples()], 1)], ".0%", xstep=10),
                    "10년별." if ko else "By decade.")
     if mid == "p4_sro_fees":
         p = D["m_p4_sro_fees"]
         p = p[p.with_fee >= 10]
-        return fig(svg_lines([("6d", [(r.year, float(r.fee6_share)) for r in p.itertuples()], 0)], ".0%", bands=[(1582, 1587, "1582–1587")], xstep=10),
+        return fig(svg_lines([(N("6d", "6펜스"), [(r.year, float(r.fee6_share)) for r in p.itertuples()], 0)], ".0%", bands=[(1582, 1587, "1582–1587")], xstep=10),
                    "수수료가 적힌 항목 10건 이상인 해만." if ko else "Years with at least 10 entries with a fee.")
     if mid == "v1_venice_printing":
         v = D["m_v1_fulin_annual"]
         v = v.assign(b=v.year // 5 * 5).groupby("b")[["privileges", "author", "printer"]].sum().reset_index()
-        s = svg_lines([("all" if not ko else "전체", [(r.b, float(r.privileges)) for r in v.itertuples()], 0),
-                       ("author" if not ko else "저자", [(r.b, float(r.author)) for r in v.itertuples()], 1),
-                       ("printer" if not ko else "인쇄업자", [(r.b, float(r.printer)) for r in v.itertuples()], 2)], ",.0f", bands=[(1517, 1518, "1517")], xstep=10)
+        s = svg_lines([(N("all", "전체"), [(r.b, float(r.privileges)) for r in v.itertuples()], 0),
+                       (N("author", "저자"), [(r.b, float(r.author)) for r in v.itertuples()], 1),
+                       (N("printer", "인쇄업자"), [(r.b, float(r.printer)) for r in v.itertuples()], 2)], ",.0f", bands=[(1517, 1518, "1517")], xstep=10)
         return fig(s, "5년 구간 합(가로축은 구간 첫해). 1525 구간은 1525–1526년 두 해다." if ko else "Five-year sums (x = first year of the period). The 1525 period covers only 1525–1526.")
     return ""
 
@@ -201,9 +211,9 @@ def table_for(mid, D, lang):
         w = w.reindex([f for f in FL.FIELD_ORDER if f in w.index])
         w.insert(0, "field_name", [FL.LABEL[f][lang] for f in w.index])
         w = w.reset_index(drop=True)
-        cols = [("field_name", "분야" if lang == "ko" else "field", None)] + [(c, c, ".0%") for c in w.columns if c != "field_name"]
+        cols = [("field_name", col_label("field_name", lang), None)] + [(c, c.replace("-", "–"), ".0%") for c in w.columns if c != "field_name"]
         return table_html(w, cols, f"t_{mid}", lang)
-    cols = [(c, c.replace("_", " "), col_spec(df, c)) for c in df.columns]
+    cols = [(c, col_label(c, lang), col_spec(df, c)) for c in df.columns]
     return table_html(df, cols, f"t_{mid}", lang)
 
 
@@ -218,16 +228,17 @@ def rel_card(mid, rel, lang):
     m = METRICS[mid]
     kind = m["rel"]
     r = rel.get(mid, {})
-    rows = "".join(f"<dt>{esc(k)}</dt><dd>{esc(v)}</dd>" for k, v in (r.get(lang) or {}).items())
-    return f'<div class="spec rel"><h3><span class="badge">{kind}</span>{T[lang]["reliability"]}</h3><p class="src">{esc(T[lang]["rel"][kind])}</p>{"<dl>" + rows + "</dl>" if rows else ""}</div>'
+    dt = {"원자료": "자료원", "출처": "자료원"} if lang == "ko" else {}      # reliability.json keeps its keys; the page uses one term
+    rows = "".join(f"<dt>{esc(dt.get(k, k))}</dt><dd>{esc(v)}</dd>" for k, v in (r.get(lang) or {}).items())
+    return f'<div class="spec rel"><h3><span class="badge">{T[lang]["badge"][kind]}</span>{T[lang]["reliability"]}</h3><p class="src">{esc(T[lang]["rel"][kind])}</p>{"<dl>" + rows + "</dl>" if rows else ""}</div>'
 
 
 def metric_page(mid, D, TK, rel, lang):
     m, t = METRICS[mid], T[lang]
     L = m[lang]
-    kv = TK[mid]["kv"][lang]
+    kv = [cap(x, lang) for x in TK[mid]["kv"][lang]]
     body = [f'<div class="eyebrow"><span class="tag layer">{m["series"]} · {esc(SERIES[m["series"]][lang])}</span></div>',
-            f'<div class="mhero"><h1>{esc(L["name"])}</h1><div class="big">{esc(kv[0])}<small>{esc(kv[1])}</small></div></div>',
+            f'<div class="mhero"><h1>{esc(L["name"])}</h1><div class="big{" long" if len(kv[0]) > 12 else ""}">{esc(kv[0])}<small>{esc(kv[1])}</small></div></div>',
             take(TK[mid][lang], lang)]
     body.append(f'<div class="spec"><dl><dt>{t["definition"]}</dt><dd>{esc(L["definition"])}</dd><dt>{t["formula"]}</dt><dd class="formula">{esc(L["formula"])}</dd>'
                 f'<dt>{t["reading"]}</dt><dd>{esc(L["reading"])}</dd><dt>{t["caveat"]}</dt><dd>{esc(L["caveat"])}</dd></dl></div>')
@@ -237,9 +248,9 @@ def metric_page(mid, D, TK, rel, lang):
     body.append(rel_card(mid, rel, lang))
     if m.get("prior"):
         body.append(f'<h2>{t["prior"]}</h2><ul class="prose">' + "".join(f'<li>{md(PRIOR[p][lang])} <span class="src">— {md(PRIOR[p]["cite"])}</span></li>' for p in m["prior"]) + "</ul>")
-    body.append(f'<h2>{t["source"]}</h2><ul class="prose">' + "".join(f'<li>{md(SOURCES[s][lang])} <span class="src">({esc(SOURCES[s]["license"])}, <a href="{SOURCES[s]["url"]}">{esc(SOURCES[s]["url"])}</a>)</span></li>' for s in m["sources"]) + "</ul>")
+    body.append(f'<h2>{t["source"]}</h2><ul class="prose">' + "".join(f'<li>{md(SOURCES[s][lang])} <span class="src">({esc(SOURCES[s]["license_ko" if lang == "ko" else "license"])}; <a href="{SOURCES[s]["url"]}">{esc(SOURCES[s]["url"])}</a>)</span></li>' for s in m["sources"]) + "</ul>")
     body.append(f'<div class="links"><a href="index.html">← {t["metric_list"]}</a></div>')
-    return page(lang, L["name"], "".join(body), depth=2, active="metrics", desc=TK[mid][lang])
+    return page(lang, L["name"], "".join(body), depth=2, active="metrics", desc=TK[mid][lang], rel=f"metrics/{mid}.html")
 
 
 def cards(D, TK, lang, ids=None, depth=1):
@@ -248,7 +259,7 @@ def cards(D, TK, lang, ids=None, depth=1):
     for mid, m in METRICS.items():
         if ids and mid not in ids:
             continue
-        kv = TK[mid]["kv"][lang]
+        kv = [cap(x, lang) for x in TK[mid]["kv"][lang]]
         out.append(f'<a class="card s-{ {"A": "A", "B": "B", "C": "C", "D": "D", "P": "E"}[m["series"]] }" href="{pre}{mid}.html"><b>{esc(m[lang]["name"])}</b>'
                    f'<span class="kv">{esc(kv[0])}<small>{esc(kv[1])}</small></span><small>{esc(m[lang]["definition"][:90])}…</small></a>')
     out.append("</div>")
@@ -261,7 +272,7 @@ def metrics_index(D, TK, lang):
     for s, lab in SERIES.items():
         ids = [k for k, m in METRICS.items() if m["series"] == s]
         body.append(f"<h2>{s} · {esc(lab[lang])}</h2>" + cards(D, TK, lang, ids, depth=2))
-    return page(lang, t["metric_list"], "".join(body), depth=2, active="metrics")
+    return page(lang, t["metric_list"], "".join(body), depth=2, active="metrics", rel="metrics/index.html")
 
 
 def home(D, TK, lang):
@@ -337,7 +348,7 @@ def places(D, TK, lang):
     body = [f"<h1>{t['nav_places']}</h1>"]
     for j, (ids, txt) in blocks.items():
         body.append(f"<h2>{JUR[j][lang]}</h2><p class='prose'>{esc(txt)}</p>" + cards(D, TK, lang, ids, depth=1))
-    return page(lang, t["nav_places"], "".join(body), depth=1, active="places")
+    return page(lang, t["nav_places"], "".join(body), depth=1, active="places", rel="places.html")
 
 
 def eras(D, TK, lang):
@@ -355,23 +366,25 @@ def eras(D, TK, lang):
           (1710, "앤 여왕법. 이 사이트의 출판 자료는 1640년에서 끝나 그 전후는 담지 못한다" if ko else "Statute of Anne; this site's printing data end in 1640 and cannot show the years around it"),
           (1852, "Woodcroft 목록 끝(10월 1일). 목록은 1852년 특허법(15 & 16 Vict. c. 83) 제32조에 따라 편찬되었다(표제면)" if ko else "Woodcroft's list ends (1 October); it was compiled under the Patent Law Amendment Act, 15 & 16 Vict. c. 83, s. 32 (title page)")]
     a1, p1, v1 = D["m_a1_annual"], D["m_p1_sro_annual"], D["m_v1_fulin_annual"]
-    s = svg_lines([("GB" if not ko else "잉글랜드 발명", [(r.year, float(r.grants)) for r in a1[a1.year <= 1700].itertuples() if not pd.isna(r.grants)], 0),
-                   ("VE" if not ko else "베네치아 출판", [(r.year, float(r.privileges)) for r in v1.itertuples()], 1)], ",.0f",
-                  bands=[(1474, 1475, "1474"), (1517, 1518, "1517"), (1624, 1625, "1624")], xstep=25)
+    s = svg_lines([("English inventions" if not ko else "잉글랜드 발명", [(r.year, float(r.grants)) for r in a1[a1.year <= 1700].itertuples() if not pd.isna(r.grants)], 0),
+                   ("Venetian printing" if not ko else "베네치아 출판", [(r.year, float(r.privileges)) for r in v1.itertuples()], 1)], ",.0f",
+                  bands=[(1474, 1475, "1474"), (1517, 1518, "1517"), (1624, 1625, "1624")], xstep=25, lang=lang)
     body = [f"<h1>{T[lang]['nav_eras']}</h1>", fig(s, "연도별 수, 1469–1700. 음영은 1474·1517·1624년." if ko else "Counts per year, 1469–1700. Shaded: 1474, 1517, 1624."),
-            "<div class='wrap'><table><thead><tr><th class='num'>" + T[lang]["year"] + "</th><th></th></tr></thead><tbody>" +
+            "<div class='wrap'><table><thead><tr><th class='num'>" + T[lang]["year"] + "</th><th>" + ("사건" if ko else "Event") + "</th></tr></thead><tbody>" +
             "".join(f"<tr><td class='num'>{y}</td><td>{esc(x)}</td></tr>" for y, x in ev) + "</tbody></table></div>",
             "<p class='src'>" + ("연표의 연도·사건은 각 자료원(Fulin·Hulme·Woodcroft·SRO)과 법령 명칭에서 가져왔다." if ko else "Years and events are taken from the sources used (Fulin, Hulme, Woodcroft, SRO) and the titles of the statutes.") + "</p>"]
-    return page(lang, T[lang]["nav_eras"], "".join(body), depth=1, active="eras")
+    return page(lang, T[lang]["nav_eras"], "".join(body), depth=1, active="eras", rel="eras.html")
 
 
 def prior_page(lang):
     t = T[lang]
-    body = [f"<h1>{t['nav_prior']}</h1><p class='lead'>{'선행 수치. 원문에서 확인한 것을 싣되, 원문을 보지 못하고 다른 문헌을 거쳐 옮긴 것은 「2차 인용」으로 표시했다. 이 사이트의 계수와 나란히 본다.' if lang == 'ko' else 'Prior figures, checked in the original publications except those marked as secondary citations, which are taken from another work. Read them next to this site’s counts.'}</p><ul class='prose'>"]
+    lead = ("선행 수치. 원문에서 확인한 것을 싣되, 원문을 보지 못하고 다른 문헌을 거쳐 옮긴 것은 「2차 인용」으로 표시했다. 이 사이트의 계수와 나란히 본다." if lang == "ko" else
+            "Prior figures, checked in the original publications except those marked as secondary citations, which are taken from another work. Read them next to this site's counts.")
+    body = [f"<h1>{t['nav_prior']}</h1><p class='lead'>{esc(lead)}</p><ul class='prose'>"]
     for k, p in PRIOR.items():
         body.append(f"<li>{md(p[lang])} <span class='src'>— {md(p['cite'])}</span></li>")
     body.append("</ul>")
-    return page(lang, t["nav_prior"], "".join(body), depth=1, active="prior")
+    return page(lang, t["nav_prior"], "".join(body), depth=1, active="prior", rel="prior.html")
 
 
 DATA_FILES = [("woodcroft_entries.csv.gz", "CC BY 4.0", "woodcroft"), ("hulme_1561_1603.csv", "CC BY 4.0", "hulme"), ("fulin_coding.csv", "CC BY 4.0", "fulin"),
@@ -381,14 +394,14 @@ DATA_FILES = [("woodcroft_entries.csv.gz", "CC BY 4.0", "woodcroft"), ("hulme_15
 def data_page(D, lang):
     ko = lang == "ko"
     t = T[lang]
-    rows = [f"<tr><td><a href='../data/{f}'>{f}</a></td><td>{lic}</td><td>{esc(SOURCES[s]['license'])}</td></tr>" for f, lic, s in DATA_FILES]
+    rows = [f"<tr><td><a href='../data/{f}'>{f}</a></td><td>{lic}</td><td>{esc(SOURCES[s]['license_ko' if ko else 'license'])}</td></tr>" for f, lic, s in DATA_FILES]
     rows += [f"<tr><td><a href='../data/{k}.csv'>{k}.csv</a></td><td>CC BY 4.0</td><td>—</td></tr>" for k in sorted(D)]
     body = [f"<h1>{t['nav_data']}</h1>",
             "<p class='prose'>" + ("레코드 표와 지표 표를 CSV로 낸다. 각 파일의 라이선스와 원자료 라이선스는 data/datapackage.json 에도 적었다. 출판업조합 등록 표는 원자료 조건에 따라 CC BY-SA 4.0으로 별도 폴더(data/sro/)에 둔다. 네덜란드 원자료는 다시 배포하지 않고 DOI로만 잇는다." if ko else
                                    "Record tables and metric tables are published as CSV. Each file's license and its source license are also listed in data/datapackage.json. The Stationers' Register table is CC BY-SA 4.0, as its source requires, and sits in its own folder (data/sro/). The Dutch source data are not redistributed; they are linked by DOI.") + "</p>",
-            "<div class='wrap'><table><thead><tr><th>file</th><th>" + t["license"] + "</th><th>source</th></tr></thead><tbody>" + "".join(rows) + "</tbody></table></div>",
+            "<div class='wrap'><table><thead><tr><th>" + t["file"] + "</th><th>" + t["license"] + "</th><th>" + ("원자료 라이선스" if ko else "Source license") + "</th></tr></thead><tbody>" + "".join(rows) + "</tbody></table></div>",
             "<p class='files'><a href='../data/datapackage.json'>datapackage.json</a> <a href='../data/reliability.json'>reliability.json</a></p>"]
-    return page(lang, t["nav_data"], "".join(body), depth=1, active="data")
+    return page(lang, t["nav_data"], "".join(body), depth=1, active="data", rel="data.html")
 
 
 def method_page(rel, lang):
@@ -399,7 +412,7 @@ def method_page(rel, lang):
     for h, ps in secs:
         body.append(f"<h2>{esc(h)}</h2>" + "".join(f"<p>{esc(p)}</p>" for p in ps))
     body.append("</div>")
-    return page(lang, t["nav_method"], "".join(body), depth=1, active="method")
+    return page(lang, t["nav_method"], "".join(body), depth=1, active="method", rel="method.html")
 
 
 METHOD = {"ko": [], "en": []}     # filled from method_text.py
@@ -412,7 +425,7 @@ def reading_page(lang):
     for h, ps in READING[lang]:
         body.append(f"<h2>{esc(h)}</h2>" + "".join(f"<p>{esc(p)}</p>" for p in ps))
     body.append("</div>")
-    return page(lang, t["nav_reading"], "".join(body), depth=1, active="reading")
+    return page(lang, t["nav_reading"], "".join(body), depth=1, active="reading", rel="reading.html")
 
 
 def write_data(D):
@@ -420,17 +433,16 @@ def write_data(D):
     (dd / "sro").mkdir(parents=True, exist_ok=True)
     for k, df in D.items():
         df.to_csv(dd / f"{k}.csv", index=False, encoding="utf-8")
-    W = pd.read_csv(DER / "woodcroft_entries.csv")
+    W = pd.read_csv(find(DER, "woodcroft_entries.csv"))
     with gzip.open(dd / "woodcroft_entries.csv.gz", "wt", encoding="utf-8", newline="") as f:
         W.to_csv(f, index=False)
-    shutil.copy(COD / "hulme_1561_1603.csv", dd / "hulme_1561_1603.csv")
-    shutil.copy(COD / "fulin_coding.csv", dd / "fulin_coding.csv")
-    S = pd.read_csv(DER / "sro_entries.csv")
+    shutil.copy(need(COD / "hulme_1561_1603.csv"), dd / "hulme_1561_1603.csv")
+    shutil.copy(need(COD / "fulin_coding.csv"), dd / "fulin_coding.csv")
+    S = pd.read_csv(find(DER, "sro_entries.csv"))
     with gzip.open(dd / "sro" / "sro_entries.csv.gz", "wt", encoding="utf-8", newline="") as f:
         S.to_csv(f, index=False)
-    shutil.copy(DER / "sro_site_decade_counts.csv", dd / "sro" / "sro_site_decade_counts.csv")
-    if (DER / "reliability.json").exists():
-        shutil.copy(DER / "reliability.json", dd / "reliability.json")
+    shutil.copy(find(DER, "sro_site_decade_counts.csv"), dd / "sro" / "sro_site_decade_counts.csv")
+    shutil.copy(need(DER / "reliability.json"), dd / "reliability.json")
     res = []
     for f, lic, s in DATA_FILES:
         res.append({"path": f, "license": lic, "source": SOURCES[s]["en"], "source_license": SOURCES[s]["license"], "source_url": SOURCES[s]["url"]})
