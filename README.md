@@ -55,7 +55,7 @@ then the three steps above. Uncompressed record tables written by these steps ar
 
 ## 인용 · Citation
 
-From Privilege to Patent, version 1.0.2 (2026), https://bowonkwon.github.io/Privilege-Metrics/
+From Privilege to Patent, version 1.0.3 (2026), https://bowonkwon.github.io/Privilege-Metrics/
 
 ## 라이선스 · License
 

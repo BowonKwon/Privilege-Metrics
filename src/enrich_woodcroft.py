@@ -12,14 +12,17 @@ Rules (all published on the method page)
 - communication: the text contains 'communication' (invention communicated from abroad, Woodcroft's wording).
 - foreign_address: the grantee's description (text before the title) names a place outside the British Isles.
 - term_years: the first term stated in the text ('for 14 yeares', 'xiiij yeares', 'xxjtie yeares', 'fourteene years',
-  'for xiiij next ensuing'); term_other: further terms in the same entry (mines, Ireland, a later revenue, a residue).
+  'for xiiij next ensuing'); term_other: further terms in the same entry (mines, Ireland, a later revenue) and 'residue'
+  when the grant runs for the residue of an earlier term. 1.0.3 adds 'and 31 yeares wthin Ireland', OCR-damaged
+  numbers ('80fy', '80^') and the residue re-grant; the first term is computed before these and never changes.
 - a margin year that differs from both neighbours while they agree with each other is rejected as an OCR misreading.
 - margin segments containing a digit are dates (whole or OCR-damaged), never grantees' names; a year read from a damaged
   date is kept when within 2 of the neighbours' median. data/coding/woodcroft_date_overrides.csv holds years read on the
   page image where the OCR lost the margin date (date_source = page_image).
 - foreign_address ignores British street names built on foreign places ('Hanover Square') and society memberships.
 - rent / proviso / void clauses: words in the text (17th–18th century grants carry them in the summary).
-- title: quoted part of the entry if any; else the words after 'invented'/'invention (of)', else after 'sole use/making/…',
+- title: quoted part of the entry if any; else, in the text from the first 'for/of his|their|her' on (the grantee's name,
+  address and trade dropped, 1.0.3), the words after 'invented'/'invention (of)', else after 'sole use/making/…',
   else after 'for', each up to 'to hold' / 'for the term of' / 'within England' / 'By writ'.
 - field: fields.classify(title).
 """
@@ -81,6 +84,13 @@ NUM_TOK = (r"(\d(?:\s?\d)?(?:\s?(?:teene?|tie|ty))?"                            
 YEARS = r"(?:y[ec]a?r[ec]?[s3]?|yeeres?|yeers?)\b"                                         # years, yeares, yere, ycares (OCR)
 TERM_RE = re.compile(r"(?:t[ec]rme?\s*of|for|space\s*of|residue\s*of|remainder\s*of)\s*(?:the\s*)?(?:t[ec]rme?\s*of\s*)?"
                      + NUM_TOK + r"\s*" + YEARS, re.I)
+# 1.0.3: further terms the first-term rule cannot see. They are searched only after the first term is fixed, so they
+# never change it: OCR-damaged numbers ('80fy', '80^'), 'and 31 yeares wthin Ireland', a re-grant for a residue.
+NUM_TOK_OCR = NUM_TOK.replace(r"(?:\s?(?:teene?|tie|ty))?", r"(?:\s?(?:teene?|tie|ty)|fy\b|\^)?", 1)
+TERM_OCR_RE = re.compile(r"(?:t[ec]rme?\s*of|for|space\s*of|residue\s*of|remainder\s*of)\s*(?:the\s*)?(?:t[ec]rme?\s*of\s*)?"
+                         + NUM_TOK_OCR + r"\s*" + YEARS, re.I)
+IRELAND_RE = re.compile(r"\band\s+" + NUM_TOK_OCR + r"\s*" + YEARS + r"\s*(?:w\S{0,4}in|in)\s+ireland", re.I)   # 'xiiij yeares wthin England and 31 yeares wthin Ireland'
+RESIDUE_RE = re.compile(r"graunt\w*\s+(?:unto|to)\s+[^;—]{0,80}?\bdur\w*\s+the\s+(?:residue|remainder|remaynder)\s+of\s+the\s+said\s+t[ec]rme?\b", re.I)  # a re-grant for the rest of an earlier term
 TERM_NEXT_RE = re.compile(r"\bfor\s+([xvilj]{2,7}|\d{1,2})\s+next\s+ensu", re.I)   # 'for xiiij next ensuing' (word 'years' left out)
 
 
@@ -123,6 +133,13 @@ def terms_of(text: str):
     for v in vals:
         if v != first and v not in rest:
             rest.append(v)
+    for rx in (TERM_OCR_RE, IRELAND_RE):             # 1.0.3
+        for m in rx.finditer(text):
+            v = _term_value(m.group(1))
+            if v and 3 <= v <= 99 and v != first and v not in rest:
+                rest.append(v)
+    if RESIDUE_RE.search(text):                      # 1.0.3: the grant runs for the residue of an earlier term
+        rest.append("residue")
     return [first] + rest
 
 
@@ -191,21 +208,33 @@ def loose_margin_date(seg: str):
 
 STOP = r"(?:;\s*to hold|to hold|for the terme? of|for (?:the )?(?:space|term) of|for \d+ yeares|within (?:England|the kingdom|our)|by writ|with a clause|w\. h\. m\.|$)"
 TITLE_PATTERNS = [
-    re.compile(r"(?:new\s+)?invent(?:ed|ion|ions)(?:\s+or\s+(?:found out|discovered|improved))?(?:\s+of)?(.*?)" + STOP, re.I),
-    re.compile(r"sole\s+(?:use|making|exercise|benefit|benefitt|privilege|license|licence|power)(.*?)" + STOP, re.I),
-    re.compile(r"for\s+(?!the term|the terme|the space)(.*?)" + STOP, re.I),
+    re.compile(r"\b(?:new\s+)?invent(?:ed|ion|ions)(?:\s+or\s+(?:found out|discovered|improved))?(?:\s+of)?\b(.*?)" + STOP, re.I),
+    re.compile(r"\bsole\s+(?:use|making|exercise|benefit|benefitt|privilege|license|licence|power)\b(.*?)" + STOP, re.I),
+    re.compile(r"\bfor\s+(?!the term|the terme|the space)(.*?)" + STOP, re.I),
 ]
+
+
+OBJECT_START = re.compile(r"\b(?:for|of)\s+(?:his|their|her|its)\b(?!\s+(?:majest|maty|matie|royal))", re.I)
+
+
+def object_text(text: str) -> str:
+    """1.0.3 (dictionary r5): the text from the first 'for/of his|their|her' on, which drops the grantee's name, address
+    and trade ('Seth Smith, ... builder', 'engraver', 'surgeon'). Quoted titles are taken before this is needed."""
+    q = re.search(r"[\"“”]", text)
+    m = OBJECT_START.search(text[: q.start() if q else len(text)])
+    return text[m.start():] if m else text
 
 
 def title_of(text: str) -> str:
     q = re.findall(r"[\"“”]\s*(.{6,}?)\s*[\"“”]", text)
     if q:
         return " ".join(q)
+    obj = object_text(text)
     for rx in TITLE_PATTERNS:
-        m = rx.search(text)
+        m = rx.search(obj)
         if m and len(m.group(1).strip()) >= 6:
             return m.group(1).strip()
-    return text[:300]
+    return obj[:300]
 
 
 def grantee_part(text: str) -> str:

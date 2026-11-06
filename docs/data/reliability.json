@@ -139,30 +139,30 @@
  },
  "b1_fields": {
   "ko": {
-   "본문 재코딩 분야 일치(층화 표본)": "145/212 (68%, 95% CI 62–74%)",
-   "Cohen κ": "0.67",
-   "분야 비중으로 가중한 정밀도": "67%",
-   "분야별 일치": "agriculture 10/11; arms 5/11; building 6/11; chemicals 10/11; food_drink 6/11; fuel_light 9/11; glass_ceramics 9/11; instruments 9/11; medicine 7/11; metals 10/11; mills 10/11; mining 7/11; other 5/25; printing_paper 8/11; steam_power 8/11; textiles 11/11; transport 6/11; water 9/11"
+   "본문 재코딩 분야 일치(층화 표본 R2c, 사전 r5)": "157/212 (74%, 95% CI 68–79%)",
+   "Cohen κ": "0.73",
+   "분야 비중으로 가중한 정밀도": "72%",
+   "분야별 일치": "agriculture 9/11; arms 9/11; building 6/11; chemicals 8/11; food_drink 10/11; fuel_light 7/11; glass_ceramics 10/11; instruments 10/11; medicine 10/11; metals 8/11; mills 8/11; mining 8/11; other 8/25; printing_paper 10/11; steam_power 8/11; textiles 11/11; transport 9/11; water 8/11"
   },
   "en": {
-   "Text recoding, field (stratified sample)": "145/212 (68%, 95% CI 62–74%)",
-   "Cohen's kappa": "0.67",
-   "Precision weighted by field shares": "67%",
-   "Agreement by field": "agriculture 10/11; arms 5/11; building 6/11; chemicals 10/11; food_drink 6/11; fuel_light 9/11; glass_ceramics 9/11; instruments 9/11; medicine 7/11; metals 10/11; mills 10/11; mining 7/11; other 5/25; printing_paper 8/11; steam_power 8/11; textiles 11/11; transport 6/11; water 9/11"
+   "Text recoding, field (stratified sample R2c, dictionary r5)": "157/212 (74%, 95% CI 68–79%)",
+   "Cohen's kappa": "0.73",
+   "Precision weighted by field shares": "72%",
+   "Agreement by field": "agriculture 9/11; arms 9/11; building 6/11; chemicals 8/11; food_drink 10/11; fuel_light 7/11; glass_ceramics 10/11; instruments 10/11; medicine 10/11; metals 8/11; mills 8/11; mining 8/11; other 8/25; printing_paper 10/11; steam_power 8/11; textiles 11/11; transport 9/11; water 8/11"
   }
  },
  "b2_hhi": {
   "ko": {
-   "본문 재코딩 분야 일치(층화 표본)": "145/212 (68%, 95% CI 62–74%)",
-   "Cohen κ": "0.67",
-   "분야 비중으로 가중한 정밀도": "67%",
-   "분야별 일치": "agriculture 10/11; arms 5/11; building 6/11; chemicals 10/11; food_drink 6/11; fuel_light 9/11; glass_ceramics 9/11; instruments 9/11; medicine 7/11; metals 10/11; mills 10/11; mining 7/11; other 5/25; printing_paper 8/11; steam_power 8/11; textiles 11/11; transport 6/11; water 9/11"
+   "본문 재코딩 분야 일치(층화 표본 R2c, 사전 r5)": "157/212 (74%, 95% CI 68–79%)",
+   "Cohen κ": "0.73",
+   "분야 비중으로 가중한 정밀도": "72%",
+   "분야별 일치": "agriculture 9/11; arms 9/11; building 6/11; chemicals 8/11; food_drink 10/11; fuel_light 7/11; glass_ceramics 10/11; instruments 10/11; medicine 10/11; metals 8/11; mills 8/11; mining 8/11; other 8/25; printing_paper 10/11; steam_power 8/11; textiles 11/11; transport 9/11; water 8/11"
   },
   "en": {
-   "Text recoding, field (stratified sample)": "145/212 (68%, 95% CI 62–74%)",
-   "Cohen's kappa": "0.67",
-   "Precision weighted by field shares": "67%",
-   "Agreement by field": "agriculture 10/11; arms 5/11; building 6/11; chemicals 10/11; food_drink 6/11; fuel_light 9/11; glass_ceramics 9/11; instruments 9/11; medicine 7/11; metals 10/11; mills 10/11; mining 7/11; other 5/25; printing_paper 8/11; steam_power 8/11; textiles 11/11; transport 6/11; water 9/11"
+   "Text recoding, field (stratified sample R2c, dictionary r5)": "157/212 (74%, 95% CI 68–79%)",
+   "Cohen's kappa": "0.73",
+   "Precision weighted by field shares": "72%",
+   "Agreement by field": "agriculture 9/11; arms 9/11; building 6/11; chemicals 8/11; food_drink 10/11; fuel_light 7/11; glass_ceramics 10/11; instruments 10/11; medicine 10/11; metals 8/11; mills 8/11; mining 8/11; other 8/25; printing_paper 10/11; steam_power 8/11; textiles 11/11; transport 9/11; water 8/11"
   }
  },
  "v1_venice_printing": {
@@ -239,13 +239,15 @@
   "r1_ngrantees": "118/120 (98%, 95% CI 94–100%)",
   "r1_comm": "119/120 (99%, 95% CI 95–100%)",
   "r2_dictr3_field": "144/212 (68%, 95% CI 61–74%)",
-  "r2_weighted": "67%",
-  "r2_per_field": "agriculture 10/11; arms 5/11; building 6/11; chemicals 10/11; food_drink 6/11; fuel_light 9/11; glass_ceramics 9/11; instruments 9/11; medicine 7/11; metals 10/11; mills 10/11; mining 7/11; other 5/25; printing_paper 8/11; steam_power 8/11; textiles 11/11; transport 6/11; water 9/11",
-  "r2_field": "145/212 (68%, 95% CI 62–74%)",
-  "r2_kappa": "0.67",
+  "r2b_field_r4": "145/212 (68%, 95% CI 62–74%)",
+  "r2b_kappa_r4": "0.67",
   "r2_foreign": "206/212 (97%, 95% CI 94–99%)",
   "r2_comm": "208/212 (98%, 95% CI 95–99%)",
   "r2_term": "210/212 (99%, 95% CI 97–100%)",
+  "r2_field": "157/212 (74%, 95% CI 68–79%)",
+  "r2_kappa": "0.73",
+  "r2_weighted": "72%",
+  "r2_per_field": "agriculture 9/11; arms 9/11; building 6/11; chemicals 8/11; food_drink 10/11; fuel_light 7/11; glass_ceramics 10/11; instruments 10/11; medicine 10/11; metals 8/11; mills 8/11; mining 8/11; other 8/25; printing_paper 10/11; steam_power 8/11; textiles 11/11; transport 9/11; water 8/11",
   "hulme_date": "55/55 (100%, 95% CI 93–100%)",
   "hulme_term": "55/55 (100%, 95% CI 93–100%)"
  },
@@ -374,7 +376,7 @@
    "kappa": 0.6600160369793877
   },
   "r2": {
-   "field": {
+   "field_r4": {
     "k": 145,
     "n": 212,
     "share": 0.6839622641509434,
@@ -383,9 +385,8 @@
      0.7427994505956955
     ]
    },
-   "kappa": 0.6655679035599925,
-   "weighted_precision": 0.668238767601825,
-   "per_field": {
+   "kappa_r4": 0.6655679035599925,
+   "per_field_r4": {
     "agriculture": {
      "k": 10,
      "n": 11,
@@ -577,6 +578,241 @@
     ]
    },
    "n": 212
+  },
+  "r2c": {
+   "field": {
+    "k": 157,
+    "n": 212,
+    "share": 0.7405660377358491,
+    "ci": [
+     0.6776522354745361,
+     0.794916846149842
+    ]
+   },
+   "kappa": 0.725375665363418,
+   "weighted_precision": 0.7224884669470657,
+   "per_field": {
+    "agriculture": {
+     "k": 9,
+     "n": 11,
+     "share": 0.8181818181818182,
+     "ci": [
+      0.5230194356457672,
+      0.9486323107214162
+     ]
+    },
+    "arms": {
+     "k": 9,
+     "n": 11,
+     "share": 0.8181818181818182,
+     "ci": [
+      0.5230194356457672,
+      0.9486323107214162
+     ]
+    },
+    "building": {
+     "k": 6,
+     "n": 11,
+     "share": 0.5454545454545454,
+     "ci": [
+      0.2800915357859759,
+      0.7872872851236217
+     ]
+    },
+    "chemicals": {
+     "k": 8,
+     "n": 11,
+     "share": 0.7272727272727273,
+     "ci": [
+      0.4343546966810743,
+      0.9025394078669138
+     ]
+    },
+    "food_drink": {
+     "k": 10,
+     "n": 11,
+     "share": 0.9090909090909091,
+     "ci": [
+      0.6226415608917041,
+      0.9837678272946745
+     ]
+    },
+    "fuel_light": {
+     "k": 7,
+     "n": 11,
+     "share": 0.6363636363636364,
+     "ci": [
+      0.35380117262012434,
+      0.8483352901086686
+     ]
+    },
+    "glass_ceramics": {
+     "k": 10,
+     "n": 11,
+     "share": 0.9090909090909091,
+     "ci": [
+      0.6226415608917041,
+      0.9837678272946745
+     ]
+    },
+    "instruments": {
+     "k": 10,
+     "n": 11,
+     "share": 0.9090909090909091,
+     "ci": [
+      0.6226415608917041,
+      0.9837678272946745
+     ]
+    },
+    "medicine": {
+     "k": 10,
+     "n": 11,
+     "share": 0.9090909090909091,
+     "ci": [
+      0.6226415608917041,
+      0.9837678272946745
+     ]
+    },
+    "metals": {
+     "k": 8,
+     "n": 11,
+     "share": 0.7272727272727273,
+     "ci": [
+      0.4343546966810743,
+      0.9025394078669138
+     ]
+    },
+    "mills": {
+     "k": 8,
+     "n": 11,
+     "share": 0.7272727272727273,
+     "ci": [
+      0.4343546966810743,
+      0.9025394078669138
+     ]
+    },
+    "mining": {
+     "k": 8,
+     "n": 11,
+     "share": 0.7272727272727273,
+     "ci": [
+      0.4343546966810743,
+      0.9025394078669138
+     ]
+    },
+    "other": {
+     "k": 8,
+     "n": 25,
+     "share": 0.32,
+     "ci": [
+      0.172051902198581,
+      0.5158973087951597
+     ]
+    },
+    "printing_paper": {
+     "k": 10,
+     "n": 11,
+     "share": 0.9090909090909091,
+     "ci": [
+      0.6226415608917041,
+      0.9837678272946745
+     ]
+    },
+    "steam_power": {
+     "k": 8,
+     "n": 11,
+     "share": 0.7272727272727273,
+     "ci": [
+      0.4343546966810743,
+      0.9025394078669138
+     ]
+    },
+    "textiles": {
+     "k": 11,
+     "n": 11,
+     "share": 1.0,
+     "ci": [
+      0.7411670300055737,
+      1.0
+     ]
+    },
+    "transport": {
+     "k": 9,
+     "n": 11,
+     "share": 0.8181818181818182,
+     "ci": [
+      0.5230194356457672,
+      0.9486323107214162
+     ]
+    },
+    "water": {
+     "k": 8,
+     "n": 11,
+     "share": 0.7272727272727273,
+     "ci": [
+      0.4343546966810743,
+      0.9025394078669138
+     ]
+    }
+   },
+   "n": 212,
+   "disagree": [
+    "12758",
+    "1554",
+    "2969",
+    "4936",
+    "11601",
+    "531",
+    "6273",
+    "1694",
+    "7170",
+    "1383",
+    "12303",
+    "715",
+    "45",
+    "10371",
+    "6016",
+    "2731",
+    "352",
+    "1255",
+    "7149",
+    "1983",
+    "12475",
+    "4650",
+    "6221",
+    "5436",
+    "13960",
+    "12059",
+    "4291",
+    "9330",
+    "9401",
+    "692",
+    "3940",
+    "3808",
+    "113",
+    "4607",
+    "13447",
+    "3387",
+    "1150",
+    "8778",
+    "470",
+    "6288",
+    "6170",
+    "1048",
+    "11197",
+    "2126",
+    "457",
+    "1963",
+    "1844",
+    "8664",
+    "5169",
+    "1020",
+    "2162",
+    "3333",
+    "7997",
+    "8472",
+    "1502"
+   ]
   },
   "hulme": {
    "date": {

@@ -1,0 +1,213 @@
+number,field,note
+12758,steam_power,locomotives + railways; tie rule
+4676,building,
+4577,arms,
+3754,food_drink,
+1375,transport,stirrup/riding gear; uncertain
+5231,mining,mine waters + ore reduction; tie rule over metals
+51,glass_ceramics,"metals, salt, bricks with peat; tie rule"
+1554,medicine,
+14309,printing_paper,
+13977,textiles,
+13087,building,slate/stone articles; uncertain
+3565,arms,gun carriages; arms before transport
+2969,other,toast stand by fire; uncertain
+5962,food_drink,
+4606,food_drink,distillation
+938,metals,
+4936,building,stone sawing; uncertain
+12921,agriculture,
+11601,fuel_light,chimneys; tie with building
+2919,medicine,
+531,agriculture,swine feed
+12336,medicine,
+941,medicine,veterinary medicine; uncertain
+9866,steam_power,
+6273,fuel_light,heating/ventilation of buildings
+1694,arms,
+13892,mills,
+7170,transport,
+10320,chemicals,
+11127,mining,
+1383,building,fire escape; uncertain
+12303,water,motive power + raising liquids; tie rule; text merges hinge patent
+12262,instruments,telegraph; uncertain
+715,mining,ore grinding mill; tie rule over mills
+12951,mills,
+11103,textiles,
+3722,arms,
+6877,steam_power,tie with transport
+45,mills,timber sawing engine; uncertain
+743,transport,
+8962,agriculture,
+10371,chemicals,fats + candles; tie rule
+4236,mining,
+9571,steam_power,
+10419,food_drink,casks for wine/beer; uncertain
+6016,chemicals,evaporation stove; uncertain
+4653,transport,
+12504,fuel_light,
+9093,medicine,
+2731,textiles,distilling + dyeing(?); tie rule; uncertain
+2696,steam_power,
+6008,printing_paper,
+141,mills,sugar mills; tie rule over food_drink
+9538,glass_ceramics,
+8124,glass_ceramics,
+5116,water,
+1878,medicine,
+13527,arms,
+11468,mills,
+9341,agriculture,
+352,transport,
+9461,other,brushes
+695,medicine,
+8959,metals,
+11312,food_drink,
+1255,water,propeller for mills/hydrostatic; uncertain
+7149,transport,ship propeller; uncertain vs steam_power
+4906,transport,road paving; uncertain vs building
+13967,steam_power,motive power
+1983,steam_power,
+13748,textiles,
+8268,fuel_light,
+3643,mills,saw mills; uncertain
+12475,mills,rice hulling; tie rule over food_drink
+7942,chemicals,
+1824,agriculture,
+3599,arms,
+1969,metals,steel tools incl hoes; tie rule
+14106,textiles,hats; uncertain
+4650,water,
+6788,other,furniture
+8647,mills,
+6221,steam_power,motive power engine
+7267,chemicals,
+4826,printing_paper,
+5436,mills,rice cleaning; uncertain
+3411,fuel_light,
+2040,printing_paper,
+12463,transport,
+626,medicine,
+599,medicine,
+13960,water,
+12059,transport,nautical instruments; tie rule over instruments
+6076,printing_paper,
+4291,transport,harness fittings; uncertain
+13864,glass_ceramics,
+3920,food_drink,
+11319,other,lifting apparatus; uncertain
+8827,textiles,
+6174,fuel_light,gas meter; tie rule over instruments
+9330,fuel_light,
+3985,arms,plus horseshoeing; tie rule
+6623,food_drink,
+7247,printing_paper,
+10341,instruments,
+6507,steam_power,steam for ships; tie rule
+9401,medicine,medicinal water; could be chemicals
+2499,water,boring timber for pumps/water pipes
+883,mining,coal/water from pits; also conveying
+3611,water,
+8447,metals,
+692,textiles,printing on woollens
+3940,fuel_light,OCR 'great' read as grate; uncertain
+3808,building,wall painting; could be chemicals
+11824,glass_ceramics,
+3386,arms,bell and gun alarm; tie arms/instruments
+113,metals,
+9234,fuel_light,
+9781,building,road paving
+2489,mills,
+4607,metals,door hinges; uncertain
+7515,printing_paper,
+11924,agriculture,
+13447,fuel_light,
+11934,transport,
+2457,other,women's stays; clothing
+4595,water,water closets; could be building
+3387,medicine,
+13431,textiles,tie textiles/chemicals
+1150,building,
+10543,printing_paper,
+1847,instruments,
+848,water,engine by fire or water; tie water/steam
+1743,instruments,
+8778,other,brushes and brooms
+3523,other,cutting trenails; woodworking
+10418,food_drink,
+13689,food_drink,
+1730,metals,locks; uncertain
+470,transport,
+6288,printing_paper,fountain pens; uncertain
+14295,mining,tie mining/metals
+6170,other,footwear
+5755,water,"steam engine, pumps, water wheels; tie water/steam"
+1048,instruments,
+11197,metals,
+1718,transport,
+1702,mining,raising coal/ore/water from mines
+356,water,raising water by fire; tie water/steam
+887,transport,ship bottom preservative; could be chemicals
+8404,other,theatrical scenery
+12084,printing_paper,
+2126,transport,canal lift; could be water
+14117,metals,
+8179,medicine,baths
+2562,instruments,
+457,water,
+1963,fuel_light,
+1844,water,
+1698,agriculture,
+5639,instruments,
+413,chemicals,potato starch; could be food
+821,glass_ceramics,pewter and earthenware; tie
+9614,building,"windows, blinds, curtains; uncertain"
+13275,glass_ceramics,
+9166,chemicals,starch
+8664,textiles,
+6138,transport,chain cable stopper
+1461,agriculture,
+673,medicine,
+65,metals,coking coal for iron; tie metals/fuel
+8528,building,cement; could be chemicals
+11630,fuel_light,
+12996,instruments,
+11956,steam_power,
+6290,steam_power,
+11907,agriculture,
+11254,textiles,
+6702,glass_ceramics,
+3301,mills,grindstones; uncertain
+5169,fuel_light,splitting/bundling firewood; uncertain
+3499,agriculture,
+3505,instruments,
+9976,printing_paper,
+3155,arms,
+12801,textiles,
+11898,chemicals,disinfecting/preserving; uncertain
+4871,glass_ceramics,
+7028,chemicals,
+1020,instruments,
+762,mining,
+9097,building,road paving
+2162,fuel_light,"coppers, boilers, furnaces; uncertain"
+3333,fuel_light,
+6318,other,object not stated
+11629,textiles,
+7997,metals,chains
+8472,food_drink,grain preserving; could be agriculture
+13335,chemicals,
+8919,food_drink,
+437,water,
+8507,other,"beds, mattresses; uncertain"
+7350,instruments,
+7744,fuel_light,
+8697,textiles,
+288,mining,"stamping ores, hemp, flax; tie earliest"
+1827,textiles,linen mangle; uncertain
+6493,metals,
+2046,glass_ceramics,bricks/building materials; tie
+4823,arms,
+965,instruments,
+1502,transport,
