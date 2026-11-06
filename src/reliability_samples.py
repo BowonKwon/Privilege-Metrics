@@ -9,6 +9,9 @@ R1 image check   120 Woodcroft entries, 30 per period stratum, read from the pag
 R2 text coding   200 parsed Woodcroft grants, stratified by our field (11 per field, 'other' 25): field, foreign address,
                  communication, stated term, read from the OCR text
 R3 Fulin recode  40 Fulin numbers drawn at random: recoded from the OCR text under the same codebook
+R2c text coding  (1.0.3, field dictionary r5) 212 parsed Woodcroft grants, stratified by the r5 field (11 per field,
+                 'other' 25), seed 20261107, entries already in R2 or R2b excluded: field only, read from the text.
+                 Run with --r2c; the other samples are not redrawn.
 """
 import json
 import sys
@@ -21,6 +24,22 @@ import pandas as pd
 from paths import COD, DER, REL, find  # noqa: F401
 IA = {1: "chronologicalin1617grea_0", 2: "chronologicalind1617grea"}
 rng = np.random.default_rng(20261103)
+
+
+def r2c():
+    """Fresh sample for the r5 dictionary: the sample that prompted r5 (R2b) is not reused."""
+    import fields
+    W = pd.read_csv(find(DER, "woodcroft_entries.csv"))
+    used = set(pd.read_csv(REL / "r2_key_dictr3.csv")["number"]) | set(pd.read_csv(REL / "r2b_key.csv")["number"])
+    G = W[W["parsed"] & (W["kind"] == "grant") & ~W["number"].isin(used)]
+    g = np.random.default_rng(20261107)
+    parts = [G[G["field"] == f].sample(min(25 if f == "other" else 11, int((G["field"] == f).sum())), random_state=int(g.integers(1e9)))
+             for f in fields.FIELD_ORDER]
+    r = pd.concat(parts).sample(frac=1, random_state=int(g.integers(1e9)))
+    r[["number", "text"]].to_csv(REL / "r2c_text_input.csv", index=False)
+    r[["number", "year", "field"]].to_csv(REL / "r2c_key.csv", index=False)
+    (REL / "field_list_r5.txt").write_text("".join(f"{i}. {k} — {fields.LABEL[k]['en']}\n" for i, k in enumerate(fields.FIELD_ORDER[:-1], 1)), encoding="utf-8")
+    print("R2c", len(r), "overlap with R2/R2b:", len(set(r["number"]) & used))
 
 
 def main():
@@ -69,4 +88,4 @@ def main():
 
 if __name__ == "__main__":
     sys.stdout.reconfigure(encoding="utf-8")
-    main()
+    r2c() if "--r2c" in sys.argv else main()

@@ -4,7 +4,9 @@
   python src/reliability.py
 
 R1 image check  data/coding/reliability/r1_image_coder.csv  vs r1_key.csv  (merged from the two coders' _a/_b files when they exist)
-R2 text coding  data/coding/reliability/r2b_text_coder.csv  vs r2b_key.csv (and the r3-dictionary round r2_*_dictr3.csv)
+R2 text coding  data/coding/reliability/r2b_text_coder.csv  vs r2b_key.csv (and the r3-dictionary round r2_*_dictr3.csv):
+                address abroad, communication, term; field as recorded for dictionary r4 (the key's sampling-time field)
+R2c (1.0.3)     data/coding/reliability/r2c_text_coder.csv  vs r2c_key.csv: field under dictionary r5, on a fresh sample
 R3 Fulin        data/coding/reliability/r3_fulin_second_coder.csv vs data/coding/fulin_coding.csv
 H  Hulme        data/coding/reliability/hulme_image_coder.csv vs data/coding/hulme_1561_1603.csv
 Agreement is reported as k/n (share, 95% Wilson interval); field agreement also as Cohen's kappa.
@@ -140,22 +142,37 @@ def main():
         c = pd.read_csv(p, dtype=str)
         k = refresh(pd.read_csv(need(REL / "r2b_key.csv"), dtype=str), ["field", "foreign_address", "communication", "term_years"])
         m = k.merge(c, on="number", suffixes=("_ours", "_text"))
-        r_f = agree(m["field_ours"].tolist(), m["field_text"].tolist())
-        kap = kappa(m["field_ours"].tolist(), m["field_text"].tolist())
+        # field: the r4 record, compared with the field stored in the key at sampling time (r5 was revised on this sample,
+        # so R2b is not used to measure r5)
+        k4 = pd.read_csv(need(REL / "r2b_key.csv"), dtype=str)[["number", "field"]].rename(columns={"field": "field_r4"})
+        m = m.merge(k4, on="number")
+        r_f = agree(m["field_r4"].tolist(), m["field_text"].tolist())
+        kap = kappa(m["field_r4"].tolist(), m["field_text"].tolist())
         per_field = {}
-        for f, g in m.groupby("field_ours"):
-            per_field[f] = agree(g["field_ours"].tolist(), g["field_text"].tolist())
+        for f, g in m.groupby("field_r4"):
+            per_field[f] = agree(g["field_r4"].tolist(), g["field_text"].tolist())
         r_fa = agree(m["foreign_address_ours"].map(tf).tolist(), m["foreign_address_text"].map(tf).tolist())
         r_cm = agree(m["communication_ours"].map(tf).tolist(), m["communication_text"].map(tf).tolist())
         r_t = agree(m["term_years_ours"].map(num).tolist(), m["term_years_text"].map(num).tolist())
         # population-weighted precision: per-field precision weighted by each field's share of all classified grants
         W = pd.read_csv(find(DER, "woodcroft_entries.csv"))
         pop = W[W["parsed"] & (W["kind"] == "grant")]["field"].value_counts(normalize=True)
-        wprec = sum(pop.get(f, 0) * r["share"] for f, r in per_field.items())
-        S["r2_weighted"] = f"{wprec * 100:.0f}%"
-        S["r2_per_field"] = "; ".join(f"{f} {r['k']}/{r['n']}" for f, r in sorted(per_field.items()))
-        res["r2"] = {"field": r_f, "kappa": kap, "weighted_precision": wprec, "per_field": per_field, "foreign_address": r_fa, "communication": r_cm, "term": r_t, "n": len(m)}
-        S["r2_field"], S["r2_kappa"], S["r2_foreign"], S["r2_comm"], S["r2_term"] = fmt(r_f), f"{kap:.2f}", fmt(r_fa), fmt(r_cm), fmt(r_t)
+        # the r4 weighted precision (67%, published in 1.0-1.0.2) used r4 field shares, which are not rebuilt here
+        res["r2"] = {"field_r4": r_f, "kappa_r4": kap, "per_field_r4": per_field, "foreign_address": r_fa, "communication": r_cm, "term": r_t, "n": len(m)}
+        S["r2b_field_r4"], S["r2b_kappa_r4"] = fmt(r_f), f"{kap:.2f}"
+        S["r2_foreign"], S["r2_comm"], S["r2_term"] = fmt(r_fa), fmt(r_cm), fmt(r_t)
+    # R2c: field under dictionary r5 on a fresh sample (1.0.3)
+    c = pd.read_csv(need(REL / "r2c_text_coder.csv"), dtype=str)
+    k = refresh(pd.read_csv(need(REL / "r2c_key.csv"), dtype=str), ["field"])
+    m = k.merge(c, on="number", suffixes=("_ours", "_text"))
+    r_f = agree(m["field_ours"].tolist(), m["field_text"].tolist())
+    kap = kappa(m["field_ours"].tolist(), m["field_text"].tolist())
+    per_field = {f: agree(g["field_ours"].tolist(), g["field_text"].tolist()) for f, g in m.groupby("field_ours")}
+    wprec = sum(pop.get(f, 0) * r["share"] for f, r in per_field.items())
+    res["r2c"] = {"field": r_f, "kappa": kap, "weighted_precision": wprec, "per_field": per_field, "n": len(m),
+                  "disagree": [n for n, a_, b_ in zip(m["number"], m["field_ours"], m["field_text"]) if a_ != b_]}
+    S["r2_field"], S["r2_kappa"], S["r2_weighted"] = fmt(r_f), f"{kap:.2f}", f"{wprec * 100:.0f}%"
+    S["r2_per_field"] = "; ".join(f"{f} {r['k']}/{r['n']}" for f, r in sorted(per_field.items()))
     # Hulme transcription check
     p = need(REL / "hulme_image_coder.csv")
     if True:
@@ -187,8 +204,8 @@ def main():
             {"이미지 대조 연도 일치": S["r1_year"], "이미지 대조 기간 일치": S["r1_term"], "이미지 대조 수혜자 수 일치": S["r1_ngrantees"], "이미지 대조 communication 일치": S["r1_comm"]},
             {"Image check, year": S["r1_year"], "Image check, term": S["r1_term"], "Image check, number of grantees": S["r1_ngrantees"], "Image check, communication": S["r1_comm"]})
     if "r2" in res:
-        put(["b1_fields", "b2_hhi"], {"본문 재코딩 분야 일치(층화 표본)": S["r2_field"], "Cohen κ": S["r2_kappa"], "분야 비중으로 가중한 정밀도": S["r2_weighted"], "분야별 일치": S["r2_per_field"]},
-            {"Text recoding, field (stratified sample)": S["r2_field"], "Cohen's kappa": S["r2_kappa"], "Precision weighted by field shares": S["r2_weighted"], "Agreement by field": S["r2_per_field"]})
+        put(["b1_fields", "b2_hhi"], {"본문 재코딩 분야 일치(층화 표본 R2c, 사전 r5)": S["r2_field"], "Cohen κ": S["r2_kappa"], "분야 비중으로 가중한 정밀도": S["r2_weighted"], "분야별 일치": S["r2_per_field"]},
+            {"Text recoding, field (stratified sample R2c, dictionary r5)": S["r2_field"], "Cohen's kappa": S["r2_kappa"], "Precision weighted by field shares": S["r2_weighted"], "Agreement by field": S["r2_per_field"]})
         put(["c1_foreign"], {"본문 재코딩 해외 주소 일치": S["r2_foreign"], "본문 재코딩 communication 일치": S["r2_comm"]},
             {"Text recoding, address abroad": S["r2_foreign"], "Text recoding, communication": S["r2_comm"]})
         put(["d1_terms", "d2_term_shift"], {"본문 재코딩 기간 일치": S["r2_term"]}, {"Text recoding, term": S["r2_term"]})

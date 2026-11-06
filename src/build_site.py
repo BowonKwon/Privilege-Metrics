@@ -21,7 +21,7 @@ from site_kit import CSS, JS, esc, fig, fmt, legend, svg_bars, svg_lines, table_
 from paths import COD, DER, OUT, find, need  # noqa: E402
 
 VERSION = SITE["version"]
-BUILD_DATE = "2026-11-04"
+BUILD_DATE = "2026-11-07"
 REPO = "https://github.com/BowonKwon/Privilege-Metrics"
 
 T = {
@@ -44,10 +44,76 @@ T = {
 }
 JUR = {"GB": {"ko": "잉글랜드", "en": "England"}, "VE": {"ko": "베네치아", "en": "Venice"}, "NL": {"ko": "네덜란드", "en": "Dutch Republic"}}
 
+# 1.0.3: navigation on leaf pages (breadcrumb, same-series list, previous/next)
+LEAF_CSS = (' main.wide{max-width:1300px} .crumbs{font-size:.84rem;color:var(--fg3);margin:-.4rem 0 .9rem} .crumbs .sep{margin:0 .25rem}'
+            ' .crumbs [aria-current]{color:var(--fg2)} .leaf{display:grid;grid-template-columns:230px minmax(0,1fr);gap:2rem;align-items:start}'
+            ' .leafbody{min-width:0} .sibs{position:sticky;top:4.2rem;max-height:calc(100vh - 5rem);overflow:auto;font-size:.84rem;border-right:1px solid var(--line);padding-right:.8rem}'
+            ' .sibs ol,.sibs-m ol{list-style:none;margin:.2rem 0 .8rem;padding:0} .sibs li a,.sibs-m li a{display:block;padding:.18rem .4rem;border-radius:6px;color:var(--fg2)}'
+            ' .sibs li a:hover,.sibs-m li a:hover{background:var(--bg2);text-decoration:none} .sibs a[aria-current],.sibs-m a[aria-current]{background:var(--bg2);color:var(--fg);font-weight:600}'
+            ' .sibs summary,.sibs-m summary{cursor:pointer;font-weight:600;color:var(--fg);margin:.3rem 0} .sibs-m{display:none;border:1px solid var(--line);border-radius:10px;padding:.4rem .8rem;margin:0 0 1rem;font-size:.9rem}'
+            ' .pn{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:2.4rem;padding-top:1rem;font-size:.92rem}'
+            ' .pn a{overflow-wrap:anywhere} .pn a[rel=next]{margin-left:auto;text-align:right} .pn small{display:block;color:var(--fg3)}'
+            ' @media(max-width:860px){.leaf{display:block}.sibs{display:none}.sibs-m{display:block}} @media print{.crumbs,.sibs,.sibs-m,.pn{display:none}.leaf{display:block}}')
+LEAF_JS = (';document.addEventListener("keydown",function(e){if(e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;var t=e.target;'
+           'if(t&&t.closest&&t.closest("input,textarea,select,[contenteditable]"))return;var a=null;if(e.key==="ArrowLeft")a=document.querySelector("a[rel=prev]");'
+           'else if(e.key==="ArrowRight")a=document.querySelector("a[rel=next]");if(a){location.href=a.href}});'
+           'var sb=document.querySelector(".sibs"),cu=sb&&sb.querySelector("a[aria-current]");if(cu){sb.scrollTop=cu.offsetTop-sb.clientHeight/2}')
+LEAF_T = {"ko": dict(crumbs="위치", sibs="같은 계열의 지표", others="다른 지표", pn="이전·다음 지표", next_group="다음 계열"),
+          "en": dict(crumbs="Breadcrumb", sibs="Metrics in this series", others="Other metrics", pn="Previous and next metric", next_group="Next series")}
 
-def page(lang, title, body, depth=1, active="", desc="", rel="index.html"):
-    """rel: this page's path under the language folder; the language switch points to the same path in the other tree."""
+
+def metric_siblings(lang, mid):
+    """Breadcrumb and sibling groups for a metric page, computed from the registry in the order of the metric list page
+    (series by series), so a new metric appears without editing any link list."""
     t = T[lang]
+    groups = [(s, f"{s} · {SERIES[s][lang]}", [(m[lang]["name"], f"{k}.html") for k, m in METRICS.items() if m["series"] == s]) for s in SERIES]
+    return dict(crumbs=[(t["nav_home"], "../index.html"), (t["nav_metrics"], "index.html")], cur=f"{mid}.html",
+                groups=[(lab, items) for _, lab, items in groups if items], anchors=[f"index.html#s-{k}" for k, _, items in groups if items])
+
+
+def leaf_html(lang, leaf, body):
+    """Breadcrumb, same-series list (sidebar on wide screens, folded box on narrow ones) and previous/next links.
+    leaf = dict(crumbs=[(label, href)...], groups=[(group label, [(label, href), ...]), ...], cur=href of this page,
+    anchors=[href of each group's heading]). At the end of a series 'next' continues with the next series and says so."""
+    L = LEAF_T[lang]
+    flat = [(lab, href, gi, glab) for gi, (glab, items) in enumerate(leaf["groups"]) for lab, href in items]
+    idx = next(i for i, x in enumerate(flat) if x[1] == leaf["cur"])
+    cur_g = flat[idx][2]
+    sep = " <span class='sep' aria-hidden='true'>›</span> "
+    crumbs = sep.join(f'<a href="{h}">{esc(l)}</a>' for l, h in leaf["crumbs"])
+    if leaf.get("anchors"):
+        crumbs += f'{sep}<a href="{leaf["anchors"][cur_g]}">{esc(leaf["groups"][cur_g][0])}</a>'
+    crumbs += f"{sep}<span aria-current='page'>{esc(flat[idx][0])}</span>"
+
+    def lists():
+        out = []
+        for gi, (glab, items) in enumerate(leaf["groups"]):
+            lis = "".join(f'<li><a href="{h}"' + (' aria-current="page"' if h == leaf["cur"] else "") + f'>{esc(l)}</a></li>' for l, h in items)
+            out.append(f'<details{" open" if gi == cur_g else ""}><summary>{esc(glab)} <small>({len(items)})</small></summary><ol>{lis}</ol></details>')
+        return "".join(out)
+
+    side = f'<aside class="sibs"><nav aria-label="{L["sibs"]}">{lists()}</nav></aside>'
+    mobile = (f'<details class="sibs-m"><summary>{L["others"]} ({len(flat)})</summary>'
+              f'<nav aria-label="{L["sibs"]}">{lists()}</nav></details>')
+    pn = []
+    if idx > 0:
+        pv = flat[idx - 1]
+        pn.append(f'<a rel="prev" href="{pv[1]}">← {esc(pv[0])}</a>')
+    if idx + 1 < len(flat):
+        nx = flat[idx + 1]
+        note = f'<small>{L["next_group"]}: {esc(nx[3])}</small> ' if nx[2] != cur_g else ""
+        pn.append(f'<a rel="next" href="{nx[1]}">{note}{esc(nx[0])} →</a>')
+    pnav = f'<nav class="pn" aria-label="{L["pn"]}">{"".join(pn)}</nav>'
+    return (f'<nav class="crumbs" aria-label="{L["crumbs"]}">{crumbs}</nav><div class="leaf">{side}<div class="leafbody">{mobile}'
+            f'{body}{pnav}</div></div>')
+
+
+def page(lang, title, body, depth=1, active="", desc="", rel="index.html", leaf=None):
+    """rel: this page's path under the language folder; the language switch points to the same path in the other tree.
+    leaf: sibling navigation for a leaf page (metric_siblings), drawn by leaf_html."""
+    t = T[lang]
+    if leaf:
+        body = leaf_html(lang, leaf, body)
     root = "../" * depth
     other = "en" if lang == "ko" else "ko"
     hub = "" if lang == "ko" else "en/"
@@ -68,13 +134,13 @@ def page(lang, title, body, depth=1, active="", desc="", rel="index.html"):
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600&display=swap" rel="stylesheet">
 <style>{CSS}
 :lang(ko) .prose p,:lang(ko) .take p,:lang(ko) .card small,:lang(ko) figcaption,:lang(ko) dd{{word-break:keep-all}}
-td.num,th.num{{white-space:nowrap}}</style></head><body>
+td.num,th.num{{white-space:nowrap}}{LEAF_CSS if leaf else ""}</style></head><body>
 <header><a class="brand" href="{root}{lang}/index.html">{t['site']}</a>
 <nav>{navh}</nav>
 <div class="right"><button id="theme" class="theme" type="button" aria-label="{t['theme']}">◑</button><a class="lang" href="{root}{other}/{rel}" hreflang="{other}">{t['lang_other']}</a></div></header>
-<main>{body}</main>
+<main{' class="wide"' if leaf else ""}>{body}</main>
 <footer>{t['site']} · {t['version']} {VERSION} · {t['built']} {BUILD_DATE} · <a href="{REPO}">GitHub</a> · {t['hub']} <a href="https://bowonkwon.github.io/{hub}">bowonkwon.github.io</a><br>{attribution}</footer>
-<script>{JS}</script></body></html>"""
+<script>{JS}{LEAF_JS if leaf else ""}</script></body></html>"""
 
 
 def take(text, lang):
@@ -250,7 +316,8 @@ def metric_page(mid, D, TK, rel, lang):
         body.append(f'<h2>{t["prior"]}</h2><ul class="prose">' + "".join(f'<li>{md(PRIOR[p][lang])} <span class="src">— {md(PRIOR[p]["cite"])}</span></li>' for p in m["prior"]) + "</ul>")
     body.append(f'<h2>{t["source"]}</h2><ul class="prose">' + "".join(f'<li>{md(SOURCES[s][lang])} <span class="src">({esc(SOURCES[s]["license_ko" if lang == "ko" else "license"])}; <a href="{SOURCES[s]["url"]}">{esc(SOURCES[s]["url"])}</a>)</span></li>' for s in m["sources"]) + "</ul>")
     body.append(f'<div class="links"><a href="index.html">← {t["metric_list"]}</a></div>')
-    return page(lang, L["name"], "".join(body), depth=2, active="metrics", desc=TK[mid][lang], rel=f"metrics/{mid}.html")
+    return page(lang, L["name"], "".join(body), depth=2, active="metrics", desc=TK[mid][lang], rel=f"metrics/{mid}.html",
+                leaf=metric_siblings(lang, mid))
 
 
 def cards(D, TK, lang, ids=None, depth=1):
@@ -271,7 +338,7 @@ def metrics_index(D, TK, lang):
     body = [f"<h1>{t['metric_list']}</h1><p class='lead'>{'지표 ' + str(len(METRICS)) + '개. 계열마다 묶었다.' if lang == 'ko' else str(len(METRICS)) + ' metrics, grouped by series.'}</p>"]
     for s, lab in SERIES.items():
         ids = [k for k, m in METRICS.items() if m["series"] == s]
-        body.append(f"<h2>{s} · {esc(lab[lang])}</h2>" + cards(D, TK, lang, ids, depth=2))
+        body.append(f"<h2 id='s-{s}'>{s} · {esc(lab[lang])}</h2>" + cards(D, TK, lang, ids, depth=2))
     return page(lang, t["metric_list"], "".join(body), depth=2, active="metrics", rel="metrics/index.html")
 
 
@@ -345,9 +412,10 @@ def places(D, TK, lang):
                "Buning·Looijesteijn 자료(1581–1621, CC BY 4.0)를 다시 셌다. 문서 성격이 특권 허여인 것만 센다." if ko else
                "The Buning and Looijesteijn data (1581–1621, CC BY 4.0), recounted here; only documents that issue a privilege are counted."),
     }
-    body = [f"<h1>{t['nav_places']}</h1>"]
+    jump = " · ".join(f"<a href='#j-{j}'>{JUR[j][lang]}</a>" for j in blocks)       # 1.0.3: one page, three sections
+    body = [f"<h1>{t['nav_places']}</h1><nav class='jump' aria-label='{'관할' if ko else 'Jurisdictions'}'>{jump}</nav>"]
     for j, (ids, txt) in blocks.items():
-        body.append(f"<h2>{JUR[j][lang]}</h2><p class='prose'>{esc(txt)}</p>" + cards(D, TK, lang, ids, depth=1))
+        body.append(f"<h2 id='j-{j}'>{JUR[j][lang]}</h2><p class='prose'>{esc(txt)}</p>" + cards(D, TK, lang, ids, depth=1))
     return page(lang, t["nav_places"], "".join(body), depth=1, active="places", rel="places.html")
 
 
