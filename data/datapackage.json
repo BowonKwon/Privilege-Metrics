@@ -1,7 +1,7 @@
 {
  "name": "privilege-metrics",
  "title": "From Privilege to Patent",
- "version": "1.0.4",
+ "version": "1.0.5",
  "created": "2026-11-07",
  "licenses": [
   {
@@ -23,7 +23,7 @@
   {
    "path": "hulme_1561_1603.csv",
    "license": "CC BY 4.0",
-   "source": "E. Wyndham Hulme, 'The History of the Patent System under the Prerogative and at Common Law', *Law Quarterly Review* 12 (1896) 141–154, and '… A Sequel', *LQR* 16 (1900) 44–56: the list of industrial monopoly grants 1561–1603, Nos. I–LV (55 grants), and the summary table on p. 52, transcribed by hand and checked against the page images.",
+   "source": "E. Wyndham Hulme, 'The History of the Patent System under the Prerogative and at Common Law', *Law Quarterly Review* 12 (1896) 141–154, and '… A Sequel', *LQR* 16 (1900) 44–56: the list of industrial monopoly grants 1561–1603, Nos. I–LV (55 grants), and the summary table on p. 52, transcribed by hand and checked against the page images. Names are kept as printed in the LQR, so No. II (saltpetre, 1561) keeps 'John Parnes'; the *Calendar of the Patent Rolls, Elizabeth I*, vol. 2 (1948), p. 98, and *Engineering* (15 June 1894) give the same grant to 'John Barnes', and 'Parnes' is taken to be a misprint in the LQR.",
    "source_license": "public domain, 1896, 1900",
    "source_url": "https://archive.org/details/sim_law-quarterly-review_1900-01_16_61"
   },
