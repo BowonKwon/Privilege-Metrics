@@ -15,6 +15,7 @@ Rules (all published on the method page)
   'for xiiij next ensuing'); term_other: further terms in the same entry (mines, Ireland, a later revenue) and 'residue'
   when the grant runs for the residue of an earlier term. 1.0.3 adds 'and 31 yeares wthin Ireland', OCR-damaged
   numbers ('80fy', '80^') and the residue re-grant; the first term is computed before these and never changes.
+  1.0.4 reads a first term written with a caret ('for the term of 14^years', no. 1733) when no other first term is found.
 - a margin year that differs from both neighbours while they agree with each other is rejected as an OCR misreading.
 - margin segments containing a digit are dates (whole or OCR-damaged), never grantees' names; a year read from a damaged
   date is kept when within 2 of the neighbours' median. data/coding/woodcroft_date_overrides.csv holds years read on the
@@ -92,6 +93,9 @@ TERM_OCR_RE = re.compile(r"(?:t[ec]rme?\s*of|for|space\s*of|residue\s*of|remaind
 IRELAND_RE = re.compile(r"\band\s+" + NUM_TOK_OCR + r"\s*" + YEARS + r"\s*(?:w\S{0,4}in|in)\s+ireland", re.I)   # 'xiiij yeares wthin England and 31 yeares wthin Ireland'
 RESIDUE_RE = re.compile(r"graunt\w*\s+(?:unto|to)\s+[^;—]{0,80}?\bdur\w*\s+the\s+(?:residue|remainder|remaynder)\s+of\s+the\s+said\s+t[ec]rme?\b", re.I)  # a re-grant for the rest of an earlier term
 TERM_NEXT_RE = re.compile(r"\bfor\s+([xvilj]{2,7}|\d{1,2})\s+next\s+ensu", re.I)   # 'for xiiij next ensuing' (word 'years' left out)
+# 1.0.4: a caret printed between the number and 'years' ('for the term of 14^years', no. 1733). Read only when no other
+# first term is found, and only for arabic digits joined to the caret.
+TERM_CARET_RE = re.compile(r"(?:t[ec]rme?\s*of|for)\s*(?:the\s*)?(?:t[ec]rme?\s*of\s*)?(\d{1,2})\^\s*" + YEARS, re.I)
 
 
 def _term_value(tok: str):
@@ -120,6 +124,11 @@ def terms_of(text: str):
         v = _term_value(m.group(1))
         if v and 3 <= v <= 99:
             out.append((m.start(), v))
+    if not out:                                      # 1.0.4
+        for m in TERM_CARET_RE.finditer(text):
+            v = _term_value(m.group(1))
+            if v and 3 <= v <= 41:
+                out.append((m.start(), v))
     if not out:
         for m in TERM_NEXT_RE.finditer(text):
             v = _term_value(m.group(1))

@@ -50,7 +50,7 @@ def build(D: dict) -> dict:
     first, last = top("1617-1649"), top("1840-1852")
     f_ko = lambda g: ", ".join(F.LABEL[r.field]["ko"] for r in g.itertuples())
     f_en = lambda g: ", ".join(F.LABEL[r.field]["en"] for r in g.itertuples())
-    oth = b1[b1.field == "other"].set_index("period")["share"]
+    oth = b1[(b1.field == "other") & (b1.source == "Woodcroft")].set_index("period")["share"]   # 1.0.4: the eight periods shown
     T["b1_fields"] = {
         "ko": f"1617–1649년에는 {f_ko(first)} 순으로 많고, 1840–1852년에는 {f_ko(last)} 순으로 많다. 규칙에 걸리지 않은 「기타」는 구간마다 {_pct(oth.min())}–{_pct(oth.max())}다.",
         "en": f"The largest fields are {f_en(first)} in 1617–1649, and {f_en(last)} in 1840–1852. The unmatched 'other' share ranges from {_pct(oth.min())} to {_pct(oth.max())} by period.",

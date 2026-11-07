@@ -12,7 +12,7 @@ Values for the cards are written by src/reliability.py into data/derived/reliabi
 SITE = {
     "ko": {"title": "특권에서 특허로", "subtitle": "근대 특허 이전, 베네치아·잉글랜드·네덜란드의 발명·출판 특권을 한 건씩 세다"},
     "en": {"title": "From Privilege to Patent", "subtitle": "Invention and printing privileges in Venice, England and the Dutch Republic before modern patents, counted one grant at a time"},
-    "version": "1.0.3",
+    "version": "1.0.4",
 }
 
 SERIES = {
@@ -122,10 +122,10 @@ metric(id="a4_extensions", series="A", table="m_a4_extensions", unit="share", fm
 metric(id="b1_fields", series="B", table="m_b1_fields", unit="share", fmt=".1%", sources=["woodcroft", "hulme"], prior=[],
        rel="sampled",
        ko=dict(name="분야 구성", definition="허여된 발명의 분야 비율. 분야는 발명 명칭에 사전 등록한 단어 규칙을 차례로 적용해 처음 맞는 것으로 정했다.",
-               formula="구간·분야별 건수 ÷ 구간 건수(「기타」 포함)", reading="1617–1649년에는 양수·배수와 금속이, 1820년 이후에는 직물·운송·증기가 큰 몫을 차지한다.",
+               formula="구간·분야별 건수 ÷ 구간 건수(「기타」 포함)", reading="1617–1649년에는 양수·배수와 금속이, 1820년 이후에는 직물·운송·증기가 큰 몫을 차지한다. 분야별 일치는 「기타」를 빼고도 55%–100%로 고르지 않다(「기타」는 25건 중 8건, 신뢰도 카드).",
                caveat="명칭의 단어로 분류하므로 한 발명이 두 분야에 걸치면 순서가 앞선 분야로 간다. 「기타」는 규칙에 걸리지 않은 것이다. 독립 코더가 본문을 읽고 매긴 분야와는 열에 일곱 꼴로 일치한다(분야 비중으로 가중한 정밀도 72%, 신뢰도 카드). 분야 비율은 대략의 구성으로 읽고, 분야 하나의 작은 증감에 무게를 두지 않는다. Hulme 1561–1603은 같은 사전을 명칭에 적용했다."),
        en=dict(name="Field composition", definition="Share of granted inventions by field. The field is the first match of a pre-registered list of word rules applied to the title of the invention.",
-               formula="count in field and period ÷ count in period (including 'other')", reading="In 1617–1649 water raising and drainage and metals take large shares; after 1820, textiles, transport and steam.",
+               formula="count in field and period ÷ count in period (including 'other')", reading="In 1617–1649 water raising and drainage and metals take large shares; after 1820, textiles, transport and steam. Agreement with the coder is uneven across fields, from 55% to 100% leaving 'other' aside (8 of 25 for 'other'; see the reliability card).",
                caveat="Classification uses the words of the title, so an invention that spans two fields goes to the one earlier in the list. 'Other' is what no rule matched. The rules agree with an independent coder reading the text on about seven entries in ten (precision weighted by field shares 72%; see the reliability card), so read the shares as a rough composition and do not weigh small changes in a single field. For Hulme 1561–1603 the same rules were applied to the subject line."))
 metric(id="b2_hhi", series="B", table="m_b2_hhi", unit="HHI", fmt=".3f", sources=["woodcroft"], prior=[],
        rel="sampled",
