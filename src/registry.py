@@ -12,7 +12,7 @@ Values for the cards are written by src/reliability.py into data/derived/reliabi
 SITE = {
     "ko": {"title": "특권에서 특허로", "subtitle": "근대 특허 이전, 베네치아·잉글랜드·네덜란드의 발명·출판 특권을 한 건씩 세다"},
     "en": {"title": "From Privilege to Patent", "subtitle": "Invention and printing privileges in Venice, England and the Dutch Republic before modern patents, counted one grant at a time"},
-    "version": "1.0.4",
+    "version": "1.0.5",
 }
 
 SERIES = {
@@ -30,8 +30,8 @@ SOURCES = {
         "license": "public domain, 1854", "license_ko": "퍼블릭 도메인, 1854", "url": "https://archive.org/details/chronologicalin1617grea_0",
     },
     "hulme": {
-        "ko": "E. Wyndham Hulme, 「The History of the Patent System under the Prerogative and at Common Law」, *Law Quarterly Review* 12 (1896) 141–154와 「… A Sequel」, *LQR* 16 (1900) 44–56. 1561–1603년 산업 독점 허여 I–LV(55건) 목록과 52쪽 집계표. 목록을 쪽 이미지와 대조해 손으로 옮겼다.",
-        "en": "E. Wyndham Hulme, 'The History of the Patent System under the Prerogative and at Common Law', *Law Quarterly Review* 12 (1896) 141–154, and '… A Sequel', *LQR* 16 (1900) 44–56: the list of industrial monopoly grants 1561–1603, Nos. I–LV (55 grants), and the summary table on p. 52, transcribed by hand and checked against the page images.",
+        "ko": "E. Wyndham Hulme, 「The History of the Patent System under the Prerogative and at Common Law」, *Law Quarterly Review* 12 (1896) 141–154와 「… A Sequel」, *LQR* 16 (1900) 44–56. 1561–1603년 산업 독점 허여 I–LV(55건) 목록과 52쪽 집계표. 목록을 쪽 이미지와 대조해 손으로 옮겼다. 이름은 LQR 인쇄 그대로다. 그래서 No. II(1561년 초석)의 「John Parnes」도 그대로 두었는데, 『Calendar of the Patent Rolls, Elizabeth I』 제2권(1948) 98쪽과 *Engineering*(1894. 6. 15.)은 같은 허여를 「John Barnes」로 적는다. LQR의 오식으로 본다.",
+        "en": "E. Wyndham Hulme, 'The History of the Patent System under the Prerogative and at Common Law', *Law Quarterly Review* 12 (1896) 141–154, and '… A Sequel', *LQR* 16 (1900) 44–56: the list of industrial monopoly grants 1561–1603, Nos. I–LV (55 grants), and the summary table on p. 52, transcribed by hand and checked against the page images. Names are kept as printed in the LQR, so No. II (saltpetre, 1561) keeps 'John Parnes'; the *Calendar of the Patent Rolls, Elizabeth I*, vol. 2 (1948), p. 98, and *Engineering* (15 June 1894) give the same grant to 'John Barnes', and 'Parnes' is taken to be a misprint in the LQR.",
         "license": "public domain, 1896, 1900", "license_ko": "퍼블릭 도메인, 1896·1900", "url": "https://archive.org/details/sim_law-quarterly-review_1900-01_16_61",
     },
     "sro": {
