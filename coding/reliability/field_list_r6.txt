@@ -1,0 +1,17 @@
+1. printing_paper — printing, paper, books and prints
+2. arms — arms and ammunition
+3. water — water raising, drainage and hydraulics
+4. steam_power — steam and motive power
+5. mining — mining and ore
+6. transport — carriages, railways, ships and navigation
+7. textiles — textiles, dyeing and leather
+8. glass_ceramics — glass, pottery, brick and tile
+9. metals — metals and metalworking
+10. chemicals — chemicals, salt, soap, oil and dyestuffs
+11. mills — mills and grinding
+12. food_drink — food, brewing and distilling
+13. fuel_light — fuel, heating and lighting
+14. instruments — clocks, instruments and music
+15. agriculture — agriculture
+16. building — building and construction
+17. medicine — medicine and the body

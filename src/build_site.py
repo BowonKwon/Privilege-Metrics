@@ -21,7 +21,7 @@ from site_kit import CSS, JS, esc, fig, fmt, legend, svg_bars, svg_lines, table_
 from paths import COD, DER, OUT, find, need  # noqa: E402
 
 VERSION = SITE["version"]
-BUILD_DATE = "2026-11-07"
+BUILD_DATE = "2026-11-13"
 REPO = "https://github.com/BowonKwon/Privilege-Metrics"
 
 T = {

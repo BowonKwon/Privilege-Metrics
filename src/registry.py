@@ -12,7 +12,7 @@ Values for the cards are written by src/reliability.py into data/derived/reliabi
 SITE = {
     "ko": {"title": "특권에서 특허로", "subtitle": "근대 특허 이전, 베네치아·잉글랜드·네덜란드의 발명·출판 특권을 한 건씩 세다"},
     "en": {"title": "From Privilege to Patent", "subtitle": "Invention and printing privileges in Venice, England and the Dutch Republic before modern patents, counted one grant at a time"},
-    "version": "1.0.5",
+    "version": "1.0.8",
 }
 
 SERIES = {
@@ -115,26 +115,26 @@ metric(id="a4_extensions", series="A", table="m_a4_extensions", unit="share", fm
        rel="ocr",
        ko=dict(name="기간 연장 항목 비율", definition="Woodcroft 번호 항목 가운데 기존 특허의 기간 연장·확인을 내준 항목의 비율(10년 단위).",
                formula="연장 항목 수 ÷ 항목 수", reading="연장은 드물다. 전체 항목의 1%가 안 된다.",
-               caveat="본문에 extension·prolongation·confirmation 이 들어간 항목을 셌다. OCR이 본문을 잃은 36번호는 연장인지 알 수 없어 연장이 아닌 항목으로 분모에 남겼다. 그래서 비율은 하한이다(36번호가 모두 연장이라 해도 전체의 0.50%)."),
+               caveat="본문에 extension·prolongation·confirmation 이 들어간 항목을 셌다. OCR이 본문을 잃은 6번호는 연장인지 알 수 없어 연장이 아닌 항목으로 분모에 남겼다. 그래서 비율은 하한이다(6번호가 모두 연장이라 해도 전체의 0.29%)."),
        en=dict(name="Share of extension entries", definition="Share of Woodcroft's numbered entries that grant an extension or confirmation of an earlier patent, by decade.",
                formula="extension entries ÷ entries", reading="Extensions are rare: under 1% of all entries.",
-               caveat="Counts entries whose text contains 'extension', 'prolongation' or 'confirmation'. The 36 numbers whose text the OCR lost cannot be checked; they stay in the denominator as entries that are not extensions, so the share is a lower bound (0.50% of all entries even if all 36 were extensions)."))
+               caveat="Counts entries whose text contains 'extension', 'prolongation' or 'confirmation'. The 6 numbers whose text the OCR lost cannot be checked; they stay in the denominator as entries that are not extensions, so the share is a lower bound (0.29% of all entries even if all 6 were extensions)."))
 metric(id="b1_fields", series="B", table="m_b1_fields", unit="share", fmt=".1%", sources=["woodcroft", "hulme"], prior=[],
        rel="sampled",
-       ko=dict(name="분야 구성", definition="허여된 발명의 분야 비율. 분야는 발명 명칭에 사전 등록한 단어 규칙을 차례로 적용해 처음 맞는 것으로 정했다.",
-               formula="구간·분야별 건수 ÷ 구간 건수(「기타」 포함)", reading="1617–1649년에는 양수·배수와 금속이, 1820년 이후에는 직물·운송·증기가 큰 몫을 차지한다. 분야별 일치는 「기타」를 빼고도 55%–100%로 고르지 않다(「기타」는 25건 중 8건, 신뢰도 카드).",
-               caveat="명칭의 단어로 분류하므로 한 발명이 두 분야에 걸치면 순서가 앞선 분야로 간다. 「기타」는 규칙에 걸리지 않은 것이다. 독립 코더가 본문을 읽고 매긴 분야와는 열에 일곱 꼴로 일치한다(분야 비중으로 가중한 정밀도 72%, 신뢰도 카드). 분야 비율은 대략의 구성으로 읽고, 분야 하나의 작은 증감에 무게를 두지 않는다. Hulme 1561–1603은 같은 사전을 명칭에 적용했다."),
-       en=dict(name="Field composition", definition="Share of granted inventions by field. The field is the first match of a pre-registered list of word rules applied to the title of the invention.",
-               formula="count in field and period ÷ count in period (including 'other')", reading="In 1617–1649 water raising and drainage and metals take large shares; after 1820, textiles, transport and steam. Agreement with the coder is uneven across fields, from 55% to 100% leaving 'other' aside (8 of 25 for 'other'; see the reliability card).",
-               caveat="Classification uses the words of the title, so an invention that spans two fields goes to the one earlier in the list. 'Other' is what no rule matched. The rules agree with an independent coder reading the text on about seven entries in ten (precision weighted by field shares 72%; see the reliability card), so read the shares as a rough composition and do not weigh small changes in a single field. For Hulme 1561–1603 the same rules were applied to the subject line."))
+       ko=dict(name="분야 구성", definition="허여된 발명의 분야 비율. 분야는 발명 명칭에 사전 등록한 단어 규칙을 차례로 적용해 처음 맞는 것으로 정했다(동력·덧붙인 쓰임 구절을 지우고 대상 이름을 먼저 보는 절차는 방법 면).",
+               formula="구간·분야별 건수 ÷ 구간 건수(「기타」 포함)", reading="1617–1649년에는 양수·배수와 금속이, 1820년 이후에는 직물·운송·증기가 큰 몫을 차지한다. 분야별 일치는 「기타」를 빼고도 45%–100%로 고르지 않다(「기타」는 25건 중 10건, 신뢰도 카드).",
+               caveat="명칭의 단어로 분류하므로 한 발명이 두 분야에 걸치면 순서가 앞선 분야로 간다. 「기타」는 규칙에 걸리지 않은 것이다. 독립 코더가 본문을 읽고 매긴 분야와는 넷에 셋 꼴로 일치한다(분야 비중으로 가중한 정밀도 75%, 신뢰도 카드). 분야 비율은 대략의 구성으로 읽고, 분야 하나의 작은 증감에 무게를 두지 않는다. Hulme 1561–1603은 같은 사전을 명칭에 적용했다."),
+       en=dict(name="Field composition", definition="Share of granted inventions by field. The field is the first match of a pre-registered list of word rules applied to the title of the invention (the method page describes the steps that remove driving-power and added-use phrases and match object names first).",
+               formula="count in field and period ÷ count in period (including 'other')", reading="In 1617–1649 water raising and drainage and metals take large shares; after 1820, textiles, transport and steam. Agreement with the coder is uneven across fields, from 45% to 100% leaving 'other' aside (10 of 25 for 'other'; see the reliability card).",
+               caveat="Classification uses the words of the title, so an invention that spans two fields goes to the one earlier in the list. 'Other' is what no rule matched. The rules agree with an independent coder reading the text on about three entries in four (precision weighted by field shares 75%; see the reliability card), so read the shares as a rough composition and do not weigh small changes in a single field. For Hulme 1561–1603 the same rules were applied to the subject line."))
 metric(id="b2_hhi", series="B", table="m_b2_hhi", unit="HHI", fmt=".3f", sources=["woodcroft"], prior=[],
        rel="sampled",
        ko=dict(name="분야 집중도", definition="10년마다 분류된 허여의 분야 점유율 제곱합(허핀달 지수). 「기타」는 빼고 계산한다.",
                formula="HHI = Σ (분야 점유율)²", reading="값이 클수록 몇 분야에 몰려 있다. 1/17≈0.059가 17분야 균등의 하한이다.",
-               caveat="초기 수십 년은 허여 수가 적어 값이 크게 흔들린다. 분야 분류의 정밀도(가중 72%)라는 한계를 그대로 물려받는다."),
+               caveat="초기 수십 년은 허여 수가 적어 값이 크게 흔들린다. 분야 분류의 정밀도(가중 75%)라는 한계를 그대로 물려받는다."),
        en=dict(name="Field concentration", definition="Herfindahl index of field shares among classified grants in each decade, 'other' excluded.",
                formula="HHI = Σ (field share)²", reading="Higher means grants concentrate in fewer fields. With 17 fields an even spread gives 1/17 ≈ 0.059.",
-               caveat="The early decades have few grants, so the index swings widely. The index inherits the precision of the field classification (72% weighted)."))
+               caveat="The early decades have few grants, so the index swings widely. The index inherits the precision of the field classification (75% weighted)."))
 metric(id="b3_venice_sectors", series="B", table="m_b3_venice_sectors", unit="patents", fmt=",.0f", sources=["comino"], prior=["comino_counts"],
        rel="secondary",
        ko=dict(name="베네치아 1474–1550 분야표(2차 인용)", definition="Comino 등의 표 A1(Berveglieri 1995 분류) 169건을 이 사이트의 분야 사전에 대응시킨 표.",

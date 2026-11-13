@@ -1,0 +1,61 @@
+number,field,note
+13590,chemicals,rule 2: peat products chemical vs fuel; unsure
+10011,chemicals,
+2203,metals,
+1823,metals,
+9984,agriculture,
+14194,textiles,
+11638,agriculture,
+7040,transport,unsure: machinery for steam vessels may be engine
+1426,steam_power,
+9993,instruments,
+7884,transport,
+4477,steam_power,unsure: gearing as motive power
+12642,food_drink,rule 2: cooking vs heating
+13358,chemicals,
+6858,fuel_light,
+13094,instruments,
+1876,textiles,
+7144,steam_power,
+7571,transport,
+8871,transport,
+12087,steam_power,rule 2: furnaces/blowing machines and engines
+14259,steam_power,
+1989,medicine,unsure: bathing machine for invalids
+9919,steam_power,
+7489,building,
+11960,fuel_light,unsure: lighting oils vs chemicals
+9112,textiles,
+11022,metals,
+6596,building,
+3709,fuel_light,
+13819,textiles,
+6617,fuel_light,
+2775,metals,
+4802,metals,
+9194,textiles,
+2677,fuel_light,
+10056,metals,
+2482,metals,
+1164,other,unsure: curtain lath (furnishing)
+11623,chemicals,rule 2: oils and lamps
+8963,steam_power,
+12229,textiles,
+14028,building,unsure: decorative painting
+8361,chemicals,unsure: imitation ivory composition
+6594,metals,
+7827,chemicals,
+8482,steam_power,
+1912,medicine,
+6703,fuel_light,
+2515,steam_power,unsure: crank transmission as motive power
+7428,fuel_light,
+12410,steam_power,
+11545,fuel_light,
+4132,other,
+7042,chemicals,
+6041,steam_power,rule 2: propelling boats and driving machinery by steam
+872,instruments,
+6120,steam_power,unsure: steam machine for ships/carriages and fixed use
+3705,glass_ceramics,
+8273,printing_paper,rule 2: paper and textiles

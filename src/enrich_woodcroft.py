@@ -25,7 +25,8 @@ Rules (all published on the method page)
 - title: quoted part of the entry if any; else, in the text from the first 'for/of his|their|her' on (the grantee's name,
   address and trade dropped, 1.0.3), the words after 'invented'/'invention (of)', else after 'sole use/making/…',
   else after 'for', each up to 'to hold' / 'for the term of' / 'within England' / 'By writ'.
-- field: fields.classify(title).
+- field: fields.classify(title). Dictionary r6 (1.0.6): from 1700, when the title gives no match, the object text
+  (first 'for/of his|their|her' up to 'to hold') is classified instead (field_basis).
 """
 import re
 import sys
@@ -82,7 +83,16 @@ NUM_TOK = (r"(\d(?:\s?\d)?(?:\s?(?:teene?|tie|ty))?"                            
            r"|(?:one|two|three|four|five|six|seven|eight|nine)\s+and\s+(?:twent(?:y|ie)|thirt(?:y|ie))"
            r"|(?:twent(?:y|ie)|thirt(?:y|ie))[-\s]?(?:one|two|three|four|five|six|seven|eight|nine)"
            r"|[a-z]+)")
-YEARS = r"(?:y[ec]a?r[ec]?[s3]?|yeeres?|yeers?)\b"                                         # years, yeares, yere, ycares (OCR)
+YEARS = r"(?:y[ec]a?r[ec]?[s3]?|yeeres?|yeers?|yeercs|yrs|yres?)\b"                        # years, yeares, yere, ycares (OCR); 1.0.8: yrs, yres
+# 1.0.8: the abbreviation 'yrs' as the OCR left it ('14 yls', '14 y™', "14 y1'3", '14 ys'). Read only directly after
+# 'term of <digits>', and only when no other first term is found (like the caret rule of 1.0.4). The alternatives are the
+# forms met in the list and nothing wider: 'term of 14 yds', 'yuan' or 'young' must not be read as years.
+TERM_ABBR_RE = re.compile(r"t[ec]rme?\s*of\s*(\d{1,2})\s*y(?:rs|rS|TS|res|re|ra|r3|ls|fs|vs|s|K|™|®|'s|'|\*s|\*3|,s|\^|1'3|1'9|1-\*|1\"8)(?=[\s;,.]|$)")
+# 1.0.8: three more forms, read only when no other first term is found: the short form of about 1815 ('to hold, &c, 14
+# years'), 'term' with the 'of' lost or damaged ('for the term 14 yrs', 'term ot 14 yrs', 'term of* 14 years', 'term of 14.
+# years', 'for the of 14 years'), and 'term of 14 pursuant to the statute' (the word 'years' left out).
+TERM_LOOSE_RE = re.compile(r"(?:to\s+hold,?\s*&\S{0,2}\s*,?\s*|t[ec]rme?\s*(?:o[ft])?[*.]?\s*|for\s+the\s+of\s+)"
+                           r"(\d{1,2})[.]?\s*(?:" + YEARS + r"|}rears\b|pursuant\s+to\s+the\s+statute)", re.I)
 TERM_RE = re.compile(r"(?:t[ec]rme?\s*of|for|space\s*of|residue\s*of|remainder\s*of)\s*(?:the\s*)?(?:t[ec]rme?\s*of\s*)?"
                      + NUM_TOK + r"\s*" + YEARS, re.I)
 # 1.0.3: further terms the first-term rule cannot see. They are searched only after the first term is fixed, so they
@@ -120,10 +130,21 @@ def terms_of(text: str):
     """All stated terms in order: the first (3–41 years) is the term of the grant; further distinct values (3–99) are other
     rights in the same entry (mines, Ireland, a later revenue) or a covenant."""
     out = []
+    text = text.replace("|", " ")                    # 1.0.8: a column rule read as '|' between the number and 'years' (no. 2873)
     for m in TERM_RE.finditer(text):
         v = _term_value(m.group(1))
         if v and 3 <= v <= 99:
             out.append((m.start(), v))
+    if not out:                                      # 1.0.8
+        for m in TERM_ABBR_RE.finditer(text):
+            v = _term_value(m.group(1))
+            if v and 3 <= v <= 41:
+                out.append((m.start(), v))
+    if not out:                                      # 1.0.8
+        for m in TERM_LOOSE_RE.finditer(text):
+            v = _term_value(m.group(1))
+            if v and 3 <= v <= 41:
+                out.append((m.start(), v))
     if not out:                                      # 1.0.4
         for m in TERM_CARET_RE.finditer(text):
             v = _term_value(m.group(1))
@@ -246,6 +267,31 @@ def title_of(text: str) -> str:
     return obj[:300]
 
 
+HOLD = re.compile(r"\bto hold\b|\bto have and to hold\b", re.I)
+
+
+def fallback_text(text: str) -> str:
+    """Dictionary r6: the object text up to 'to hold', or '' when the entry has no 'for/of his|their|her'."""
+    q = re.search(r"[\"“”]", text)
+    m = OBJECT_START.search(text[: q.start() if q else len(text)])
+    if not m:
+        return ""
+    t = text[m.start():]
+    h = HOLD.search(t)
+    return t[: h.start()] if h else t
+
+
+def field_of(title: str, text: str, early: bool) -> str:
+    if early:
+        return classify(text)
+    f = classify(title)
+    if f == "other":
+        fb = fallback_text(text)
+        if fb:
+            f = classify(fb)
+    return f
+
+
 def grantee_part(text: str) -> str:
     """Text before the title: names, addresses and descriptions of the grantees."""
     q = re.search(r"[\"“”]", text)
@@ -314,14 +360,16 @@ def main():
     full["foreign_link"] = full["communication"] | full["foreign_address"]
     tl = t.map(terms_of)
     full["term_years"] = tl.map(lambda L: L[0] if L else None)
+    # 1.0.8: no. 3783 (1814) is printed 'for the term of 41 yrs pursuant to the statute' in Woodcroft; the statutory term
+    # is 14 years, so the figure is taken as a misprint (digits transposed), like the dates of nos. 7046 and 7049.
+    full.loc[(full["number"] == 3783) & (full["term_years"] == 41), "term_years"] = 14
     full["term_other"] = tl.map(lambda L: "; ".join(str(v) for v in L[1:]) if len(L) > 1 else "")   # further terms stated in the same entry
     full["rent_clause"] = low.str.contains(r"\brent\b|\byearly\b.{0,40}\b(?:pay|rent)|\bpayinge?\b|reserv\w* to (?:the|his|our) (?:crown|matie|majesty)", regex=True)
     full["proviso_clause"] = low.str.contains(r"\bproviso\b|\bprovided\b|\bvoid\b|\bvoyd\b", regex=True)
     full["title"] = t.map(title_of).str.slice(0, 400)
     # before 1700 the title is not set off by quotation marks and addresses are rare: classify the whole text
     early = full["year"] < 1700
-    basis = full["title"].where(~early, t)
-    full["field"] = basis.map(classify)
+    full["field"] = [field_of(ti, tx, e) for ti, tx, e in zip(full["title"], t, early)]
     full.loc[~full["parsed"], ["kind", "field"]] = ["", ""]
     full.loc[~full["parsed"], ["communication", "foreign_address", "foreign_link", "rent_clause", "proviso_clause"]] = False
     names = segs.map(lambda L: [x for x in L if is_name_segment(x)])

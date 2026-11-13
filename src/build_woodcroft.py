@@ -34,7 +34,7 @@ DATE_RE = re.compile(r"^\s*(\d{1,2})\s*(?:st|nd|rd|th|d|t)?\s*\.?\s*([A-Za-z]{3,
 START_RE = re.compile(r"^\s*(\d{1,2}[,.\s]\d{3}|\d{1,4})\s*[.,]\s+\S")
 NUM_TOKEN = re.compile(r"^\d{1,2}[,.]?\d{3}[.,]$|^\d{1,4}[.,]$")
 MONTH_TOKEN = re.compile(r"^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?,?$", re.I)
-GRANT_RE = re.compile(r"(A|An)\s+(grant|graunt|spiall|speciall|special|lycence|licence|license|patent)|grant\s+unt[o0]", re.I)
+GRANT_RE = re.compile(r"\b(A|An)\s+(grant|graunt|spiall|speciall|special|lycence|licence|license|patent)\b|\bgrant\s+unt[o0]\b", re.I)
 HEADER_Y = 0.085          # top band (running head, page number) as a share of page height
 
 

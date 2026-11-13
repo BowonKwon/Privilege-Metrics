@@ -1,0 +1,142 @@
+seq,number,year,field_r6,field_r5,verifier,memo,res
+1,1930,1793.0,medicine,other,medicine,,right
+2,554,1736.0,transport,other,transport,,right
+3,1666,1788.0,transport,other,food_drink,,both_wrong
+4,1694,1789.0,arms,other,arms,,right
+5,1522,1786.0,medicine,other,medicine,,right
+6,4045,1816.0,medicine,other,medicine,,right
+7,500,1728.0,transport,other,transport,,right
+8,380,1707.0,metals,other,metals,,right
+9,3516,1812.0,building,other,building,,right
+10,2717,1803.0,textiles,other,textiles,,right
+11,1704,1789.0,water,other,water,,right
+12,4033,1816.0,building,other,building,mastic cement의 조성·시공; 건축 재료로 판단.,right
+13,8679,1840.0,instruments,other,instruments,뒤에 별도 악기 발명 항목이 OCR로 이어짐. 앞 항목 evaporation은 분야 불명; 입력 전체의 명시 분야인 instruments 선택. 원항목 분리 필요.,right
+14,1274,1780.0,agriculture,other,instruments,육해 측량 장비 자체; 항해에 한정되지 않음.,both_wrong
+15,422,1718.0,textiles,other,textiles,,right
+16,1566,1786.0,medicine,other,medicine,,right
+17,3400,1811.0,arms,other,arms,,right
+18,393,1713.0,agriculture,other,chemicals,종자 기름 추출이 대상; 식용 명시 없음.,both_wrong
+19,367,1701.0,fuel_light,other,glass_ceramics,점토 지붕 판재; tile로 판단.,both_wrong
+20,402,1716.0,transport,other,other,선박 sweepings 처리·재활용; 물질 불명.,wrong_other
+21,3954,1815.0,chemicals,other,chemicals,중성염 분말이 대상; 약효는 용도. medicine과 경계 불명.,right
+22,440,1722.0,glass_ceramics,other,glass_ceramics,,right
+23,3703,1813.0,agriculture,other,textiles,군용 모자이며 무기 아님.,both_wrong
+24,411,1717.0,chemicals,other,chemicals,,right
+25,541,1733.0,glass_ceramics,other,glass_ceramics,,right
+26,400,1715.0,printing_paper,other,textiles,직물 날염·염색 공정; 인쇄와 중첩.,both_wrong
+27,6181,1831.0,chemicals,other,chemicals,염전에서 소금 추출; 채굴 아님.,right
+28,502,1728.0,mining,other,metals,,both_wrong
+29,490,1727.0,printing_paper,other,metals,,both_wrong
+30,3383,1810.0,arms,other,instruments,,both_wrong
+31,596,1744.0,printing_paper,other,medicine,,both_wrong
+32,531,1731.0,printing_paper,other,agriculture,돼지 사료; 사람의 식품 아님.,both_wrong
+33,7713,1838.0,chemicals,other,chemicals,,right
+34,3329,1810.0,arms,other,transport,승마·마차용 재갈로 판단.,both_wrong
+35,377,1706.0,fuel_light,other,water,선박 통과용 부유 댐; 수리 구조물로 판단.,both_wrong
+36,443,1722.0,metals,other,metals,,right
+37,2387,1800.0,medicine,other,medicine,수술 지혈대; 일반 계측기 아님.,right
+38,618,1746.0,printing_paper,other,transport,,both_wrong
+39,2303,1799.0,medicine,other,medicine,,right
+40,1519,1785.0,fuel_light,other,fuel_light,반사경을 포함한 조명 기구.,right
+41,1005,1772.0,medicine,other,medicine,,right
+42,9073,1841.0,printing_paper,other,agriculture,,both_wrong
+43,6993,1836.0,water,other,other,범용 인양 훅·활대; 사용 장소만으로 mining 등에 넣지 않음.,wrong_other
+44,5400,1826.0,transport,other,transport,,right
+45,1898,1792.0,chemicals,other,chemicals,,right
+46,3022,1807.0,steam_power,other,steam_power,동력 전달 기구 자체; 선박은 적용 예.,right
+47,510,1729.0,transport,other,glass_ceramics,,both_wrong
+48,540,1733.0,transport,other,transport,,right
+49,525,1730.0,instruments,other,instruments,악기용 펜·플렉트럼; 단순 금속 제조 아님.,right
+50,566,1738.0,instruments,other,instruments,천문 관측 사분의; 항해 위치 결정과 중첩.,right
+51,1801,1791.0,printing_paper,other,printing_paper,종이·직물·가죽 등 방수; 목록 순서.,right
+52,615,1745.0,printing_paper,other,steam_power,풍력 동력 장치로 해석; 상세 작동 불명.,both_wrong
+53,834,1765.0,chemicals,other,chemicals,기름 기반 stone paste 조성; 건물은 적용처.,right
+54,488,1727.0,printing_paper,other,chemicals,소금 제조 공정의 연료 절감; chemicals 선택.,both_wrong
+55,2532,1801.0,transport,other,transport,항해용 수평계; 측량과 중첩.,right
+56,2844,1805.0,arms,other,other,목재 절단 기계; 건축용으로 한정되지 않음.,wrong_other
+57,523,1730.0,chemicals,other,chemicals,황 추출·정제; 채굴 아님.,right
+58,464,1724.0,agriculture,other,agriculture,,right
+59,1975,1794.0,textiles,other,textiles,,right
+60,3682,1813.0,transport,other,textiles,,both_wrong
+61,1816,1791.0,fuel_light,other,fuel_light,,right
+62,3058,1807.0,transport,other,fuel_light,채광 장치 자체; 유리 재료는 직업에서 추론하지 않음.,both_wrong
+63,537,1732.0,water,other,food_drink,,both_wrong
+64,2355,1799.0,printing_paper,other,printing_paper,,right
+65,2291,1799.0,medicine,other,medicine,신약이 대상; 화학 준비물과 중첩.,right
+66,2917,1806.0,arms,other,arms,,right
+67,6665,1834.0,transport,other,transport,,right
+68,2860,1805.0,arms,other,building,텐트 환기 장치; building으로 해석.,both_wrong
+69,1710,1789.0,transport,other,transport,거리 측정과 마차 파손 방지; 목록 순서.,right
+70,1527,1786.0,chemicals,other,chemicals,산업용 산·식초 제조; 식용 명시 없음.,right
+71,3284,1809.0,medicine,other,medicine,,right
+72,785,1763.0,transport,other,water,준설·밸러스트 제거용 선박; 수리 작업과 중첩.,both_wrong
+73,2049,1795.0,medicine,other,medicine,,right
+74,407,1716.0,instruments,other,steam_power,범용 순환 동력 전달; waterworks는 적용처.,both_wrong
+75,2454,1800.0,arms,other,arms,,right
+76,2521,1801.0,metals,other,other,범용 자물쇠·잠금쇠; 건물용으로 한정되지 않음.,wrong_other
+77,2672,1802.0,water,other,water,수관·하수관 등과 벽체의 복합 구조; 수리 목적도 명시.,right
+78,7773,1838.0,transport,other,transport,,right
+79,589,1743.0,printing_paper,other,printing_paper,무늬 인쇄 기계가 대상; 직물은 인쇄 매체.,right
+80,3751,1813.0,transport,other,transport,선박 항로·경도 측정; 항해 장치와 instruments 중첩.,right
+81,2307,1799.0,transport,other,transport,,right
+82,534,1731.0,transport,other,transport,항해 측정과 표류 방지 복합 발명.,right
+83,999,1771.0,printing_paper,other,printing_paper,,right
+84,483,1726.0,medicine,other,medicine,,right
+85,552,1736.0,printing_paper,other,chemicals,액상 청색제가 대상; 직물은 적용처.,both_wrong
+86,2750,1804.0,arms,other,arms,pikes를 무기로 해석.,right
+87,2849,1805.0,transport,other,other,새 재료의 정체 불명; 선박·지붕·물받이는 적용처.,wrong_other
+88,1650,1788.0,instruments,other,steam_power,기계 운동 자체의 개량; 시계·조리·크레인은 적용 예.,both_wrong
+89,578,1741.0,printing_paper,other,textiles,,both_wrong
+90,469,1724.0,water,other,water,,right
+91,2978,1806.0,agriculture,other,agriculture,비료·살충 농업 조성물; chemicals와 경계 불명.,right
+92,8704,1840.0,arms,other,arms,,right
+93,416,1717.0,chemicals,other,chemicals,,right
+94,2018,1794.0,water,other,other,범용 인양·이동 기계; 물·광석·선박 등은 사용 예.,wrong_other
+95,484,1726.0,chemicals,other,chemicals,,right
+96,2068,1795.0,water,other,transport,목재 결합 공법; 선박 건조도 독립 대상.,both_wrong
+97,3019,1807.0,glass_ceramics,other,glass_ceramics,도자기 제조도 포함; 목록상 ceramics가 앞섬.,right
+98,700,1755.0,medicine,other,medicine,,right
+99,2226,1798.0,medicine,other,medicine,,right
+100,3759,1813.0,arms,other,other,장교 휴대 장비·수납 구성; 무기 발명은 아님.,wrong_other
+101,492,1727.0,textiles,other,textiles,,right
+102,570,1740.0,printing_paper,other,transport,,both_wrong
+103,3602,1812.0,arms,other,transport,침몰선 인양; transport로 해석하나 범용 인양과 경계.,both_wrong
+104,494,1727.0,textiles,other,transport,승마 장비; 가죽 재료보다 기능 대상.,both_wrong
+105,2091,1796.0,food_drink,other,food_drink,,right
+106,470,1724.0,transport,other,transport,차량용 강철 스프링; 물질 제조보다 차량 장치.,right
+107,2630,1802.0,transport,other,transport,,right
+108,2845,1805.0,arms,other,transport,승마용 굴레로 판단.,both_wrong
+109,535,1732.0,instruments,other,instruments,,right
+110,8770,1840.0,printing_paper,other,chemicals,잉크 조성; 인쇄용인지 필기용인지 불명.,both_wrong
+111,4198,1818.0,steam_power,other,steam_power,,right
+112,495,1728.0,printing_paper,other,metals,광석의 금속 추출·합금 제조; 채굴 아님.,both_wrong
+113,7152,1836.0,food_drink,other,food_drink,,right
+114,3217,1809.0,arms,other,other,탁자·의자·걸상; 건물 자체 아님.,wrong_other
+115,588,1743.0,printing_paper,other,instruments,,both_wrong
+116,3351,1810.0,transport,other,transport,,right
+117,503,1728.0,printing_paper,other,arms,,both_wrong
+118,1796,1791.0,chemicals,other,medicine,,both_wrong
+119,1616,1787.0,textiles,other,textiles,,right
+120,2290,1799.0,fuel_light,other,fuel_light,,right
+121,485,1726.0,water,other,water,,right
+122,1108,1775.0,transport,other,water,배수·선박 추진·화물 인양 복합; 목록 순서.,both_wrong
+123,511,1729.0,water,other,steam_power,범용 동력 원리; 수력 엔진은 적용 대상.,both_wrong
+124,507,1729.0,water,other,water,,right
+125,530,1731.0,printing_paper,other,printing_paper,,right
+126,2445,1800.0,fuel_light,other,chemicals,동물성 지방의 용해·가공; 식용 명시 없음.,both_wrong
+127,598,1744.0,printing_paper,other,water,하상 밸러스트 인양을 수리 작업으로 판단.,both_wrong
+128,2809,1805.0,arms,other,transport,승마 재갈로 판단.,both_wrong
+129,3098,1808.0,metals,other,metals,인조 숫돌·금속 날 연마; 광물 재료 자체는 불명.,right
+130,7516,1837.0,building,other,building,건축 공법과 표면 보호·다른 제조업 패턴 복합; building 중심 판단.,right
+131,539,1733.0,water,other,water,양수·배수가 독립 대상으로 명시.,right
+132,3317,1810.0,transport,other,chemicals,,both_wrong
+133,1499,1785.0,instruments,other,instruments,,right
+134,3350,1810.0,transport,other,agriculture,경작·가축 사육 및 이동 축사; railways는 이동 수단.,both_wrong
+135,404,1716.0,textiles,other,chemicals,기름 추출이 대상; 직물·비누·가죽은 적용처.,both_wrong
+136,5001,1824.0,chemicals,other,other,냉각·냉동은 목록 heating과 다름; 다른 용도만으로 분류하지 않음.,wrong_other
+137,527,1731.0,instruments,other,instruments,,right
+138,5434,1826.0,fuel_light,other,fuel_light,,right
+139,4019,1816.0,steam_power,other,steam_power,증기·수력 범용 원동기; 양수 장치 아님.,right
+140,1502,1785.0,transport,other,transport,,right
+141,478,1725.0,water,other,chemicals,선박 목재 방부 혼합물 자체가 대상; transport와 경계.,both_wrong

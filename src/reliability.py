@@ -7,6 +7,12 @@ R1 image check  data/coding/reliability/r1_image_coder.csv  vs r1_key.csv  (merg
 R2 text coding  data/coding/reliability/r2b_text_coder.csv  vs r2b_key.csv (and the r3-dictionary round r2_*_dictr3.csv):
                 address abroad, communication, term; field as recorded for dictionary r4 (the key's sampling-time field)
 R2c (1.0.3)     data/coding/reliability/r2c_text_coder.csv  vs r2c_key.csv: field under dictionary r5, on a fresh sample
+                (pinned to r5 in 1.0.6: R2c was used to write r6)
+R2d (1.0.6)     r2d_coder1.csv + r2d_coder2.csv (106 items each) vs r2d_key.csv: field under dictionary r6 on a fresh sample,
+                and r5 on the same items (field_r5 in the key)
+R2d-chg (1.0.6) r2d_chg_coder1.csv and r2d_chg_coder2.csv (both coders, all 60 items) vs r2d_chg_key.csv: entries whose
+                field changed from r5 to r6. Inter-coder agreement; per item, improvement (r6 matches the coders, r5 does
+                not), regression (the reverse) or neither, counted where the two coders agree
 R3 Fulin        data/coding/reliability/r3_fulin_second_coder.csv vs data/coding/fulin_coding.csv
 H  Hulme        data/coding/reliability/hulme_image_coder.csv vs data/coding/hulme_1561_1603.csv
 Agreement is reported as k/n (share, 95% Wilson interval); field agreement also as Cohen's kappa.
@@ -161,9 +167,12 @@ def main():
         res["r2"] = {"field_r4": r_f, "kappa_r4": kap, "per_field_r4": per_field, "foreign_address": r_fa, "communication": r_cm, "term": r_t, "n": len(m)}
         S["r2b_field_r4"], S["r2b_kappa_r4"] = fmt(r_f), f"{kap:.2f}"
         S["r2_foreign"], S["r2_comm"], S["r2_term"] = fmt(r_fa), fmt(r_cm), fmt(r_t)
-    # R2c: field under dictionary r5 on a fresh sample (1.0.3)
+    # R2c: field under dictionary r5 on a fresh sample (1.0.3). Pinned to r5 (1.0.6): R2c was used to write r6, so it
+    # keeps the r5 labels stored in its key (the sampling-time field, equal to r5 for all 212 items) and the r5 field
+    # shares of the 14,287 grants (field_shares_r5.csv) instead of the current field column.
+    pop = pd.read_csv(need(REL / "field_shares_r5.csv")).set_index("field")["share"]
     c = pd.read_csv(need(REL / "r2c_text_coder.csv"), dtype=str)
-    k = refresh(pd.read_csv(need(REL / "r2c_key.csv"), dtype=str), ["field"])
+    k = pd.read_csv(need(REL / "r2c_key.csv"), dtype=str)
     m = k.merge(c, on="number", suffixes=("_ours", "_text"))
     r_f = agree(m["field_ours"].tolist(), m["field_text"].tolist())
     kap = kappa(m["field_ours"].tolist(), m["field_text"].tolist())
@@ -173,6 +182,94 @@ def main():
                   "disagree": [n for n, a_, b_ in zip(m["number"], m["field_ours"], m["field_text"]) if a_ != b_]}
     S["r2_field"], S["r2_kappa"], S["r2_weighted"] = fmt(r_f), f"{kap:.2f}", f"{wprec * 100:.0f}%"
     S["r2_per_field"] = "; ".join(f"{f} {r['k']}/{r['n']}" for f, r in sorted(per_field.items()))
+    # R2d: dictionary r6 on a fresh sample (1.0.6), and r5 on the same items
+    # Pinned to r6 (1.0.7): the key keeps the r6 labels of 1.0.6 and field_shares_r6.csv the r6 shares of the 14,287
+    # grants of 1.0.6, so the card does not move when the dictionary or the parse changes.
+    pop6 = pd.read_csv(need(REL / "field_shares_r6.csv")).set_index("field")["share"]
+    c = pd.concat([pd.read_csv(need(REL / f"r2d_coder{i}.csv"), dtype=str) for i in (1, 2)])
+    k = pd.read_csv(need(REL / "r2d_key.csv"), dtype=str)
+    m = k.merge(c, on="number", validate="1:1")
+    for lab, col, pp in (("r6", "field_r6", pop6), ("r5", "field_r5", pop)):
+        r_f = agree(m[col].tolist(), m["field"].tolist())
+        kap = kappa(m[col].tolist(), m["field"].tolist())
+        pf = {f: agree(g[col].tolist(), g["field"].tolist()) for f, g in m.groupby(col)}
+        wp = sum(pp.get(f, 0) * r["share"] for f, r in pf.items())
+        res[f"r2d_{lab}"] = {"field": r_f, "kappa": kap, "weighted_precision": wp, "per_field": pf, "n": len(m),
+                             "disagree": [n for n, a_, b_ in zip(m["number"], m[col], m["field"]) if a_ != b_]}
+        pre = "r2d" if lab == "r6" else "r2d_r5"
+        S[f"{pre}_field"], S[f"{pre}_kappa"], S[f"{pre}_weighted"] = fmt(r_f), f"{kap:.2f}", f"{wp * 100:.0f}%"
+        S[f"{pre}_per_field"] = "; ".join(f"{f} {r['k']}/{r['n']}" for f, r in sorted(pf.items()))
+    pf6 = res["r2d_r6"]["per_field"]
+    named = [r["share"] for f, r in pf6.items() if f != "other"]
+    S["r2d_named_range"] = f"{min(named) * 100:.0f}%–{max(named) * 100:.0f}%"
+    S["r2d_other"] = f"{pf6['other']['k']}/{pf6['other']['n']}"
+    S["r2d_n_differ"] = str(int((m["field_r6"] != m["field_r5"]).sum()))
+    # R2d-chg: entries whose field changed r5 -> r6, both coders on all items
+    kc = pd.read_csv(need(REL / "r2d_chg_key.csv"), dtype=str)
+    a1 = pd.read_csv(need(REL / "r2d_chg_coder1.csv"), dtype=str)[["number", "field"]].rename(columns={"field": "c1"})
+    a2 = pd.read_csv(need(REL / "r2d_chg_coder2.csv"), dtype=str)[["number", "field"]].rename(columns={"field": "c2"})
+    x = kc.merge(a1, on="number", validate="1:1").merge(a2, on="number", validate="1:1")
+    ic = agree(x["c1"].tolist(), x["c2"].tolist())
+    ick = kappa(x["c1"].tolist(), x["c2"].tolist())
+    ag = x[x["c1"] == x["c2"]]
+    out_ = ["improvement" if (a_ == c_ and b_ != c_) else "regression" if (b_ == c_ and a_ != c_) else "neither"
+            for a_, b_, c_ in zip(ag["field_r6"], ag["field_r5"], ag["c1"])]
+    na = len(ag)
+    cnt = {o: agree([1] * out_.count(o) + [0] * (na - out_.count(o)), [1] * na) for o in ("improvement", "regression", "neither")}
+    per_coder = {cc: {"r6": int((x["field_r6"] == x[cc]).sum()), "r5": int((x["field_r5"] == x[cc]).sum())} for cc in ("c1", "c2")}
+    res["r2d_chg"] = {"n": len(x), "intercoder": ic, "kappa": ick, "n_agree": na, "outcome_where_agree": cnt, "per_coder": per_coder,
+                      "regressions": [n for n, o in zip(ag["number"], out_) if o == "regression"],
+                      "neither": [n for n, o in zip(ag["number"], out_) if o == "neither"],
+                      "coders_disagree": list(x.loc[x["c1"] != x["c2"], "number"])}
+    S["chg_n"], S["chg_intercoder"], S["chg_kappa"], S["chg_n_agree"] = str(len(x)), fmt(ic), f"{ick:.2f}", str(na)
+    S["chg_improve"], S["chg_regress"], S["chg_neither"] = fmt(cnt["improvement"]), fmt(cnt["regression"]), fmt(cnt["neither"])
+    S["chg_improve_k"], S["chg_regress_k"], S["chg_neither_k"] = (str(cnt[o]["k"]) for o in ("improvement", "regression", "neither"))
+    # R2f: dictionary r7 on a fresh sample (1.0.7), and r6 (on the re-parsed text) on the same items
+    W7 = pd.read_csv(find(DER, "woodcroft_entries.csv"))
+    pop7 = W7[W7["parsed"] & (W7["kind"] == "grant")]["field"].value_counts(normalize=True)
+    pop6r = pd.read_csv(need(REL / "field_shares_r6_reparsed.csv")).set_index("field")["share"]
+    c = pd.concat([pd.read_csv(need(REL / f"r2f_coder{i}.csv"), dtype=str) for i in (1, 2)])
+    k = pd.read_csv(need(REL / "r2f_key.csv"), dtype=str)
+    m = k.merge(c, on="number", validate="1:1")
+    for lab, col, pp in (("r7", "field_r7", pop7), ("r6", "field_r6", pop6r)):
+        r_f = agree(m[col].tolist(), m["field"].tolist())
+        kap = kappa(m[col].tolist(), m["field"].tolist())
+        pf = {f: agree(g[col].tolist(), g["field"].tolist()) for f, g in m.groupby(col)}
+        wp = sum(pp.get(f, 0) * r["share"] for f, r in pf.items())
+        res[f"r2f_{lab}"] = {"field": r_f, "kappa": kap, "weighted_precision": wp, "per_field": pf, "n": len(m),
+                             "disagree": [n for n, a_, b_ in zip(m["number"], m[col], m["field"]) if a_ != b_]}
+        pre = "r2f" if lab == "r7" else "r2f_r6"
+        S[f"{pre}_field"], S[f"{pre}_kappa"], S[f"{pre}_weighted"] = fmt(r_f), f"{kap:.2f}", f"{wp * 100:.0f}%"
+        S[f"{pre}_per_field"] = "; ".join(f"{f} {r['k']}/{r['n']}" for f, r in sorted(pf.items()))
+    pf7 = res["r2f_r7"]["per_field"]
+    named = [r["share"] for f, r in pf7.items() if f != "other"]
+    S["r2f_named_range"] = f"{min(named) * 100:.0f}%–{max(named) * 100:.0f}%"
+    S["r2f_other"] = f"{pf7['other']['k']}/{pf7['other']['n']}"
+    S["r2f_n_differ"] = str(int((m["field_r7"] != m["field_r6"]).sum()))
+    S["r2f_low_fields"] = "; ".join(f"{f} {r['k']}/{r['n']}" for f, r in sorted(pf7.items()) if f != "other" and r["share"] < 0.6)
+    # R2f-chg: entries whose field changed r6 -> r7, both coders on all items
+    kc = pd.read_csv(need(REL / "r2f_chg_key.csv"), dtype=str)
+    a1 = pd.read_csv(need(REL / "r2f_chg_coder1.csv"), dtype=str)[["number", "field"]].rename(columns={"field": "c1"})
+    a2 = pd.read_csv(need(REL / "r2f_chg_coder2.csv"), dtype=str)[["number", "field"]].rename(columns={"field": "c2"})
+    x = kc.merge(a1, on="number", validate="1:1").merge(a2, on="number", validate="1:1")
+    ic = agree(x["c1"].tolist(), x["c2"].tolist())
+    ick = kappa(x["c1"].tolist(), x["c2"].tolist())
+    ag = x[x["c1"] == x["c2"]]
+    out_ = ["improvement" if (a_ == c_ and b_ != c_) else "regression" if (b_ == c_ and a_ != c_) else "neither"
+            for a_, b_, c_ in zip(ag["field_r7"], ag["field_r6"], ag["c1"])]
+    na = len(ag)
+    cnt = {o: agree([1] * out_.count(o) + [0] * (na - out_.count(o)), [1] * na) for o in ("improvement", "regression", "neither")}
+    per_coder = {cc: {"r7": int((x["field_r7"] == x[cc]).sum()), "r6": int((x["field_r6"] == x[cc]).sum())} for cc in ("c1", "c2")}
+    res["r2f_chg"] = {"n": len(x), "intercoder": ic, "kappa": ick, "n_agree": na, "outcome_where_agree": cnt, "per_coder": per_coder,
+                      "regressions": [n for n, o in zip(ag["number"], out_) if o == "regression"],
+                      "neither": [n for n, o in zip(ag["number"], out_) if o == "neither"],
+                      "coders_disagree": list(x.loc[x["c1"] != x["c2"], "number"])}
+    S["fchg_n"], S["fchg_intercoder"], S["fchg_kappa"], S["fchg_n_agree"] = str(len(x)), fmt(ic), f"{ick:.2f}", str(na)
+    S["fchg_improve"], S["fchg_regress"], S["fchg_neither"] = fmt(cnt["improvement"]), fmt(cnt["regression"]), fmt(cnt["neither"])
+    S["fchg_improve_k"], S["fchg_regress_k"], S["fchg_neither_k"] = (str(cnt[o]["k"]) for o in ("improvement", "regression", "neither"))
+    # R2e: all grants the title-fallback rule of r6 moved out of 'other' in 1.0.6 (141), coded blind by an outside verifier
+    e = pd.read_csv(need(REL / "r2e_scored.csv"), dtype=str)
+    S["r2e_n"] = str(len(e))
     # Hulme transcription check
     p = need(REL / "hulme_image_coder.csv")
     if True:
@@ -204,8 +301,16 @@ def main():
             {"이미지 대조 연도 일치": S["r1_year"], "이미지 대조 기간 일치": S["r1_term"], "이미지 대조 수혜자 수 일치": S["r1_ngrantees"], "이미지 대조 communication 일치": S["r1_comm"]},
             {"Image check, year": S["r1_year"], "Image check, term": S["r1_term"], "Image check, number of grantees": S["r1_ngrantees"], "Image check, communication": S["r1_comm"]})
     if "r2" in res:
-        put(["b1_fields", "b2_hhi"], {"본문 재코딩 분야 일치(층화 표본 R2c, 사전 r5)": S["r2_field"], "Cohen κ": S["r2_kappa"], "분야 비중으로 가중한 정밀도": S["r2_weighted"], "분야별 일치": S["r2_per_field"]},
-            {"Text recoding, field (stratified sample R2c, dictionary r5)": S["r2_field"], "Cohen's kappa": S["r2_kappa"], "Precision weighted by field shares": S["r2_weighted"], "Agreement by field": S["r2_per_field"]})
+        put(["b1_fields", "b2_hhi"], {"본문 재코딩 분야 일치(층화 표본 R2f, 사전 r7)": S["r2f_field"], "Cohen κ": S["r2f_kappa"], "분야 비중으로 가중한 정밀도": S["r2f_weighted"], "분야별 일치": S["r2f_per_field"],
+                                      "같은 항목의 사전 r6": f"{S['r2f_r6_field']}(κ {S['r2f_r6_kappa']}, 가중 {S['r2f_r6_weighted']})",
+                                      "r6→r7로 바뀐 항목 표본(R2f-chg, 두 코더가 같은 답 " + S["fchg_n_agree"] + "건)": f"r7만 맞음 {S['fchg_improve']}; r6만 맞음 {S['fchg_regress']}; 둘 다 틀림 {S['fchg_neither_k']}건",
+                                      "R2f-chg 코더 간 일치": f"{S['fchg_intercoder']}(κ {S['fchg_kappa']})",
+                                      "앞 판의 측정(사전 r6, 표본 R2d, 옛 코더 지시)": f"{S['r2d_field']}(κ {S['r2d_kappa']}, 가중 {S['r2d_weighted']})"},
+            {"Text recoding, field (stratified sample R2f, dictionary r7)": S["r2f_field"], "Cohen's kappa": S["r2f_kappa"], "Precision weighted by field shares": S["r2f_weighted"], "Agreement by field": S["r2f_per_field"],
+             "Dictionary r6 on the same entries": f"{S['r2f_r6_field']} (κ {S['r2f_r6_kappa']}, {S['r2f_r6_weighted']} weighted)",
+             "Entries changed r6→r7 (R2f-chg, " + S["fchg_n_agree"] + " where both coders agree)": f"only r7 right {S['fchg_improve']}; only r6 right {S['fchg_regress']}; both wrong {S['fchg_neither_k']}",
+             "R2f-chg agreement between coders": f"{S['fchg_intercoder']} (κ {S['fchg_kappa']})",
+             "Previous measurement (dictionary r6, sample R2d, earlier coder instructions)": f"{S['r2d_field']} (κ {S['r2d_kappa']}, {S['r2d_weighted']} weighted)"})
         put(["c1_foreign"], {"본문 재코딩 해외 주소 일치": S["r2_foreign"], "본문 재코딩 communication 일치": S["r2_comm"]},
             {"Text recoding, address abroad": S["r2_foreign"], "Text recoding, communication": S["r2_comm"]})
         put(["d1_terms", "d2_term_shift"], {"본문 재코딩 기간 일치": S["r2_term"]}, {"Text recoding, term": S["r2_term"]})
