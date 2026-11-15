@@ -34,6 +34,7 @@ header .brand{font-family:var(--display);font-weight:600;font-size:1.05rem;color
 header nav{display:flex;gap:1rem;flex-wrap:wrap}header nav a{color:var(--fg2);font-size:.92rem;padding:.2rem 0;border-bottom:2px solid transparent}
 header nav a:hover{text-decoration:none;color:var(--fg)}header nav a.on{color:var(--fg);border-bottom-color:var(--accent2)}
 header .right{margin-left:auto;display:flex;gap:.6rem;align-items:center}
+header .hub{font-size:.88rem;color:var(--fg2);white-space:nowrap}header .hub:hover{color:var(--fg)}
 header .lang{font-size:.88rem;color:var(--fg2);border:1px solid var(--line);border-radius:999px;padding:.15rem .7rem}header .lang:hover{text-decoration:none;color:var(--fg);border-color:var(--fg3)}
 .theme{border:1px solid var(--line);background:transparent;color:var(--fg2);border-radius:999px;width:30px;height:30px;cursor:pointer;font-size:.9rem;line-height:1;padding:0}.theme:hover{color:var(--fg);border-color:var(--fg3)}
 main{max-width:1060px;margin:0 auto;padding:1.6rem 1.1rem 4rem;min-width:0}
@@ -60,6 +61,7 @@ a.stat:hover{text-decoration:none;border-color:var(--fg3)}
 .rel{border-left:4px solid var(--accent2)}
 dl{display:grid;grid-template-columns:max-content 1fr;gap:.55rem 1.4rem;margin:0}dt{color:var(--fg3);font-size:.86rem;letter-spacing:.01em;padding-top:.15rem}dd{margin:0;min-width:0}
 dd.formula{font-family:ui-monospace,"SF Mono",Consolas,"Noto Sans KR",monospace;font-size:.9rem;background:var(--bg2);border-radius:6px;padding:.45rem .65rem;line-height:1.6}
+@media(max-width:640px){.sx{overflow-x:auto;-webkit-overflow-scrolling:touch}.sx>svg{min-width:calc(var(--vw)*1px);max-width:none}}
 @media(max-width:640px){dl{grid-template-columns:1fr}dt{margin-top:.5rem}}
 table{border-collapse:collapse;width:100%;font-size:.9rem;margin:.6rem 0}
 th,td{border-bottom:1px solid var(--line2);padding:.42rem .6rem;text-align:left;vertical-align:top}
@@ -170,14 +172,16 @@ def tick_spec(spec, ticks):
     return spec
 
 
-def svg_lines(series, spec, width=900, height=320, ylabel="", xstep=None, bands=None, lang="en") -> str:
+def svg_lines(series, spec, width=900, height=320, ylabel="", xstep=None, bands=None, lang="en", xlabel="", xnames=None, hline=None) -> str:
+    """xlabel: name under the horizontal axis. xnames: {x: tick label} when x is an index of periods rather than a year.
+    hline: (value, label) for a dashed reference line. Band labels of nine characters or fewer are written at the top of the band."""
     xs = [p[0] for _, pts, _ in series for p in pts]
     ys = [p[1] for _, pts, _ in series for p in pts if not math.isnan(p[1])]
     if not xs or not ys:
         return ""
     x0, x1, y0, y1 = min(xs), max(xs), 0.0, max(ys) * 1.05 or 1
     _w = lambda t: sum(11 if ord(ch) > 0x2E80 else 6.3 for ch in str(t))  # rough width of a label at the chart font size
-    L, R, Tp, B = 62, (max(110, max(_w(n) for n, _, _ in series) + 14) if len(series) > 1 else 20), 22, 36
+    L, R, Tp, B = 62, (max(110, max(_w(n) for n, _, _ in series) + 14) if len(series) > 1 else 20), 22, (52 if xlabel else 36)
     pw, ph = width - L - R, height - Tp - B
     X = lambda v: L + (v - x0) / (x1 - x0 or 1) * pw
     Y = lambda v: Tp + ph - (v - y0) / (y1 - y0) * ph
@@ -185,15 +189,27 @@ def svg_lines(series, spec, width=900, height=320, ylabel="", xstep=None, bands=
     if bands:
         for (a, b, label) in bands:
             out.append(f'<rect x="{X(a):.1f}" y="{Tp}" width="{max(X(b)-X(a),1):.1f}" height="{ph}" fill="var(--accent2)" fill-opacity=".10"><title>{esc(label)}</title></rect>')
+            if len(str(label)) <= 9:   # 1.1: the band says what it is
+                out.append(f'<text x="{(X(a) + X(b)) / 2:.1f}" y="{Tp + 11}" text-anchor="middle" fill="var(--fg3)">{esc(label)}</text>')
     ticks = nice_ticks(y0, y1)
     tspec = tick_spec(spec, ticks)
     for v in ticks:
         out.append(f'<line class="grid" x1="{L}" y1="{Y(v):.1f}" x2="{width-R}" y2="{Y(v):.1f}"/><text x="{L-6}" y="{Y(v)+4:.1f}" text-anchor="end">{fmt(v, tspec)}</text>')
     step = xstep or max(1, int((x1 - x0) / 8 / 10) * 10)
-    xv = int(math.ceil(x0 / step) * step)
-    while xv <= x1:
-        out.append(f'<text x="{X(xv):.1f}" y="{height-12}" text-anchor="middle">{xv}</text>')
-        xv += step
+    ty = (Tp + ph + 20) if xlabel else (height - 12)
+    if xnames:
+        for xv, lab in xnames.items():
+            out.append(f'<text x="{X(xv):.1f}" y="{ty:.1f}" text-anchor="middle">{esc(lab)}</text>')
+    else:
+        xv = int(math.ceil(x0 / step) * step)
+        while xv <= x1:
+            out.append(f'<text x="{X(xv):.1f}" y="{ty:.1f}" text-anchor="middle">{xv}</text>')
+            xv += step
+    if xlabel:
+        out.append(f'<text x="{L + pw / 2:.1f}" y="{height - 8}" text-anchor="middle">{esc(xlabel)}</text>')
+    if hline and y0 <= hline[0] <= y1:
+        out.append(f'<line x1="{L}" x2="{width - R}" y1="{Y(hline[0]):.1f}" y2="{Y(hline[0]):.1f}" stroke="var(--fg3)" stroke-dasharray="4 4"/>'
+                   f'<text x="{L + 6}" y="{Y(hline[0]) - 4:.1f}" fill="var(--fg3)">{esc(hline[1])}</text>')
     if ylabel:
         out.append(f'<text x="{L}" y="13">{esc(ylabel)}</text>')
     ends = []
@@ -226,7 +242,7 @@ def svg_lines(series, spec, width=900, height=320, ylabel="", xstep=None, bands=
             if len(seg) == 1:  # a lone point between two gaps has no line to show it
                 out.append(f'<circle cx="{X(seg[0][0]):.1f}" cy="{Y(seg[0][1]):.1f}" r="2.4" fill="var(--s{ci+1})"/>')
         for x, y in pts:
-            out.append(f'<circle cx="{X(x):.1f}" cy="{Y(y):.1f}" r="4" fill="transparent"><title>{esc(name)} · {x}: {fmt(y, spec)}</title></circle>')
+            out.append(f'<circle cx="{X(x):.1f}" cy="{Y(y):.1f}" r="4" fill="transparent"><title>{esc(name)} · {(xnames or {}).get(x, x)}: {fmt(y, spec)}</title></circle>')
         if len(series) > 1:
             lx, ly = pts[-1]
             ends.append([X(lx) + 4, Y(ly) + 4, name])

@@ -108,12 +108,26 @@ def leaf_html(lang, leaf, body):
             f'{body}{pnav}</div></div>')
 
 
+_WIDE_SVG = re.compile(r"""<svg\b[^>]*\bviewBox=(["'])0 0 (\d+)(?:\.\d+)? [^"']*\1[^>]*>.*?</svg>""", re.S)
+
+
+def wrap_wide_svgs(body: str) -> str:
+    """Put every chart at least 500 units wide in a <div class="sx"> that carries its width (1.1). On a narrow screen the
+    stylesheet lets that box scroll sideways and draws the chart at its own size, so chart text keeps the size it was laid
+    out for instead of shrinking to 4px. On wider screens the box changes nothing."""
+    def one(m):
+        w = int(m.group(2))
+        return f'<div class="sx" style="--vw:{w}">{m.group(0)}</div>' if w >= 500 else m.group(0)
+    return _WIDE_SVG.sub(one, body)
+
+
 def page(lang, title, body, depth=1, active="", desc="", rel="index.html", leaf=None):
     """rel: this page's path under the language folder; the language switch points to the same path in the other tree.
     leaf: sibling navigation for a leaf page (metric_siblings), drawn by leaf_html."""
     t = T[lang]
     if leaf:
         body = leaf_html(lang, leaf, body)
+    body = wrap_wide_svgs(body)
     root = "../" * depth
     other = "en" if lang == "ko" else "ko"
     hub = "" if lang == "ko" else "en/"
@@ -137,7 +151,7 @@ def page(lang, title, body, depth=1, active="", desc="", rel="index.html", leaf=
 td.num,th.num{{white-space:nowrap}}{LEAF_CSS if leaf else ""}</style></head><body>
 <header><a class="brand" href="{root}{lang}/index.html">{t['site']}</a>
 <nav>{navh}</nav>
-<div class="right"><button id="theme" class="theme" type="button" aria-label="{t['theme']}">◑</button><a class="lang" href="{root}{other}/{rel}" hreflang="{other}">{t['lang_other']}</a></div></header>
+<div class="right"><a class="hub" href="https://bowonkwon.github.io/{'' if lang == 'ko' else 'en/'}">{'공개 자료 허브' if lang == 'ko' else 'All public materials'}</a><button id="theme" class="theme" type="button" aria-label="{t['theme']}">◑</button><a class="lang" href="{root}{other}/{rel}" hreflang="{other}">{t['lang_other']}</a></div></header>
 <main{' class="wide"' if leaf else ""}>{body}</main>
 <footer>{t['site']} · {t['version']} {VERSION} · {t['built']} {BUILD_DATE} · <a href="{REPO}">GitHub</a> · {t['hub']} <a href="https://bowonkwon.github.io/{hub}">bowonkwon.github.io</a><br>{attribution}</footer>
 <script>{JS}{LEAF_JS if leaf else ""}</script></body></html>"""
@@ -157,12 +171,65 @@ def load():
 
 
 # ------------------------------------------------------------------ figures per metric
+YEAR = ("연도", "year")
+DEC = ("10년 구간의 첫 해", "first year of the decade")
+LINE_AX = {
+    "a1_annual": [("허여 수(건/년)", "grants per year") + YEAR] * 2,
+    "a4_extensions": [("연장 항목 수(10년 합)", "extension entries per decade") + DEC],
+    "b1_fields": [("허여 가운데 그 분야의 비율", "share of grants in the field", "구간", "period")],
+    "b2_hhi": [("두 값 모두 0~1 (HHI는 지수, 「기타」는 비율)", "both run from 0 to 1 (HHI is an index, 'other' a share)") + DEC],
+    "c1_foreign": [("허여 가운데 비율", "share of grants") + DEC], "c2_cogrant": [("허여 가운데 공동 허여의 비율", "share of grants made to more than one person") + DEC],
+    "d2_term_shift": [("허여 수(건/년)", "grants per year") + YEAR], "d3_clauses": [("항목 가운데 그 조항을 언급한 비율", "share of entries mentioning the clause") + DEC],
+    "p1_sro_annual": [("등록 항목 수(건/년)", "register entries per year") + YEAR], "p2_sro_concentration": [("그해 등록 가운데 상위 5인의 몫", "share of the year's entries held by the top five") + YEAR],
+    "p3_sro_status": [("등록 항목 가운데 비율", "share of register entries") + DEC],
+    "p4_sro_fees": [("수수료가 적힌 항목 가운데 6펜스의 비율", "share of sixpence fees among entries with a fee") + YEAR],
+    "v1_venice_printing": [("출판 특권 문서 수(5년 합)", "printing privileges per five years", "5년 구간의 첫 해", "first year of the five-year period")],
+}
+BAR_X = {"a2_periods": ("건수(관할마다 세는 단위가 다르다)", "count (the unit differs by jurisdiction)"), "a3_1624": ("연평균 허여 수(건/년)", "mean grants per year"),
+         "b3_venice_sectors": ("특허 수(건)", "patents"), "d1_terms": ("존속기간(년)", "term (years)")}
+# 1.1: Korean names for the sectors of the Venetian table; the source's English name stays beside each
+SECTOR_KO = {"Mills — cereals": "방아(곡물)", "Mills — metals": "가공 기계(금속)", "Mills — textiles": "가공 기계(직물)", "Mills — wood saws": "제재기(톱)", "Mills — multiple usage": "가공 기계(여러 용도)",
+             "Fabrics": "직물", "Paint": "도료", "Bread and food": "빵·식품", "Pottery and Porcelain Vases": "도기·자기", "Agricultural machines": "농기계",
+             "Drainage, mud removal": "배수·준설", "Hydraulic pumps": "양수 펌프", "Armour and weapons": "갑옷·무기", "Arsenal": "아르세날레(조선소)", "Mining": "광업",
+             "Perpetual Motion": "영구 기관", "Miscellaneous": "기타"}
+LIST_KO = {"Hulme": "Hulme 목록", "Woodcroft": "Woodcroft 목록", "Buning": "Buning 자료", "Fulin": "Fulin 문서"}
+LIST_EN = {"Hulme": "Hulme's list", "Woodcroft": "Woodcroft's list", "Buning": "the Buning data", "Fulin": "Fulin's documents"}
+GLOSS = {
+    "ko": ("낱말: 허여(許與)는 특권이나 특허를 내려 주는 일이다. Hulme과 Woodcroft는 잉글랜드의 독점 허여·특허를 목록으로 엮은 사람이고(각각 1561–1603년, 1617–1852년), "
+           "Fulin은 베네치아 인쇄 관련 문서(1469–1526년)를, Buning은 네덜란드 특허(1581–1621년) 자료를 엮었다. SRO는 런던 출판업조합의 등록부를 옮긴 Stationers' Register Online이다. 이 면에서 쓴 자료의 서지는 아래 「자료원」에, 다섯 자료 모두의 서지는 방법 면에 있다."),
+    "en": ("Names: Hulme and Woodcroft compiled lists of English monopoly grants and patents (1561–1603 and 1617–1852); Fulin edited documents on Venetian printing (1469–1526); "
+           "Buning's data cover Dutch patents (1581–1621); SRO is Stationers' Register Online, a transcription of the register of the London Stationers' Company. References for the sources used on this page are under Sources below; those for all five are on the method page."),
+}
+
+
+N_FIELDS = len([f for f in FL.LABEL if f != "other"])   # 17
+
+
+def source_label(src: str, lang: str) -> str:
+    """'GB Woodcroft 1625-1700' -> 'England · Woodcroft's list 1625–1700' (1.1)."""
+    parts = src.split(" ", 2)
+    if len(parts) < 3 or parts[0] not in JUR:
+        return src
+    rest = parts[2].replace("-", "–")
+    if lang == "ko":
+        rest = rest.replace(" (printing)", "(출판)")
+    return f"{JUR[parts[0]][lang]} · {(LIST_KO if lang == 'ko' else LIST_EN).get(parts[1], parts[1])} {rest}"
+
+
 def figure(mid, D, lang):
     ko = lang == "ko"
     N = lambda en, k: k if ko else cap(en, "en")      # series / band name per language, sentence case in English
     from site_kit import svg_lines as svg_lines_, svg_bars as svg_bars_
-    svg_lines = lambda *a, **k: svg_lines_(*a, lang=lang, **k)  # noqa: E731
-    svg_bars = lambda *a, **k: svg_bars_(*a, lang=lang, **k)  # noqa: E731
+    ax = iter(LINE_AX.get(mid, []))
+
+    def svg_lines(*a, **k):   # 1.1: every line chart names both axes
+        y_ko, y_en, x_ko, x_en = next(ax, ("", "", "", ""))
+        return svg_lines_(*a, lang=lang, ylabel=(y_ko if ko else y_en), xlabel=(x_ko if ko else x_en), **k)
+
+    def svg_bars(*a, **k):
+        if mid in BAR_X and "xlabel" not in k:
+            k["xlabel"] = BAR_X[mid][0 if ko else 1]
+        return svg_bars_(*a, lang=lang, **k)
     if mid == "a1_annual":
         a = D["m_a1_annual"]
         e = a[(a.year <= 1700)]
@@ -170,7 +237,8 @@ def figure(mid, D, lang):
         s1 = svg_lines([(N("grants", "허여"), [(r.year, float(r.grants) if not pd.isna(r.grants) else math.nan) for r in e.itertuples()], 0)], ",.0f",
                        bands=[(1604, 1616, N("gap", "목록 공백")), (1624, 1625, "1624")], xstep=20)
         s2 = svg_lines([(N("grants", "허여"), [(r.year, float(r.grants)) for r in l.itertuples()], 0)], ",.0f", xstep=20)
-        return (fig(s1, "1561–1700. 음영은 두 목록 사이의 공백인 1604–1616년과 1624년." if ko else "1561–1700. Shaded: 1604–1616, the gap between the two lists, and 1624.")
+        return (fig(s1, "1561–1700. 음영은 두 목록 사이의 공백인 1604–1616년(목록이 없어 선을 끊었다 — 0건이 아니라 모른다)과 독점법이 나온 1624년." if ko
+                    else "1561–1700. Shaded: 1604–1616, the gap between the two lists (no list, so the line breaks; not zero but unknown), and 1624, the year of the Statute of Monopolies.")
                 + fig(s2, "1700–1852." if ko else "1700–1852."))
     if mid == "a2_periods":
         a = D["m_a2_periods"]
@@ -182,7 +250,8 @@ def figure(mid, D, lang):
         w = a[a.grants.notna()]
         items = [(r.window, float(r.per_year), 0) for r in w.itertuples()]
         err = {r.window: (r.ci_low, r.ci_high) for r in w.itertuples()}
-        return fig(svg_bars(items, ".1f", label_w=140, errors=err), "연평균 허여와 95% 포아송 구간." if ko else "Mean grants per year with 95% Poisson intervals.")
+        return fig(svg_bars(items, ".1f", label_w=140, errors=err), "막대는 7년 구간의 연평균 허여 수, 가는 선은 95% 신뢰구간이다 — 포아송 분포를 가정해 추정한 연평균 허여 수가 있을 법한 범위로, 두 막대의 선이 겹치면 차이가 우연의 폭 안에 있을 수 있다. 셋째 막대(1632–1638)는 그다음 7년이다."
+                   if ko else "Bars: mean grants per year over seven-year windows; thin lines: 95% confidence intervals for the yearly rate under a Poisson model. Where the lines of two bars overlap, the difference may be within chance. The third bar (1632–1638) is the next seven years.")
     if mid == "a4_extensions":
         a = D["m_a4_extensions"]
         # A decade absent from the table is a decade with no grants at all in the annual list (the 1650s): the count is a true zero, not a gap.
@@ -197,18 +266,21 @@ def figure(mid, D, lang):
         x = {p: i for i, p in enumerate(per)}
         top = b[b.field != "other"].groupby("field")["count"].sum().sort_values(ascending=False).head(4).index.tolist()
         series = [(N(FL.LABEL[f]["en"], FL.LABEL[f]["ko"]), [(x[r.period], float(r.share)) for r in b[b.field == f].itertuples()], i) for i, f in enumerate(top)]
-        svg = svg_lines(series, ".0%", xstep=1)
-        dash = lambda pr: pr.replace("-", "–")     # period keys use a hyphen in the data; the caption uses an en dash
-        cap_ = ("가로축은 구간 번호(0 = " + dash(per[0]) + ", " + str(len(per) - 1) + " = " + dash(per[-1]) + "). 많은 네 분야만 그렸다. 전체는 표."
-                if ko else "X axis: period index (0 = " + dash(per[0]) + ", " + str(len(per) - 1) + " = " + dash(per[-1]) + "). The four largest fields only; all fields are in the table.")
+        dash = lambda pr: pr.replace("-", "–")     # period keys use a hyphen in the data; the labels use an en dash
+        svg = svg_lines(series, ".0%", xstep=1, xnames={i: dash(pr) for pr, i in x.items()})
+        cap_ = ("많은 네 분야만 그렸다. 전체는 표. 구간의 길이가 서로 달라(" + dash(per[0]) + "년 구간은 " + str(int(per[0][5:]) - int(per[0][:4]) + 1) + "년, " + dash(per[-1]) + "년 구간은 " + str(int(per[-1][5:]) - int(per[-1][:4]) + 1) + "년) 선의 기울기를 구간끼리 견줄 수 없다."
+                if ko else "The four largest fields only; all fields are in the table. The periods differ in length (" + dash(per[0]) + " is " + str(int(per[0][5:]) - int(per[0][:4]) + 1) + " years, " + dash(per[-1]) + " " + str(int(per[-1][5:]) - int(per[-1][:4]) + 1) + "), so slopes cannot be compared from one period to the next.")
         return fig(svg, cap_)
     if mid == "b2_hhi":
         b = D["m_b2_hhi"]
-        return fig(svg_lines([("HHI", [(r.decade, float(r.hhi)) for r in b.itertuples()], 0), (N("other", "기타"), [(r.decade, float(r.other_share)) for r in b.itertuples()], 1)], ".2f", xstep=20),
-                   "HHI와 「기타」 비율." if ko else "HHI and the 'other' share.")
+        return fig(svg_lines([("HHI", [(r.decade, float(r.hhi)) for r in b.itertuples()], 0), (N("other", "기타"), [(r.decade, float(r.other_share)) for r in b.itertuples()], 1)], ".2f", xstep=20,
+                             hline=(1 / N_FIELDS, (f"{N_FIELDS}분야에 고르게 나뉠 때 {1 / N_FIELDS:.3f}" if ko else f"{1 / N_FIELDS:.3f} if spread evenly over {N_FIELDS} fields"))),
+                   ("HHI는 분야별 몫을 제곱해 더한 값이다. 한 분야가 다 차지하면 1이고, 고르게 나뉠수록 작아진다(점선이 고르게 나뉠 때의 값). 「기타」는 어느 분야로도 분류하지 못한 허여의 비율로, HHI와 뜻이 다른 값이다." if ko
+                    else "HHI is the sum of the squared shares of the fields: 1 if one field takes everything, smaller the more evenly the grants are spread (the dotted line is the value for an even spread). 'Other' is the share of grants that fit no field; it measures something different from HHI."))
     if mid == "b3_venice_sectors":
         b = D["m_b3_venice_sectors"]
-        return fig(svg_bars([(r.sector_berveglieri, float(r.count), 1) for r in b.itertuples()], ",.0f", label_w=260), "Comino 등 표 A1." if ko else "Comino et al., Table A1.")
+        return fig(svg_bars([((f"{SECTOR_KO.get(r.sector_berveglieri, r.sector_berveglieri)} ({r.sector_berveglieri})" if ko else r.sector_berveglieri), float(r.count), 1) for r in b.itertuples()], ",.0f", label_w=390),
+                   "베네치아 원로원 특허의 분야별 건수. Comino 등 표 A1의 분류와 수를 그대로 옮겼다(괄호 안이 원문의 분야 이름)." if ko else "Venetian Senate patents by sector, as classified and counted in Comino et al., Table A1.")
     if mid == "c1_foreign":
         c = D["m_c1_foreign_gb"]
         c = c[c.decade >= 1700]
@@ -222,9 +294,10 @@ def figure(mid, D, lang):
     if mid == "d1_terms":
         d = D["m_d1_terms"]
         d = d[d.n_stated > 0]
-        items = [(r.source, float(r["median"]), 0) for _, r in d.iterrows()]
-        err = {r.source: (r.p25, r.p75) for _, r in d.iterrows()}
-        return fig(svg_bars(items, ".0f", label_w=300, errors=err), "중앙값(막대)과 사분위 범위(선)." if ko else "Median (bar) and interquartile range (line).")
+        items = [(source_label(r.source, lang), float(r["median"]), 0) for _, r in d.iterrows()]
+        err = {source_label(r.source, lang): (r.p25, r.p75) for _, r in d.iterrows()}
+        return fig(svg_bars(items, ".0f", label_w=360, errors=err), "막대는 적힌 존속기간의 중앙값(한가운데 값), 가는 선은 사분위 범위다 — 값의 가운데 절반이 이 선 안에 있다." if ko
+                   else "Bar: median written term (the middle value); thin line: interquartile range, which holds the middle half of the values.")
     if mid == "d2_term_shift":
         d = D["m_d2_term_shift"]
         # A year absent from the table is a year with no grants in the annual list (1643–1659 and others): both counts are true zeros, not gaps.
@@ -245,7 +318,8 @@ def figure(mid, D, lang):
     if mid == "p2_sro_concentration":
         p = D["m_p2_sro_concentration"]
         p = p[p.entries >= 20]
-        return fig(svg_lines([(N("top five", "상위 5인"), [(r.year, float(r.top5_share)) for r in p.itertuples()], 0)], ".0%", xstep=10), "등록 20건 이상인 해만." if ko else "Years with at least 20 entries.")
+        return fig(svg_lines([(N("top five", "상위 5인"), [(r.year, float(r.top5_share)) for r in p.itertuples()], 0)], ".0%", xstep=10), "등록 20건 이상인 해만 그렸고, 빠진 해에서는 선을 끊었다. 정의의 두 값 가운데 상위 5인의 몫만 그렸다(HHI는 아래 표)." if ko
+                   else "Years with at least 20 entries only; the line breaks at the years left out. Of the two values in the definition only the top-five share is drawn (HHI is in the table below).")
     if mid == "p3_sro_status":
         p = D["m_p3_sro_status"]
         return fig(svg_lines([(N("reassigned", "양도"), [(r.decade, float(r.reassigned_share)) for r in p.itertuples()], 0), (N("shared", "공동 등록"), [(r.decade, float(r.shared_share)) for r in p.itertuples()], 1)], ".0%", xstep=10),
@@ -318,6 +392,7 @@ def metric_page(mid, D, TK, rel, lang):
     body.append(f'<div class="spec"><dl><dt>{t["definition"]}</dt><dd>{esc(L["definition"])}</dd><dt>{t["formula"]}</dt><dd class="formula">{esc(L["formula"])}</dd>'
                 f'<dt>{t["reading"]}</dt><dd>{esc(L["reading"])}</dd><dt>{t["caveat"]}</dt><dd>{esc(L["caveat"])}</dd></dl></div>')
     body.append(figure(mid, D, lang))
+    body.append(f"<p class='src'>{esc(GLOSS[lang])}</p>")   # 1.1
     body.append(f'<h2>{t["table"]}</h2><p class="files"><a href="../../data/{m["table"]}.csv">{t["download"]} · {m["table"]}.csv</a></p>')
     body.append(table_for(mid, D, lang))
     body.append(rel_card(mid, rel, lang))
@@ -445,8 +520,17 @@ def eras(D, TK, lang):
     a1, p1, v1 = D["m_a1_annual"], D["m_p1_sro_annual"], D["m_v1_fulin_annual"]
     s = svg_lines([("English inventions" if not ko else "잉글랜드 발명", [(r.year, float(r.grants)) for r in a1[a1.year <= 1700].itertuples() if not pd.isna(r.grants)], 0),
                    ("Venetian printing" if not ko else "베네치아 출판", [(r.year, float(r.privileges)) for r in v1.itertuples()], 1)], ",.0f",
-                  bands=[(1474, 1475, "1474"), (1517, 1518, "1517"), (1624, 1625, "1624")], xstep=25, lang=lang)
-    body = [f"<h1>{T[lang]['nav_eras']}</h1>", fig(s, "연도별 수, 1469–1700. 음영은 1474·1517·1624년." if ko else "Counts per year, 1469–1700. Shaded: 1474, 1517, 1624."),
+                  bands=[(1474, 1475, "1474"), (1517, 1518, "1517"), (1624, 1625, "1624")], xstep=25, lang=lang,
+                  ylabel=("한 해의 건수(두 선은 세는 것이 다르다)" if ko else "count per year (the two lines count different things)"), xlabel=("연도" if ko else "year"))
+    vmax, emax = v1.loc[v1.privileges.idxmax()], a1[a1.year <= 1700].loc[a1[a1.year <= 1700].grants.idxmax()]
+    intro = ("<p>아래 그림은 두 자료를 한 연표 위에 놓은 것이다. 「베네치아 출판」은 Fulin이 엮은 문서 가운데 출판 특권의 수이고, 「잉글랜드 발명」은 Hulme과 Woodcroft의 목록에 실린 독점 허여·특허의 수다. 세는 것이 달라 두 선의 높이를 서로 견주지 않는다.</p>"
+             if ko else "<p>The chart sets two sources on one timeline. 'Venetian printing' counts the printing privileges among the documents edited by Fulin; 'English inventions' counts the monopoly grants and patents in the lists of Hulme and Woodcroft. They count different things, so the heights of the two lines are not to be compared.</p>")
+    cap_ = ((f"연도별 수, 1469–1700. 음영은 1474년(베네치아 특허법), 1517년(베네치아가 기존 출판 특권을 거둠), 1624년(잉글랜드 독점법)이다. "
+             f"베네치아 출판 특권은 {int(vmax.year)}년의 {int(vmax.privileges)}건이, 1700년까지의 잉글랜드 발명 허여는 {int(emax.year)}년의 {int(emax.grants)}건이 가장 많다. 잉글랜드 선이 끊긴 1604–1616년은 목록이 없는 기간이다.")
+            if ko else
+            (f"Counts per year, 1469–1700. Shaded: 1474 (the Venetian patent act), 1517 (Venice revokes existing printing privileges) and 1624 (the Statute of Monopolies). "
+             f"Venetian printing privileges are most numerous in {int(vmax.year)} ({int(vmax.privileges)}); English grants for inventions up to 1700 in {int(emax.year)} ({int(emax.grants)}). The English line breaks at 1604–1616, for which there is no list."))
+    body = [f"<h1>{T[lang]['nav_eras']}</h1>", intro, fig(s, cap_),
             "<div class='wrap'><table><thead><tr><th class='num'>" + T[lang]["year"] + "</th><th>" + ("사건" if ko else "Event") + "</th></tr></thead><tbody>" +
             "".join(f"<tr><td class='num'>{y}</td><td>{esc(x)}</td></tr>" for y, x in ev) + "</tbody></table></div>",
             "<p class='src'>" + ("연표의 연도·사건은 각 자료원(Fulin·Hulme·Woodcroft·SRO)과 법령 명칭에서 가져왔다." if ko else "Years and events are taken from the sources used (Fulin, Hulme, Woodcroft, SRO) and the titles of the statutes.") + "</p>"]
