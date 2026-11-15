@@ -160,13 +160,24 @@ def nice_ticks(lo: float, hi: float, n: int = 5) -> list[float]:
     return ticks
 
 
+def tick_spec(spec, ticks):
+    """Number format for axis ticks: one more decimal when the ticks fall between the values the format can show
+    (a 2.5 step printed with no decimals reads 0, 3, 5, 8)."""
+    if spec.endswith(".0%") and any(abs(v * 100 - round(v * 100)) > 1e-9 for v in ticks):
+        return spec[:-3] + ".1%"
+    if spec.endswith(".0f") and any(abs(v - round(v)) > 1e-9 for v in ticks):
+        return spec[:-3] + ".1f"
+    return spec
+
+
 def svg_lines(series, spec, width=900, height=320, ylabel="", xstep=None, bands=None, lang="en") -> str:
     xs = [p[0] for _, pts, _ in series for p in pts]
     ys = [p[1] for _, pts, _ in series for p in pts if not math.isnan(p[1])]
     if not xs or not ys:
         return ""
     x0, x1, y0, y1 = min(xs), max(xs), 0.0, max(ys) * 1.05 or 1
-    L, R, Tp, B = 62, (110 if len(series) > 1 else 20), 16, 36
+    _w = lambda t: sum(11 if ord(ch) > 0x2E80 else 6.3 for ch in str(t))  # rough width of a label at the chart font size
+    L, R, Tp, B = 62, (max(110, max(_w(n) for n, _, _ in series) + 14) if len(series) > 1 else 20), 22, 36
     pw, ph = width - L - R, height - Tp - B
     X = lambda v: L + (v - x0) / (x1 - x0 or 1) * pw
     Y = lambda v: Tp + ph - (v - y0) / (y1 - y0) * ph
@@ -174,26 +185,59 @@ def svg_lines(series, spec, width=900, height=320, ylabel="", xstep=None, bands=
     if bands:
         for (a, b, label) in bands:
             out.append(f'<rect x="{X(a):.1f}" y="{Tp}" width="{max(X(b)-X(a),1):.1f}" height="{ph}" fill="var(--accent2)" fill-opacity=".10"><title>{esc(label)}</title></rect>')
-    for v in nice_ticks(y0, y1):
-        out.append(f'<line class="grid" x1="{L}" y1="{Y(v):.1f}" x2="{width-R}" y2="{Y(v):.1f}"/><text x="{L-6}" y="{Y(v)+4:.1f}" text-anchor="end">{fmt(v, spec)}</text>')
+    ticks = nice_ticks(y0, y1)
+    tspec = tick_spec(spec, ticks)
+    for v in ticks:
+        out.append(f'<line class="grid" x1="{L}" y1="{Y(v):.1f}" x2="{width-R}" y2="{Y(v):.1f}"/><text x="{L-6}" y="{Y(v)+4:.1f}" text-anchor="end">{fmt(v, tspec)}</text>')
     step = xstep or max(1, int((x1 - x0) / 8 / 10) * 10)
     xv = int(math.ceil(x0 / step) * step)
     while xv <= x1:
         out.append(f'<text x="{X(xv):.1f}" y="{height-12}" text-anchor="middle">{xv}</text>')
         xv += step
     if ylabel:
-        out.append(f'<text x="{L}" y="10">{esc(ylabel)}</text>')
+        out.append(f'<text x="{L}" y="13">{esc(ylabel)}</text>')
+    ends = []
     for name, pts, ci in series:
-        pts = [p for p in pts if not math.isnan(p[1])]
+        # The line stops where the data stop: at a missing value, and where the x values skip more than one regular step
+        # (years with no list, decades with no grants). Joining across such a gap draws values that were never counted.
+        allx = sorted(p[0] for p in pts)
+        steps = [b - a for a, b in zip(allx, allx[1:]) if b > a]
+        base = min(steps) if steps else 0
+        segs, cur, prev = [], [], None
+        for x, y in pts:
+            if math.isnan(y):
+                if cur:
+                    segs.append(cur)
+                cur, prev = [], None
+                continue
+            if cur and base and x - prev > base * 1.5:
+                segs.append(cur)
+                cur = []
+            cur.append((x, y))
+            prev = x
+        if cur:
+            segs.append(cur)
+        pts = [p for seg in segs for p in seg]
         if not pts:
             continue
-        d = " ".join(f"{'M' if i == 0 else 'L'}{X(x):.1f},{Y(y):.1f}" for i, (x, y) in enumerate(pts))
+        d = " ".join(f"{'M' if i == 0 else 'L'}{X(x):.1f},{Y(y):.1f}" for seg in segs for i, (x, y) in enumerate(seg))
         out.append(f'<path d="{d}" fill="none" stroke="var(--s{ci+1})" stroke-width="1.8" stroke-linejoin="round"/>')
+        for seg in segs:
+            if len(seg) == 1:  # a lone point between two gaps has no line to show it
+                out.append(f'<circle cx="{X(seg[0][0]):.1f}" cy="{Y(seg[0][1]):.1f}" r="2.4" fill="var(--s{ci+1})"/>')
         for x, y in pts:
             out.append(f'<circle cx="{X(x):.1f}" cy="{Y(y):.1f}" r="4" fill="transparent"><title>{esc(name)} · {x}: {fmt(y, spec)}</title></circle>')
         if len(series) > 1:
             lx, ly = pts[-1]
-            out.append(f'<text x="{X(lx)+4:.1f}" y="{Y(ly)+4:.1f}">{esc(name)}</text>')
+            ends.append([X(lx) + 4, Y(ly) + 4, name])
+    # Series names at the line ends: keep them at least 17 units apart (a label is about 16.5 units tall) so that lines ending close together stay legible.
+    ends.sort(key=lambda e: e[1])
+    for a, b in zip(ends, ends[1:]):
+        if b[1] - a[1] < 17:
+            b[1] = a[1] + 17
+    over = (ends[-1][1] - (height - B - 2)) if ends else 0
+    for e in ends:
+        out.append(f'<text x="{e[0]:.1f}" y="{e[1] - max(over, 0):.1f}">{esc(e[2])}</text>')
     out.append("</svg>")
     return "".join(out)
 
@@ -206,14 +250,19 @@ def svg_bars(items, spec, width=900, row_h=22, label_w=240, xlabel="", errors=No
     lo, hi = 0.0, max(max(vals), hi_err, 0.0)
     pad = hi * 0.05 or 1
     hi = hi + pad
+    _lw = lambda t: sum(11 if ord(ch) > 0x2E80 else 6.3 for ch in str(t))  # rough width of a label at the chart font size
+    label_w = min(max(label_w, max(_lw(n) for n, _, _ in items) + 16), width * 0.62)  # a long row name (English edition titles) must fit its column
     pw = width - label_w - 30
-    h = row_h * len(items) + 40
+    hb = row_h * len(items) + 40
+    h = hb + (16 if xlabel else 0)  # the axis title sits below the tick labels, not on them
     x = lambda v: label_w + (v - lo) / (hi - lo) * pw
     out = [f'<svg viewBox="0 0 {width} {h}" role="img" aria-label="{"막대 그래프" if lang == "ko" else "Bar chart"}">']
-    for v in nice_ticks(lo, hi):
-        out.append(f'<line class="grid" x1="{x(v):.1f}" y1="6" x2="{x(v):.1f}" y2="{h-30}"/><text x="{x(v):.1f}" y="{h-14}" text-anchor="middle">{fmt(v, spec)}</text>')
+    _ticks = nice_ticks(lo, hi)
+    _tspec = tick_spec(spec, _ticks)
+    for v in _ticks:
+        out.append(f'<line class="grid" x1="{x(v):.1f}" y1="6" x2="{x(v):.1f}" y2="{hb-30}"/><text x="{x(v):.1f}" y="{hb-14}" text-anchor="middle">{fmt(v, _tspec)}</text>')
     if xlabel:
-        out.append(f'<text x="{label_w+pw/2:.0f}" y="{h-2}" text-anchor="middle">{esc(xlabel)}</text>')
+        out.append(f'<text x="{label_w+pw/2:.0f}" y="{hb+4}" text-anchor="middle">{esc(xlabel)}</text>')
     for i, (name, v, ci) in enumerate(items):
         y = 8 + i * row_h
         out.append(f'<text x="{label_w-8}" y="{y+row_h*0.68:.1f}" text-anchor="end">{esc(name)}</text>')

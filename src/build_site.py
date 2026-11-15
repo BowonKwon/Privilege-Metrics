@@ -21,7 +21,7 @@ from site_kit import CSS, JS, esc, fig, fmt, legend, svg_bars, svg_lines, table_
 from paths import COD, DER, OUT, find, need  # noqa: E402
 
 VERSION = SITE["version"]
-BUILD_DATE = "2026-11-13"
+BUILD_DATE = "2026-11-15"
 REPO = "https://github.com/BowonKwon/Privilege-Metrics"
 
 T = {
@@ -185,7 +185,11 @@ def figure(mid, D, lang):
         return fig(svg_bars(items, ".1f", label_w=140, errors=err), "연평균 허여와 95% 포아송 구간." if ko else "Mean grants per year with 95% Poisson intervals.")
     if mid == "a4_extensions":
         a = D["m_a4_extensions"]
-        return fig(svg_lines([(N("extension entries", "연장 항목"), [(r.decade, float(r.extensions)) for r in a.itertuples()], 0)], ",.0f", xstep=20), "10년별 연장 항목 수." if ko else "Extension entries per decade.")
+        # A decade absent from the table is a decade with no grants at all in the annual list (the 1650s): the count is a true zero, not a gap.
+        g = D["m_a1_annual"]
+        have = {int(r.decade): float(r.extensions) for r in a.itertuples()}
+        pts = [(dc, have[dc] if dc in have else (0.0 if g[(g.year >= dc) & (g.year < dc + 10)].grants.sum() == 0 else math.nan)) for dc in range(int(a.decade.min()), int(a.decade.max()) + 1, 10)]
+        return fig(svg_lines([(N("extension entries", "연장 항목"), pts, 0)], ",.0f", xstep=20), "10년별 연장 항목 수." if ko else "Extension entries per decade.")
     if mid == "b1_fields":
         b = D["m_b1_fields"]
         b = b[b.source == "Woodcroft"]
@@ -201,7 +205,7 @@ def figure(mid, D, lang):
     if mid == "b2_hhi":
         b = D["m_b2_hhi"]
         return fig(svg_lines([("HHI", [(r.decade, float(r.hhi)) for r in b.itertuples()], 0), (N("other", "기타"), [(r.decade, float(r.other_share)) for r in b.itertuples()], 1)], ".2f", xstep=20),
-                   "HHI(위)와 「기타」 비율." if ko else "HHI and the 'other' share.")
+                   "HHI와 「기타」 비율." if ko else "HHI and the 'other' share.")
     if mid == "b3_venice_sectors":
         b = D["m_b3_venice_sectors"]
         return fig(svg_bars([(r.sector_berveglieri, float(r.count), 1) for r in b.itertuples()], ",.0f", label_w=260), "Comino 등 표 A1." if ko else "Comino et al., Table A1.")
@@ -223,7 +227,12 @@ def figure(mid, D, lang):
         return fig(svg_bars(items, ".0f", label_w=300, errors=err), "중앙값(막대)과 사분위 범위(선)." if ko else "Median (bar) and interquartile range (line).")
     if mid == "d2_term_shift":
         d = D["m_d2_term_shift"]
-        return fig(svg_lines([(N("21 years", "21년"), [(r.year, float(r.eq21)) for r in d.itertuples()], 0), (N("≤14 years", "14년 이하"), [(r.year, float(r.le14)) for r in d.itertuples()], 1)], ",.0f",
+        # A year absent from the table is a year with no grants in the annual list (1643–1659 and others): both counts are true zeros, not gaps.
+        g = D["m_a1_annual"].set_index("year").grants
+        have = {int(r.year): r for r in d.itertuples()}
+        yrs = range(int(d.year.min()), int(d.year.max()) + 1)
+        val = lambda y, col: float(getattr(have[y], col)) if y in have else (0.0 if g.get(y, math.nan) == 0 else math.nan)
+        return fig(svg_lines([(N("21 years", "21년"), [(y, val(y, "eq21")) for y in yrs], 0), (N("≤14 years", "14년 이하"), [(y, val(y, "le14")) for y in yrs], 1)], ",.0f",
                              bands=[(1624, 1625, "1624")], xstep=5), "해마다 21년·14년 이하로 적힌 허여 수." if ko else "Grants per year with a written term of 21 years and of 14 years or less.")
     if mid == "d3_clauses":
         d = D["m_d3_clauses"]
@@ -231,8 +240,8 @@ def figure(mid, D, lang):
                    "10년별 언급 비율." if ko else "Share of entries mentioning the clause, by decade.")
     if mid == "p1_sro_annual":
         p = D["m_p1_sro_annual"]
-        return fig(svg_lines([(N("entries", "등록"), [(r.year, float(r.entries)) for r in p.itertuples()], 0)], ",.0f", bands=[(1571, 1576, N("gap", "기록 없음")), (1637, 1638, "1637")], xstep=10),
-                   "음영: 기록이 없는 1571–1576년, 등록이 의무가 된 1637년." if ko else "Shaded: 1571–1576, for which no entries survive, and 1637, when entrance became compulsory.")
+        return fig(svg_lines([(N("entries", "등록"), [(r.year, math.nan if r.gap else float(r.entries)) for r in p.itertuples()], 0)], ",.0f", bands=[(1571, 1576, N("gap", "기록 없음")), (1637, 1638, "1637")], xstep=10),
+                   "음영: 기록이 없는 1571–1575년, 등록이 의무가 된 1637년." if ko else "Shaded: 1571–1575, for which no entries survive, and 1637, when entrance became compulsory.")
     if mid == "p2_sro_concentration":
         p = D["m_p2_sro_concentration"]
         p = p[p.entries >= 20]
