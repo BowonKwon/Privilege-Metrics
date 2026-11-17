@@ -55,10 +55,16 @@ then the three steps above. Uncompressed record tables written by these steps ar
 
 ## 인용 · Citation
 
-From Privilege to Patent, version 1.1 (2026), https://bowonkwon.github.io/Privilege-Metrics/
+From Privilege to Patent, version 1.1.1 (2026), https://bowonkwon.github.io/Privilege-Metrics/
 
 ## 라이선스 · License
 
 코드 MIT, 데이터·문서 CC BY 4.0, `data/sro/` 는 CC BY-SA 4.0. 자세한 것은 LICENSE.md. Code MIT; data and text CC BY 4.0; `data/sro/` CC BY-SA 4.0. See LICENSE.md.
 
 [모든 공개 자료 · All public materials](https://bowonkwon.github.io/)
+
+## 일러두기 · Note
+
+이 저장소의 자료는 엮은이가 개인적으로 공부하며 엮은 것입니다. 엮은이가 속한 기관의 견해나 업무와는 관계가 없습니다.
+
+These are personal study materials and do not represent the views or work of any institution the editor belongs to.

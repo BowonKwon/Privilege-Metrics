@@ -21,7 +21,7 @@ from site_kit import CSS, JS, esc, fig, fmt, legend, svg_bars, svg_lines, table_
 from paths import COD, DER, OUT, find, need  # noqa: E402
 
 VERSION = SITE["version"]
-BUILD_DATE = "2026-11-15"
+BUILD_DATE = "2026-11-17"
 REPO = "https://github.com/BowonKwon/Privilege-Metrics"
 
 T = {
@@ -177,7 +177,8 @@ LINE_AX = {
     "a1_annual": [("허여 수(건/년)", "grants per year") + YEAR] * 2,
     "a4_extensions": [("연장 항목 수(10년 합)", "extension entries per decade") + DEC],
     "b1_fields": [("허여 가운데 그 분야의 비율", "share of grants in the field", "구간", "period")],
-    "b2_hhi": [("두 값 모두 0~1 (HHI는 지수, 「기타」는 비율)", "both run from 0 to 1 (HHI is an index, 'other' a share)") + DEC],
+    "b2_hhi": [("분야 집중도 HHI(클수록 몇 분야에 몰림)", "field concentration, HHI (higher = more concentrated)") + DEC,
+               ("허여 가운데 「기타」의 비율", "share of grants classed as 'other'") + DEC],
     "c1_foreign": [("허여 가운데 비율", "share of grants") + DEC], "c2_cogrant": [("허여 가운데 공동 허여의 비율", "share of grants made to more than one person") + DEC],
     "d2_term_shift": [("허여 수(건/년)", "grants per year") + YEAR], "d3_clauses": [("항목 가운데 그 조항을 언급한 비율", "share of entries mentioning the clause") + DEC],
     "p1_sro_annual": [("등록 항목 수(건/년)", "register entries per year") + YEAR], "p2_sro_concentration": [("그해 등록 가운데 상위 5인의 몫", "share of the year's entries held by the top five") + YEAR],
@@ -200,6 +201,59 @@ GLOSS = {
     "en": ("Names: Hulme and Woodcroft compiled lists of English monopoly grants and patents (1561–1603 and 1617–1852); Fulin edited documents on Venetian printing (1469–1526); "
            "Buning's data cover Dutch patents (1581–1621); SRO is Stationers' Register Online, a transcription of the register of the London Stationers' Company. References for the sources used on this page are under Sources below; those for all five are on the method page."),
 }
+# 1.1.1: how English statutes are cited (regnal year and chapter), for the pages that cite one
+STATUTE_GLOSS = {
+    "ko": "법령 인용: 1963년 이전의 잉글랜드·영국 의회 법률은 회기가 열린 국왕의 재위 연도와, 그 회기에 통과한 법률들에 차례로 붙인 장(chapter) 번호로 부른다. 21 Jac. I c. 3은 제임스 1세(라틴어 이름 Jacobus) 재위 21년 회기 잉글랜드 의회의 제3장이고, 15 & 16 Vict. c. 83은 빅토리아 여왕 재위 15년과 16년에 걸친 회기 영국 의회의 제83장이다. s. 32는 그 법의 제32조(section 32)다.",
+    "en": "Statute citations: Acts of the English and, later, British Parliament passed before 1963 are cited by the regnal year of the session and the chapter number given to each Act passed in that session. 21 Jac. I c. 3 is chapter 3 of the session of the 21st year of James I (Jacobus), an Act of the English Parliament; 15 & 16 Vict. c. 83 is chapter 83 of the session spanning the 15th and 16th years of Victoria, an Act of the Parliament of the United Kingdom; s. 32 is section 32 of that Act.",
+}
+_SAMPLE_RE = re.compile(r"\bR2[a-z]?(?:-chg)?\b")
+_DICT_RE = re.compile(r"\br[0-9]\b")
+_FIELD_KEY_RE = re.compile(r"(?<![A-Za-z_])(" + "|".join(sorted((re.escape(k) for k in FL.LABEL), key=len, reverse=True)) + r")(?= [0-9]+/[0-9]+)")
+
+
+def rel_gloss(text: str, lang: str) -> str:
+    """1.1.1: plain-language notes for the words that the reliability card actually uses."""
+    ko = lang == "ko"
+    out = []
+    frac = re.search(r"([0-9]+)/([0-9]+)", text)
+    if frac:
+        k, n = frac.groups()
+        out.append(f"「{k}/{n}」처럼 적힌 수는 견주어 본 {n}항목 가운데 두 값이 같았던 {k}항목이다. 무엇과 무엇을 견주었는지는 줄 이름에 있다. 「이미지 대조」「전사」「재코딩」「분야 일치」 줄은 이 사이트의 값과 다른 사람이 쪽 이미지나 본문을 다시 읽거나 분류를 다시 매긴 값이다." if ko
+                   else f"A figure such as {k}/{n} means that two values agree on {k} of the {n} entries checked. What is compared with what is in the row name: the rows on image checks, transcription, recoding and field agreement compare the site's value with the value another reader found or assigned from the page image or the text.")
+        if "chg" in text:
+            out.append("다만 「같은 항목의 사전 r6」 줄은 앞 판 사전(r6)이 매긴 분야와 코더를, 「앞 판의 측정」 줄은 앞 판 사전(r6)과 그 판의 표본(R2d)을 코딩한 코더를, 「코더 간 일치」 줄은 두 코더끼리를 견준 수다. 「r7만 맞음」「r6만 맞음」은 두 코더가 같은 답을 낸 항목 가운데 한쪽 사전만 그 답과 같았던 수이고, 「둘 다 틀림」은 어느 사전도 그 답과 같지 않았던 수다." if ko
+                       else "But the row on dictionary r6 compares the field given by the previous dictionary (r6) with the coder; the row on the previous measurement compares r6 with the coders of its own sample (R2d); the row on agreement between coders compares the two coders with each other; 'only r7 right' and 'only r6 right' count, among the entries on which both coders gave the same answer, those where only one dictionary matched that answer, and 'both wrong' those where neither did.")
+    if "CI" in text:
+        out.append("95% CI(95% 신뢰구간, 윌슨 방식)는 표본의 일치율로 전체의 실제 일치율을 어림한 범위다. 같은 방법으로 표본을 거듭 뽑아 이런 구간을 만들면 대략 100번에 95번꼴로 실제 값을 담는다. 다른 조건이 비슷하면 표본이 작을수록 넓다." if ko
+                   else "95% CI (95% confidence interval, Wilson method) is a range for the true rate of agreement estimated from the sample: intervals made this way from repeated samples would contain the true value about 95 times in 100. Other things being similar, the smaller the sample, the wider it is.")
+    if "κ" in text:
+        out.append("κ(코헨 카파)는 두 판단이 우연히 같아질 몫을 뺀 일치도다. 1이면 완전히 같고, 0이면 우연히 맞는 정도다." if ko
+                   else "κ (Cohen's kappa) is agreement with the part expected by chance removed: 1 is complete agreement, 0 is no better than chance.")
+    if "가중" in text or "weighted" in text:
+        out.append("표본은 분야마다 정한 수(일반 분야 11항목, 「기타」 25항목)를 뽑은 것이라 실제 허여의 분야 구성과 다르다. 그래서 분야별 일치율에 실제 허여의 분야 비중(「기타」 포함)을 곱해 더한 값을 「가중한 정밀도」로 함께 적는다. 이 카드의 95% CI는 가중하지 않은 표본 일치율(예: 163/212)에 붙인 근사 구간이고, 가중한 정밀도의 신뢰구간은 아니다." if ko
+                   else "The sample takes a set number per field (11 per field, 25 for 'other'), so its mix differs from that of the grants; the weighted precision therefore multiplies each field's agreement by that field's share of the grants ('other' included) and adds them up. The 95% CI on this card is an approximate interval for the unweighted share in the sample (for example 163/212), not a confidence interval for the weighted precision.")
+    samples = sorted(set(_SAMPLE_RE.findall(text)))
+    dicts = sorted(set(_DICT_RE.findall(text)))
+    if samples or dicts:
+        parts = []
+        if samples:
+            strat = [x for x in samples if not x.endswith("-chg")]
+            chg = [x for x in samples if x.endswith("-chg")]
+            ko_s = f"표본 이름({'·'.join(samples)}) — 검증하려고 뽑은 항목 묶음이다." + (f" 이 카드의 {'·'.join(strat)}는 허여를 분야별로 나눈 뒤 분야마다 무작위로 뽑은 묶음(층화 표본)이다." if strat else "") + (f" {'·'.join(chg)}는 사전을 바꿀 때 분야가 바뀐 허여 가운데서 단순 무작위로 뽑은 묶음이다." if chg else "")
+            en_s = f"Sample names ({', '.join(samples)}): sets of entries drawn for checking." + (f" On this card, {' and '.join(strat)} {'is a stratified sample' if len(strat) == 1 else 'are stratified samples'}, the grants divided by field and drawn at random within each field." if strat else "") + (f" {', '.join(chg)} {'is a simple random sample' if len(chg) == 1 else 'are simple random samples'} from the grants whose field changed with the new dictionary." if chg else "")
+            parts.append(ko_s if ko else en_s)
+        if dicts:
+            parts.append((f"사전 이름({'·'.join(dicts)}) — 분야를 가르는 단어 규칙(분야 사전)의 판 번호다." if ko
+                          else f"Dictionary names ({', '.join(dicts)}): versions of the word rules that assign fields (the field dictionary)."))
+        out.append(" ".join(parts) + (" 경위는 방법 면에 있다." if ko else " The method page gives the history."))
+    if "전사" in text or "transcription" in text:
+        out.append("전사는 문서를 읽어 그대로 옮겨 적은 것이다." if ko else "Transcription is reading a document and copying it out.")
+    if "재코딩" in text or "recod" in text:
+        out.append("재코딩은 다른 사람이 같은 항목을 다시 읽고 분류를 다시 매긴 것이다." if ko else "Recoding is another person reading the same entry and assigning its categories again.")
+    if "communication" in text:
+        out.append("communication은 목록 본문에 해외에서 전해진 발명이라고 적힌 허여다." if ko
+                   else "'Communication' marks a grant whose text says the invention was communicated from abroad.")
+    return " ".join(out)
 
 
 N_FIELDS = len([f for f in FL.LABEL if f != "other"])   # 17
@@ -273,10 +327,26 @@ def figure(mid, D, lang):
         return fig(svg, cap_)
     if mid == "b2_hhi":
         b = D["m_b2_hhi"]
-        return fig(svg_lines([("HHI", [(r.decade, float(r.hhi)) for r in b.itertuples()], 0), (N("other", "기타"), [(r.decade, float(r.other_share)) for r in b.itertuples()], 1)], ".2f", xstep=20,
-                             hline=(1 / N_FIELDS, (f"{N_FIELDS}분야에 고르게 나뉠 때 {1 / N_FIELDS:.3f}" if ko else f"{1 / N_FIELDS:.3f} if spread evenly over {N_FIELDS} fields"))),
-                   ("HHI는 분야별 몫을 제곱해 더한 값이다. 한 분야가 다 차지하면 1이고, 고르게 나뉠수록 작아진다(점선이 고르게 나뉠 때의 값). 「기타」는 어느 분야로도 분류하지 못한 허여의 비율로, HHI와 뜻이 다른 값이다." if ko
-                    else "HHI is the sum of the squared shares of the fields: 1 if one field takes everything, smaller the more evenly the grants are spread (the dotted line is the value for an even spread). 'Other' is the share of grants that fit no field; it measures something different from HHI."))
+        # 1.1.1: HHI (an index) and the 'other' share (a proportion) are drawn in two charts with their own axes; the values are those of the table.
+        hmax = b.loc[b.hhi.idxmax()]
+        omax = b.loc[b.other_share.idxmax()]
+        gaps = [d for d in range(int(b.decade.min()), int(b.decade.max()) + 1, 10) if d not in set(b.decade.astype(int))]
+        gap_ko = "·".join(f"{d}년대" for d in gaps)
+        gap_en = ", ".join(f"{d}s" for d in gaps)
+        s_h = svg_lines([("HHI", [(r.decade, float(r.hhi)) for r in b.itertuples()], 0)], ".2f", xstep=20,
+                        hline=(1 / N_FIELDS, (f"{N_FIELDS}분야에 고르게 나뉠 때 {1 / N_FIELDS:.3f}" if ko else f"{1 / N_FIELDS:.3f} if spread evenly over {N_FIELDS} fields")))
+        s_o = svg_lines([(N("other", "기타"), [(r.decade, float(r.other_share)) for r in b.itertuples()], 1)], ".0%", xstep=20)
+        cap_h = ((f"HHI는 「기타」를 뺀 분류된 허여에서 분야마다의 몫을 제곱해 더한 값이다. 한 분야가 다 차지하면 1이고, {N_FIELDS}분야에 똑같이 나뉘면 가장 작은 값 {1 / N_FIELDS:.3f}(점선)이다. "
+                  f"선이 위에 있을수록 허여가 몇 분야에 몰려 있다. 가장 높은 값은 {int(hmax.decade)}년대의 {hmax.hhi:.3f}인데, 그 10년에 분야를 가른 허여는 {int(hmax.classified)}건뿐이다 — 허여가 적은 10년의 값은 크게 흔들린다. {gap_ko}는 허여가 없어 선을 끊었다.")
+                 if ko else
+                 (f"HHI is the sum of the squared shares of the fields among the classified grants, 'other' excluded. It is 1 if one field takes everything and at its smallest, {1 / N_FIELDS:.3f} (dotted line), if the grants are split equally over {N_FIELDS} fields. "
+                  f"The higher the line, the more the grants concentrate in a few fields. The highest value, {hmax.hhi:.3f} in the {int(hmax.decade)}s, comes from only {int(hmax.classified)} classified grants; values for decades with few grants swing widely. The line breaks at the {gap_en}, which have no grants."))
+        cap_o = ((f"「기타」는 {N_FIELDS}분야 어디에도 넣지 못한 허여가 그 10년 허여 가운데 차지하는 비율이다. 위의 HHI와 뜻도 단위도 다른 값이라 따로 그렸다. HHI는 「기타」를 뺀 허여로 계산하므로, 그 10년 허여 가운데 이 비율만큼은 HHI 계산에 들어가지 않는다(예: {int(omax.decade)}년대는 {int(omax.n)}건 가운데 {int(omax.n) - int(omax.classified)}건이 빠지고 {int(omax.classified)}건으로 계산했다). "
+                  f"가장 높은 10년은 {int(omax.decade)}년대({omax.other_share:.0%})다.")
+                 if ko else
+                 (f"'Other' is the share of a decade's grants that fit none of the {N_FIELDS} fields. It differs from HHI in meaning and in unit, so it has a chart of its own. HHI is computed without the 'other' grants, so this share of a decade's grants is left out of its HHI (in the {int(omax.decade)}s, for example, {int(omax.n) - int(omax.classified)} of {int(omax.n)} grants are left out and HHI rests on {int(omax.classified)}). "
+                  f"The highest decade is the {int(omax.decade)}s ({omax.other_share:.0%})."))
+        return fig(s_h, cap_h) + fig(s_o, cap_o)
     if mid == "b3_venice_sectors":
         b = D["m_b3_venice_sectors"]
         return fig(svg_bars([((f"{SECTOR_KO.get(r.sector_berveglieri, r.sector_berveglieri)} ({r.sector_berveglieri})" if ko else r.sector_berveglieri), float(r.count), 1) for r in b.itertuples()], ",.0f", label_w=390),
@@ -362,6 +432,11 @@ def table_for(mid, D, lang):
         w = w.reset_index(drop=True)
         cols = [("field_name", col_label("field_name", lang), None)] + [(c, c.replace("-", "–"), ".0%") for c in w.columns if c != "field_name"]
         return table_html(w, cols, f"t_{mid}", lang)
+    keyed = [c for c in ("top_field", "our_field") if c in df.columns]
+    if keyed:   # 1.1.1: field keys shown by their names on the page; the CSV keeps the keys
+        df = df.copy()
+        for c in keyed:
+            df[c] = df[c].map(lambda v: FL.LABEL[v][lang] if isinstance(v, str) and v in FL.LABEL else v)
     cols = [(c, col_label(c, lang), col_spec(df, c)) for c in df.columns]
     return table_html(df, cols, f"t_{mid}", lang)
 
@@ -378,8 +453,13 @@ def rel_card(mid, rel, lang):
     kind = m["rel"]
     r = rel.get(mid, {})
     dt = {"원자료": "자료원", "출처": "자료원"} if lang == "ko" else {}      # reliability.json keeps its keys; the page uses one term
-    rows = "".join(f"<dt>{esc(dt.get(k, k))}</dt><dd>{esc(v)}</dd>" for k, v in (r.get(lang) or {}).items())
-    return f'<div class="spec rel"><h3><span class="badge">{T[lang]["badge"][kind]}</span>{T[lang]["reliability"]}</h3><p class="src">{esc(T[lang]["rel"][kind])}</p>{"<dl>" + rows + "</dl>" if rows else ""}</div>'
+    items = list((r.get(lang) or {}).items())
+    # 1.1.1: field keys in the per-field row are shown by their names (reliability.json keeps the keys)
+    named = lambda v: _FIELD_KEY_RE.sub(lambda mm: FL.LABEL[mm.group(1)][lang], v)
+    rows = "".join(f"<dt>{esc(dt.get(k, k))}</dt><dd>{esc(named(v))}</dd>" for k, v in items)
+    note = rel_gloss(" ".join(f"{k} {v}" for k, v in items), lang)
+    note_html = f"<p class='src gloss'>{esc(note)}</p>" if note else ""
+    return f'<div class="spec rel"><h3><span class="badge">{T[lang]["badge"][kind]}</span>{T[lang]["reliability"]}</h3><p class="src">{esc(T[lang]["rel"][kind])}</p>{"<dl>" + rows + "</dl>" if rows else ""}{note_html}</div>'
 
 
 def metric_page(mid, D, TK, rel, lang):
@@ -392,7 +472,7 @@ def metric_page(mid, D, TK, rel, lang):
     body.append(f'<div class="spec"><dl><dt>{t["definition"]}</dt><dd>{esc(L["definition"])}</dd><dt>{t["formula"]}</dt><dd class="formula">{esc(L["formula"])}</dd>'
                 f'<dt>{t["reading"]}</dt><dd>{esc(L["reading"])}</dd><dt>{t["caveat"]}</dt><dd>{esc(L["caveat"])}</dd></dl></div>')
     body.append(figure(mid, D, lang))
-    body.append(f"<p class='src'>{esc(GLOSS[lang])}</p>")   # 1.1
+    body.append(f"<p class='src'>{esc(GLOSS[lang])}{(' ' + esc(STATUTE_GLOSS[lang])) if ' c. ' in L['definition'] else ''}</p>")   # 1.1; statute note 1.1.1
     body.append(f'<h2>{t["table"]}</h2><p class="files"><a href="../../data/{m["table"]}.csv">{t["download"]} · {m["table"]}.csv</a></p>')
     body.append(table_for(mid, D, lang))
     body.append(rel_card(mid, rel, lang))
@@ -518,22 +598,27 @@ def eras(D, TK, lang):
           (1710, "앤 여왕법. 이 사이트의 출판 자료는 1640년에서 끝나 그 전후는 담지 못한다" if ko else "Statute of Anne; this site's printing data end in 1640 and cannot show the years around it"),
           (1852, "Woodcroft 목록 끝(10월 1일). 목록은 1852년 특허법(15 & 16 Vict. c. 83) 제32조에 따라 편찬되었다(표제면)" if ko else "Woodcroft's list ends (1 October); it was compiled under the Patent Law Amendment Act, 15 & 16 Vict. c. 83, s. 32 (title page)")]
     a1, p1, v1 = D["m_a1_annual"], D["m_p1_sro_annual"], D["m_v1_fulin_annual"]
-    s = svg_lines([("English inventions" if not ko else "잉글랜드 발명", [(r.year, float(r.grants)) for r in a1[a1.year <= 1700].itertuples() if not pd.isna(r.grants)], 0),
-                   ("Venetian printing" if not ko else "베네치아 출판", [(r.year, float(r.privileges)) for r in v1.itertuples()], 1)], ",.0f",
-                  bands=[(1474, 1475, "1474"), (1517, 1518, "1517"), (1624, 1625, "1624")], xstep=25, lang=lang,
-                  ylabel=("한 해의 건수(두 선은 세는 것이 다르다)" if ko else "count per year (the two lines count different things)"), xlabel=("연도" if ko else "year"))
-    vmax, emax = v1.loc[v1.privileges.idxmax()], a1[a1.year <= 1700].loc[a1[a1.year <= 1700].grants.idxmax()]
-    intro = ("<p>아래 그림은 두 자료를 한 연표 위에 놓은 것이다. 「베네치아 출판」은 Fulin이 엮은 문서 가운데 출판 특권의 수이고, 「잉글랜드 발명」은 Hulme과 Woodcroft의 목록에 실린 독점 허여·특허의 수다. 세는 것이 달라 두 선의 높이를 서로 견주지 않는다.</p>"
-             if ko else "<p>The chart sets two sources on one timeline. 'Venetian printing' counts the printing privileges among the documents edited by Fulin; 'English inventions' counts the monopoly grants and patents in the lists of Hulme and Woodcroft. They count different things, so the heights of the two lines are not to be compared.</p>")
-    cap_ = ((f"연도별 수, 1469–1700. 음영은 1474년(베네치아 특허법), 1517년(베네치아가 기존 출판 특권을 거둠), 1624년(잉글랜드 독점법)이다. "
-             f"베네치아 출판 특권은 {int(vmax.year)}년의 {int(vmax.privileges)}건이, 1700년까지의 잉글랜드 발명 허여는 {int(emax.year)}년의 {int(emax.grants)}건이 가장 많다. 잉글랜드 선이 끊긴 1604–1616년은 목록이 없는 기간이다.")
-            if ko else
-            (f"Counts per year, 1469–1700. Shaded: 1474 (the Venetian patent act), 1517 (Venice revokes existing printing privileges) and 1624 (the Statute of Monopolies). "
-             f"Venetian printing privileges are most numerous in {int(vmax.year)} ({int(vmax.privileges)}); English grants for inventions up to 1700 in {int(emax.year)} ({int(emax.grants)}). The English line breaks at 1604–1616, for which there is no list."))
-    body = [f"<h1>{T[lang]['nav_eras']}</h1>", intro, fig(s, cap_),
+    # 1.1.1: the two series count different things, so each has its own chart and axis (before 1.1.1 they shared one axis).
+    e1 = a1[a1.year <= 1700]
+    s_v = svg_lines([("Venetian printing" if not ko else "베네치아 출판", [(r.year, float(r.privileges)) for r in v1.itertuples()], 1)], ",.0f",
+                    bands=[(1474, 1475, "1474"), (1517, 1518, "1517")], xstep=10, lang=lang,
+                    ylabel=("베네치아 출판 특권 문서 수(건/년)" if ko else "Venetian printing privileges per year"), xlabel=("연도" if ko else "year"))
+    s_e = svg_lines([("English inventions" if not ko else "잉글랜드 발명", [(r.year, float(r.grants)) for r in e1.itertuples() if not pd.isna(r.grants)], 0)], ",.0f",
+                    bands=[(1604, 1616, "목록 공백" if ko else "gap"), (1624, 1625, "1624")], xstep=20, lang=lang,
+                    ylabel=("잉글랜드 발명 독점 허여·특허 수(건/년)" if ko else "English invention grants and patents per year"), xlabel=("연도" if ko else "year"))
+    vmax, emax = v1.loc[v1.privileges.idxmax()], e1.loc[e1.grants.idxmax()]
+    intro = ("<p>아래 두 그림은 연표에 나오는 두 자료의 해마다 건수다. 위 그림 「베네치아 출판」은 Fulin이 엮은 문서 가운데 출판 특권을 내준 문서의 수이고, 아래 그림 「잉글랜드 발명」은 Hulme과 Woodcroft의 목록에 실린 독점 허여·특허의 수다. 세는 것도, 다루는 기간도 달라 그림을 나누었다. 두 그림의 높이를 서로 견주지 않는다.</p>"
+             if ko else "<p>The two charts below give the yearly counts of the two sources on the timeline. The first, 'Venetian printing', counts the documents granting a printing privilege among those edited by Fulin; the second, 'English inventions', counts the monopoly grants and patents in the lists of Hulme and Woodcroft. They count different things over different years, so they are drawn apart; their heights are not to be compared.</p>")
+    cap_v = ((f"베네치아 출판 특권, {int(v1.year.min())}–{int(v1.year.max())}년. 선이 위에 있을수록 그해 특권 문서가 많다. 음영은 1474년(베네치아 특허법)과 1517년(베네치아가 기존 출판 특권을 거둠)이다. 가장 많은 해는 {int(vmax.year)}년의 {int(vmax.privileges)}건이다.")
+             if ko else
+             (f"Venetian printing privileges, {int(v1.year.min())}–{int(v1.year.max())}. The higher the line, the more privilege documents in that year. Shaded: 1474 (the Venetian patent act) and 1517 (Venice revokes existing printing privileges). The largest year is {int(vmax.year)} ({int(vmax.privileges)})."))
+    cap_e = ((f"잉글랜드 발명 독점 허여·특허, {int(e1.year.min())}–1700년. 선이 위에 있을수록 그해 허여가 많다. 음영은 두 목록 사이의 공백인 1604–1616년(목록이 없어 선을 끊었다 — 0건이 아니라 모른다)과 독점법이 나온 1624년이다. 가장 많은 해는 {int(emax.year)}년의 {int(emax.grants)}건이다.")
+             if ko else
+             (f"English grants and patents for inventions, {int(e1.year.min())}–1700. The higher the line, the more grants in that year. Shaded: 1604–1616, the gap between the two lists (no list, so the line breaks; not zero but unknown), and 1624, the year of the Statute of Monopolies. The largest year is {int(emax.year)} ({int(emax.grants)})."))
+    body = [f"<h1>{T[lang]['nav_eras']}</h1>", intro, fig(s_v, cap_v), fig(s_e, cap_e),
             "<div class='wrap'><table><thead><tr><th class='num'>" + T[lang]["year"] + "</th><th>" + ("사건" if ko else "Event") + "</th></tr></thead><tbody>" +
             "".join(f"<tr><td class='num'>{y}</td><td>{esc(x)}</td></tr>" for y, x in ev) + "</tbody></table></div>",
-            "<p class='src'>" + ("연표의 연도·사건은 각 자료원(Fulin·Hulme·Woodcroft·SRO)과 법령 명칭에서 가져왔다." if ko else "Years and events are taken from the sources used (Fulin, Hulme, Woodcroft, SRO) and the titles of the statutes.") + "</p>"]
+            "<p class='src'>" + ("연표의 연도·사건은 각 자료원(Fulin·Hulme·Woodcroft·SRO)과 법령 명칭에서 가져왔다." if ko else "Years and events are taken from the sources used (Fulin, Hulme, Woodcroft, SRO) and the titles of the statutes.") + " " + esc(STATUTE_GLOSS[lang]) + "</p>"]
     return page(lang, T[lang]["nav_eras"], "".join(body), depth=1, active="eras", rel="eras.html")
 
 
