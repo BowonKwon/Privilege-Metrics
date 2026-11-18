@@ -12,7 +12,7 @@ Values for the cards are written by src/reliability.py into data/derived/reliabi
 SITE = {
     "ko": {"title": "특권에서 특허로", "subtitle": "근대 특허 이전, 베네치아·잉글랜드·네덜란드의 발명·출판 특권을 한 건씩 세다"},
     "en": {"title": "From Privilege to Patent", "subtitle": "Invention and printing privileges in Venice, England and the Dutch Republic before modern patents, counted one grant at a time"},
-    "version": "1.1.1",
+    "version": "1.1.2",
 }
 
 SERIES = {

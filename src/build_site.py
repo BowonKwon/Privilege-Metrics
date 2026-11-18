@@ -21,7 +21,7 @@ from site_kit import CSS, JS, esc, fig, fmt, legend, svg_bars, svg_lines, table_
 from paths import COD, DER, OUT, find, need  # noqa: E402
 
 VERSION = SITE["version"]
-BUILD_DATE = "2026-11-17"
+BUILD_DATE = "2026-11-18"
 REPO = "https://github.com/BowonKwon/Privilege-Metrics"
 
 T = {
@@ -121,10 +121,20 @@ def wrap_wide_svgs(body: str) -> str:
     return _WIDE_SVG.sub(one, body)
 
 
-def page(lang, title, body, depth=1, active="", desc="", rel="index.html", leaf=None):
+import site_nav  # 1.1.2: section ids, a section list on pages with three or more sections, a button back to it
+METHOD_IDS = ["counted", "woodcroft", "fields", "reliability", "prior-checks", "not-done", "versions"]
+READING_IDS = ["counting", "around-1624", "recipients", "printing", "using"]
+
+
+def page(lang, title, body, depth=1, active="", desc="", rel="index.html", leaf=None, toc=True):
     """rel: this page's path under the language folder; the language switch points to the same path in the other tree.
     leaf: sibling navigation for a leaf page (metric_siblings), drawn by leaf_html."""
     t = T[lang]
+    # 1.1.2: every section heading gets a link to itself; pages with three or more sections get a section list
+    # (toc=False where the page already has its own list: metric pages beside the series list, the jurisdictions page).
+    body, _items = site_nav.anchor_html(body, lang, rel)
+    if toc:
+        body = site_nav.with_toc(body, site_nav.page_toc(lang, _items), lang)
     if leaf:
         body = leaf_html(lang, leaf, body)
     body = wrap_wide_svgs(body)
@@ -148,13 +158,13 @@ def page(lang, title, body, depth=1, active="", desc="", rel="index.html", leaf=
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600&display=swap" rel="stylesheet">
 <style>{CSS}
 :lang(ko) .prose p,:lang(ko) .take p,:lang(ko) .card small,:lang(ko) figcaption,:lang(ko) dd{{word-break:keep-all}}
-td.num,th.num{{white-space:nowrap}}{LEAF_CSS if leaf else ""}</style></head><body>
+td.num,th.num{{white-space:nowrap}}{LEAF_CSS if leaf else ""}{site_nav.NAV_CSS}</style></head><body>
 <header><a class="brand" href="{root}{lang}/index.html">{t['site']}</a>
 <nav>{navh}</nav>
 <div class="right"><a class="hub" href="https://bowonkwon.github.io/{'' if lang == 'ko' else 'en/'}">{'공개 자료 허브' if lang == 'ko' else 'All public materials'}</a><button id="theme" class="theme" type="button" aria-label="{t['theme']}">◑</button><a class="lang" href="{root}{other}/{rel}" hreflang="{other}">{t['lang_other']}</a></div></header>
 <main{' class="wide"' if leaf else ""}>{body}</main>
 <footer>{t['site']} · {t['version']} {VERSION} · {t['built']} {BUILD_DATE} · <a href="{REPO}">GitHub</a> · {t['hub']} <a href="https://bowonkwon.github.io/{hub}">bowonkwon.github.io</a><br>{attribution}</footer>
-<script>{JS}{LEAF_JS if leaf else ""}</script></body></html>"""
+<script>{JS}{LEAF_JS if leaf else ""}{site_nav.NAV_JS}</script></body></html>"""
 
 
 def take(text, lang):
@@ -473,14 +483,14 @@ def metric_page(mid, D, TK, rel, lang):
                 f'<dt>{t["reading"]}</dt><dd>{esc(L["reading"])}</dd><dt>{t["caveat"]}</dt><dd>{esc(L["caveat"])}</dd></dl></div>')
     body.append(figure(mid, D, lang))
     body.append(f"<p class='src'>{esc(GLOSS[lang])}{(' ' + esc(STATUTE_GLOSS[lang])) if ' c. ' in L['definition'] else ''}</p>")   # 1.1; statute note 1.1.1
-    body.append(f'<h2>{t["table"]}</h2><p class="files"><a href="../../data/{m["table"]}.csv">{t["download"]} · {m["table"]}.csv</a></p>')
+    body.append(f'<h2 id="table">{t["table"]}</h2><p class="files"><a href="../../data/{m["table"]}.csv">{t["download"]} · {m["table"]}.csv</a></p>')
     body.append(table_for(mid, D, lang))
     body.append(rel_card(mid, rel, lang))
     if m.get("prior"):
-        body.append(f'<h2>{t["prior"]}</h2><ul class="prose">' + "".join(f'<li>{md(PRIOR[p][lang])} <span class="src">— {md(PRIOR[p]["cite"])}</span></li>' for p in m["prior"]) + "</ul>")
-    body.append(f'<h2>{t["source"]}</h2><ul class="prose">' + "".join(f'<li>{md(SOURCES[s][lang])} <span class="src">({esc(SOURCES[s]["license_ko" if lang == "ko" else "license"])}; <a href="{SOURCES[s]["url"]}">{esc(SOURCES[s]["url"])}</a>)</span></li>' for s in m["sources"]) + "</ul>")
+        body.append(f'<h2 id="prior">{t["prior"]}</h2><ul class="prose">' + "".join(f'<li>{md(PRIOR[p][lang])} <span class="src">— {md(PRIOR[p]["cite"])}</span></li>' for p in m["prior"]) + "</ul>")
+    body.append(f'<h2 id="sources">{t["source"]}</h2><ul class="prose">' + "".join(f'<li>{md(SOURCES[s][lang])} <span class="src">({esc(SOURCES[s]["license_ko" if lang == "ko" else "license"])}; <a href="{SOURCES[s]["url"]}">{esc(SOURCES[s]["url"])}</a>)</span></li>' for s in m["sources"]) + "</ul>")
     body.append(f'<div class="links"><a href="index.html">← {t["metric_list"]}</a></div>')
-    return page(lang, L["name"], "".join(body), depth=2, active="metrics", desc=TK[mid][lang], rel=f"metrics/{mid}.html",
+    return page(lang, L["name"], "".join(body), depth=2, active="metrics", desc=TK[mid][lang], rel=f"metrics/{mid}.html", toc=False,
                 leaf=metric_siblings(lang, mid))
 
 
@@ -558,7 +568,7 @@ def home(D, TK, lang):
             f'<div class="take"><div class="l">{t["key"]}</div>' + "".join(f"<p>{esc(x)}</p>" for x in lines) + "</div>"]
     for s, lab in SERIES.items():
         ids = [k for k, m in METRICS.items() if m["series"] == s]
-        body.append(f"<h2>{s} · {esc(lab[lang])}</h2>" + cards(D, TK, lang, ids, depth=1))
+        body.append(f"<h2 id='s-{s}'>{s} · {esc(lab[lang])}</h2>" + cards(D, TK, lang, ids, depth=1))
     return page(lang, t["site"], "".join(body), depth=1, active="home")
 
 
@@ -580,7 +590,7 @@ def places(D, TK, lang):
     body = [f"<h1>{t['nav_places']}</h1><nav class='jump' aria-label='{'관할' if ko else 'Jurisdictions'}'>{jump}</nav>"]
     for j, (ids, txt) in blocks.items():
         body.append(f"<h2 id='j-{j}'>{JUR[j][lang]}</h2><p class='prose'>{esc(txt)}</p>" + cards(D, TK, lang, ids, depth=1))
-    return page(lang, t["nav_places"], "".join(body), depth=1, active="places", rel="places.html")
+    return page(lang, t["nav_places"], "".join(body), depth=1, active="places", rel="places.html", toc=False)
 
 
 def eras(D, TK, lang):
@@ -655,8 +665,9 @@ def method_page(rel, lang):
     t = T[lang]
     secs = METHOD[lang]
     body = [f"<h1>{t['nav_method']}</h1><div class='prose'>"]
-    for h, ps in secs:
-        body.append(f"<h2>{esc(h)}</h2>" + "".join(f"<p>{esc(p)}</p>" for p in ps))
+    assert len(secs) == len(METHOD_IDS), "method sections and METHOD_IDS differ in number"
+    for i, (h, ps) in zip(METHOD_IDS, secs):
+        body.append(f'<h2 id="{i}">{esc(h)}</h2>' + "".join(f"<p>{esc(p)}</p>" for p in ps))
     body.append("</div>")
     return page(lang, t["nav_method"], "".join(body), depth=1, active="method", rel="method.html")
 
@@ -668,8 +679,9 @@ READING = {"ko": [], "en": []}
 def reading_page(lang):
     t = T[lang]
     body = [f"<h1>{t['nav_reading']}</h1><div class='prose'>"]
-    for h, ps in READING[lang]:
-        body.append(f"<h2>{esc(h)}</h2>" + "".join(f"<p>{esc(p)}</p>" for p in ps))
+    assert len(READING[lang]) == len(READING_IDS), "reading sections and READING_IDS differ in number"
+    for i, (h, ps) in zip(READING_IDS, READING[lang]):
+        body.append(f'<h2 id="{i}">{esc(h)}</h2>' + "".join(f"<p>{esc(p)}</p>" for p in ps))
     body.append("</div>")
     return page(lang, t["nav_reading"], "".join(body), depth=1, active="reading", rel="reading.html")
 
