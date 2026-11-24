@@ -72,6 +72,8 @@ table.fixed{table-layout:fixed;min-width:900px}table.fixed th{white-space:normal
 .wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:0 .3rem;margin:.6rem 0 1rem}.wrap table{margin:0}
 figure{margin:1.2rem 0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1rem 1rem .8rem;box-shadow:var(--shadow)}
 figcaption{font-size:.86rem;color:var(--fg2);margin-top:.5rem;line-height:1.5}
+figure .fi{margin:0 0 .6rem;font-size:.92rem;color:var(--fg);line-height:1.55}figcaption .cp{margin:.35rem 0}figcaption .cp b{color:var(--fg);font-weight:600;margin-right:.3rem}figure .sxh{display:none;margin:.3rem 0 0;font-size:.8rem;color:var(--fg3)}
+@media(max-width:640px){figure .sxh{display:block}}
 svg{max-width:100%;height:auto;display:block}svg text{font-family:var(--body);fill:var(--fg2);font-size:11px}svg .ax{stroke:var(--line)}svg .grid{stroke:var(--grid)}
 .legend{display:flex;gap:1.1rem;font-size:.86rem;color:var(--fg2);flex-wrap:wrap;margin:.2rem 0 .4rem}.legend span::before{content:"";display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:.4rem;vertical-align:-1px;background:var(--c)}
 .note{background:color-mix(in srgb,var(--accent) 7%,var(--card));border:1px solid color-mix(in srgb,var(--accent) 25%,var(--line));border-left:4px solid var(--accent);border-radius:8px;padding:.7rem 1rem;margin:1.2rem 0;font-size:.95rem}
@@ -386,4 +388,15 @@ def cap(s, lang: str) -> str:
 
 def fig(svg: str, caption: str) -> str:
     return f"<figure>{svg}<figcaption>{caption}</figcaption></figure>" if svg else ""
+
+
+SX_HINT = {"ko": "좁은 화면에서는 그림을 옆으로 밀어 끝까지 볼 수 있다.", "en": "On a narrow screen, swipe the chart sideways to see all of it."}
+
+
+def fig_n(svg: str, intro: str, parts, lang: str) -> str:
+    """1.1.4: one-line introduction above the chart, the notes (heading, text) in the caption below."""
+    if not svg:
+        return ""
+    notes = "".join(f'<p class="cp"><b>{esc(h)}</b> {esc(t)}</p>' for h, t in parts)
+    return f'<figure><p class="fi">{esc(intro)}</p>{svg}<p class="sxh">{esc(SX_HINT[lang])}</p><figcaption>{notes}</figcaption></figure>'
 

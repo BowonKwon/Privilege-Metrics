@@ -12,7 +12,7 @@ Values for the cards are written by src/reliability.py into data/derived/reliabi
 SITE = {
     "ko": {"title": "특권에서 특허로", "subtitle": "근대 특허 이전, 베네치아·잉글랜드·네덜란드의 발명·출판 특권을 한 건씩 세다"},
     "en": {"title": "From Privilege to Patent", "subtitle": "Invention and printing privileges in Venice, England and the Dutch Republic before modern patents, counted one grant at a time"},
-    "version": "1.1.3",
+    "version": "1.1.4",
 }
 
 SERIES = {
@@ -163,10 +163,10 @@ metric(id="d1_terms", series="D", table="m_d1_terms", unit="years", fmt=".0f", s
        rel="sampled",
        ko=dict(name="존속기간 분포", definition="허여 문서에 적힌 존속기간(년). 적혀 있지 않은 것은 채우지 않는다.",
                formula="기간이 적힌 허여의 중앙값·사분위·값별 건수", reading="엘리자베스 시대(Hulme)는 6–30년에 걸치고, 기간이 적힌 47건 가운데 44건이 7–21년, 가운데 절반이 10–21년이다. 1624년 뒤 잉글랜드는 14년으로 모인다. 네덜란드와 베네치아 출판 특권은 10년 안팎이 많다.",
-               caveat="Woodcroft 1820년 이후 항목은 기간을 적지 않아 비어 있다. 법정 기간(14년)을 가정해 채우지 않았다."),
+               caveat="Woodcroft 집계는 1819년에서 끝난다. 1820년부터의 항목은 대부분 기간을 적지 않아 막대와 표의 줄을 두지 않았다(기간이 적힌 소수의 항목 수는 그림 설명). 법정 기간(14년)을 가정해 채우지 않았다."),
        en=dict(name="Terms granted", definition="Term in years written in the grant. Terms not written are left blank, not filled in.",
                formula="median, quartiles and counts by value among grants with a stated term", reading="Elizabethan terms (Hulme) range from 6 to 30 years: 44 of the 47 stated terms fall between 7 and 21, and the middle half between 10 and 21; after 1624 English terms gather at 14. Dutch and Venetian printing terms cluster around 10.",
-               caveat="Woodcroft's entries from about 1820 do not state the term, so those years are empty. The statutory 14 years was not assumed."))
+               caveat="The Woodcroft count ends in 1819: entries from 1820 on mostly do not state the term, so there is no bar or table row for them (the few that do are counted in the chart notes). The statutory 14 years was not assumed."))
 metric(id="d2_term_shift", series="D", table="m_d2_term_shift", unit="grants", fmt=",.0f", sources=["woodcroft"], prior=[],
        rel="ocr",
        ko=dict(name="21년에서 14년으로", definition="1617–1700년 해마다 본문에 적힌 첫 기간이 21년인 허여와 14년 이하인 허여의 수.",
